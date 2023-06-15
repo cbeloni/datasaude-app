@@ -26,16 +26,16 @@ import TableList from "views/TableList/TableList.js";
 
 const dashboardRoutes = [
   {
-    path: "/mapa",
-    name: "Mapa",
-    icon: Public,
+    path: "/dashboard",
+    name: "Dashboard",
+    icon: Dashboard,
     component: DashboardPage,
     layout: "/admin",
   },
   {
-    path: "/dashboard",
-    name: "Dashboard",
-    icon: Dashboard,
+    path: "/mapa",
+    name: "Mapa",
+    icon: Public,
     component: DashboardPage,
     layout: "/admin",
   },
