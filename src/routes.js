@@ -22,6 +22,7 @@ import Public from "@material-ui/icons/Public";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import TableList from "views/TableList/TableList.js";
+import Maps from "views/Maps/Maps.js";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -36,7 +37,7 @@ const dashboardRoutes = [
     path: "/mapa",
     name: "Mapa",
     icon: Public,
-    component: DashboardPage,
+    component: Maps,
     layout: "/admin",
   },
   {
