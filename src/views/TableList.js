@@ -1,4 +1,4 @@
-import DataTable from "components/Table/Datatable";
+import DataTableComponent from "components/Table/Datatable";
 import React from "react";
 
 // react-bootstrap components
@@ -27,10 +27,10 @@ function TableList() {
                   Here is a subtitle for this table
                 </p>
               </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-0">
-                <DataTable>
-                </DataTable>
+              <Card.Body className="table-full-width table-responsive px-4">
+                <DataTableComponent></DataTableComponent>
               </Card.Body>
+              <p>teste</p>
             </Card>
           </Col>
           <Col md="12">

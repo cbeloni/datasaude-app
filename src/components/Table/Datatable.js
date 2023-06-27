@@ -1,24 +1,53 @@
-import React, { useEffect, useRef } from 'react';
-import { Button } from 'react-bootstrap';
+import React from 'react';
+import { DataGrid } from 'tubular-react';
+import { LocalStorage, AggregateFunctions, ColumnDataType, ColumnSortDirection, createColumn} from "tubular-common";
 
+const columns = [
+  createColumn("OrderID", {
+    dataType: ColumnDataType.Numeric,
+    filterable: true,
+    isKey: true,
+    label: "Id",
+    sortDirection: ColumnSortDirection.Ascending,
+    sortOrder: 1,
+    sortable: true
+  }),
+  createColumn("CustomerName", {
+    aggregate: AggregateFunctions.Count,
+    filterable: true,
+    searchable: true,
+    sortable: true
+  }),
+  createColumn("ShippedDate", {
+    dataType: ColumnDataType.DateTime,
+    filterable: true,
+    sortable: true
+  }),
+  createColumn("ShipperCity"),
+  createColumn("Amount", {
+    dataType: ColumnDataType.Numeric,
+    sortable: true
+  }),
+  createColumn("IsShipped", {
+    dataType: ColumnDataType.Boolean,
+    filterable: true,
+    sortable: true
+  })
+];
 
-const DataTable = () => {
-  const tableRef = useRef(null);
-
-  useEffect(() => {
-    console.log('Iniciando')
-  }, []);
+function DataTableComponent() {
 
   return (
     <div>
-      <Button>Default</Button>
-      <Button variant="primary">Primary</Button>
-      <Button variant="info">Info</Button>
-      <Button variant="success">Success</Button>
-      <Button variant="warning">Warning</Button>
-      <Button variant="danger">Danger</Button>
+      <DataGrid
+        gridName="Tubular-React"
+        columns={columns}
+        dataSource="https://tubular.azurewebsites.net/api/orders/paged"
+        storage={new LocalStorage()}
+      />
     </div>
   );
-};
+}
 
-export default DataTable;
+
+export default DataTableComponent;
