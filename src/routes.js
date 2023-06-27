@@ -1,12 +1,12 @@
 /*!
 
 =========================================================
-* Material Dashboard React - v1.10.0
+* Light Bootstrap Dashboard React - v2.0.1
 =========================================================
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/material-dashboard-react/blob/master/LICENSE.md)
+* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
 
 * Coded by Creative Tim
 
@@ -15,37 +15,36 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-// @material-ui/icons
-import Dashboard from "@material-ui/icons/Dashboard";
-import Public from "@material-ui/icons/Public";
-
-// core components/views for Admin layout
-import DashboardPage from "views/Dashboard/Dashboard.js";
-import TableList from "views/TableList/TableList.js";
-import Maps from "views/Maps/Maps.js";
-// core components/views for RTL layout
+import Dashboard from "views/Dashboard.js";
+import UserProfile from "views/UserProfile.js";
+import TableList from "views/TableList.js";
+import Typography from "views/Typography.js";
+import Icons from "views/Icons.js";
+import Maps from "views/Maps.js";
+import Notifications from "views/Notifications.js";
+import Upgrade from "views/Upgrade.js";
 
 const dashboardRoutes = [
   {
     path: "/dashboard",
     name: "Dashboard",
-    icon: Dashboard,
-    component: DashboardPage,
-    layout: "/admin",
-  },
-  {
-    path: "/mapa",
-    name: "Mapa",
-    icon: Public,
-    component: Maps,
-    layout: "/admin",
+    icon: "nc-icon nc-chart-pie-35",
+    component: Dashboard,
+    layout: "/admin"
   },
   {
     path: "/table",
     name: "Table List",
-    icon: "content_paste",
+    icon: "nc-icon nc-notes",
     component: TableList,
-    layout: "/admin",
+    layout: "/admin"
+  },
+  {
+    path: "/maps",
+    name: "Maps",
+    icon: "nc-icon nc-pin-3",
+    component: Maps,
+    layout: "/admin"
   }
 ];
 
