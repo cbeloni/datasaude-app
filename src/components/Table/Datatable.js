@@ -53,7 +53,7 @@ function DataTableComponent() {
       <DataGrid
         gridName="Tubular-React"
         columns={columns}
-        dataSource="http://localhost:8000/api/v1/poluentes"
+        dataSource="https://datasaude-api.beloni.dev.br/api/v1/poluentes"
         storage={new LocalStorage()}
       />
     </div>
