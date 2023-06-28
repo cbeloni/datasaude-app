@@ -28,4 +28,5 @@ jobs:
             git clone https://${{ secrets.GIT_USER }}:${{ secrets.GIT_TOKEN }}@github.com/cbeloni/datasaude-app.git            
             echo "Buildando projeto"
             cd datasaude-app
+            docker-compose down
             docker-compose up -d --no-deps --build
