@@ -3,36 +3,47 @@ import { DataGrid } from 'tubular-react';
 import { LocalStorage, AggregateFunctions, ColumnDataType, ColumnSortDirection, createColumn} from "tubular-common";
 
 const columns = [
-  createColumn("OrderID", {
+  createColumn("id", {
     dataType: ColumnDataType.Numeric,
     filterable: true,
     isKey: true,
     label: "Id",
     sortDirection: ColumnSortDirection.Ascending,
     sortOrder: 1,
-    sortable: true
+    sortable: false
   }),
-  createColumn("CustomerName", {
-    aggregate: AggregateFunctions.Count,
-    filterable: true,
-    searchable: true,
-    sortable: true
+  createColumn("nome",{
+    dataType: ColumnDataType.String,
+    label: "Nome",
   }),
-  createColumn("ShippedDate", {
-    dataType: ColumnDataType.DateTime,
-    filterable: true,
-    sortable: true
+  createColumn("situacao_rede",{
+    dataType: ColumnDataType.String,
+    label: "Situação Rede",
   }),
-  createColumn("ShipperCity"),
-  createColumn("Amount", {
-    dataType: ColumnDataType.Numeric,
-    sortable: true
+  createColumn("qualidade",{
+    dataType: ColumnDataType.String,
+    label: "Qualidade do Ar",
   }),
-  createColumn("IsShipped", {
-    dataType: ColumnDataType.Boolean,
-    filterable: true,
-    sortable: true
-  })
+  createColumn("indice",{
+    dataType: ColumnDataType.String,
+    label: "Índice Poluente",
+  }),
+  createColumn("poluente",{
+    dataType: ColumnDataType.String,
+    label: "Tipo Poluente",
+  }),
+  createColumn("endereco",{
+    dataType: ColumnDataType.String,
+    label: "Endereço coleta",
+  }),
+  createColumn("data",{
+    dataType: ColumnDataType.String,
+    label: "Data coleta",
+  }),
+  createColumn("data_atual",{
+    dataType: ColumnDataType.String,
+    label: "Data Sistema",
+  }),
 ];
 
 function DataTableComponent() {
@@ -42,7 +53,7 @@ function DataTableComponent() {
       <DataGrid
         gridName="Tubular-React"
         columns={columns}
-        dataSource="https://tubular.azurewebsites.net/api/orders/paged"
+        dataSource="http://localhost:8000/api/v1/poluentes"
         storage={new LocalStorage()}
       />
     </div>

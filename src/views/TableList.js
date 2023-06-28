@@ -30,7 +30,6 @@ function TableList() {
               <Card.Body className="table-full-width table-responsive px-4">
                 <DataTableComponent></DataTableComponent>
               </Card.Body>
-              <p>teste</p>
             </Card>
           </Col>
           <Col md="12">
