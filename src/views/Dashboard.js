@@ -38,28 +38,30 @@ function Dashboard() {
         <Row>          
           {data.Payload.map((card) => {
             const variante = {
-              'N1 - BOA': 'success',
-              'N2 - MODERADA': 'warning',
-            }[card.qualidade];
+              'N1 - BOA': 'green',
+              'N2 - MODERADA': 'orange',
+            }[card.qualidade] || 'red';
 
             
             
             return (    
               <Col md="3" key={card.id}>
                 <Card
-                  bg={variante || 'danger'}
                   key={card.id}
-                  text='white'
+                  text='black'
                   style={{ width: '18rem' }}
-                  className="mb-2"
+                  className="mb-2 card-stats"
                 >
                 <Card.Body align="center">
                     <Card.Text>
                     <strong> {card.nome} </strong>
                     <hr></hr>
                     </Card.Text>
-                    <Card.Text>
-                      Qualidade: {card.qualidade} 
+                    <Card.Text style={{
+                      color:  `${variante}`,
+                      fontSize: "20px"
+                    }}>
+                      Qualidade: {card.qualidade}
                     </Card.Text>
                     <Card.Text>
                       Indice: {card.indice}
