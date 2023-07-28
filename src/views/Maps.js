@@ -6,6 +6,7 @@ import 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css'; // Re-uses images from ~leaflet package
 import 'leaflet-defaulticon-compatibility';
 import L from 'leaflet';
+import { Form } from "react-bootstrap";
 
 function Maps() {
   useEffect(() => {
@@ -32,7 +33,15 @@ function Maps() {
 
   
   return (
+    <>
+    <Form>
+      <Form.Group controlId="formBasicRange">
+        <Form.Label>Date range</Form.Label>
+        <Form.Control type="range" />
+      </Form.Group>
+    </Form>
       <div id="map" style={{ height: '80vh' }}></div>
+    </>
   )
 }
 
