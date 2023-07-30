@@ -1,8 +1,6 @@
-name: Deploy
+name: hard-deploy
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
