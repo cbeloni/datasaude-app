@@ -1,8 +1,8 @@
-name: Deploy
+name: deploy
 
 on:
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -10,23 +10,25 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18.x]
+
     env:
       SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+      SERVER_IP: 177.93.131.202
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16
-      uses: actions/setup-node@v2
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
       with:
-        node-version: 16
-        cache: 'yarn'
-    - run: yarn install
-    - run: yarn build
-    - run: mkdir ~/.ssh
+        node-version: ${{ matrix.node-version }}
+    - name: Install Packages
+      run: yarn install
+    - name: Build page
+      run: yarn run build   
     - run: 'echo "$SSH_KEY" >> ~/.ssh/github-action'
     - run: chmod 400 ~/.ssh/github-action
-    - run: echo -e "Host 177.93.131.202\n\tUser ubuntu\n\tHostname 177.93.131.202\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
-    - run: rsync -e ssh public github-actions-tutorial:~/static
-    - run: rsync -e ssh built/app.js github-actions-tutorial:~/static/js/app.js
-    - run: rsync -e ssh built/server.js github-actions-tutorial:~/api/server.js
-    - run: ssh 177.93.131.202 "pm2 reload all"
+    - run: echo -e "Host $SERVER_IP\n\tUser ubuntu\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
+    - run: rsync -avP --delete build/ ubuntu@$SERVER_IP:~/html
