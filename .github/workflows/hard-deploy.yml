@@ -19,6 +19,8 @@ jobs:
       with:
         node-version: 16
         cache: 'yarn'
+    - run: pwd
+    - run: ls
     - run: yarn install
     - run: yarn build
     - run: mkdir ~/.ssh
