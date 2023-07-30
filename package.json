@@ -7,6 +7,7 @@
   "dependencies": {
     "@material-ui/core": "4.11.4",
     "@material-ui/icons": "4.11.2",
+    "axios": "^1.4.0",
     "babel-cli": "^6.26.0",
     "chartist": "0.10.1",
     "classnames": "2.3.1",
@@ -61,5 +62,5 @@
     ],
     "development": []
   },
-  "postbuild": "mv build/static build/material-dashboard-react/static"  
+  "postbuild": "mv build/static build/material-dashboard-react/static"
 }

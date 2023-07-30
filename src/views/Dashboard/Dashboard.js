@@ -1,107 +1,109 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // @material-ui/core
 import { makeStyles } from "@material-ui/core/styles";
-import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import Store from "@material-ui/icons/Store";
-import Warning from "@material-ui/icons/Warning";
-import DateRange from "@material-ui/icons/DateRange";
+// import Warning from "@material-ui/icons/Warning";
 import LocalOffer from "@material-ui/icons/LocalOffer";
 import Update from "@material-ui/icons/Update";
-import Accessibility from "@material-ui/icons/Accessibility";
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
-import Danger from "components/Typography/Danger.js";
+// import Danger from "components/Typography/Danger.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardFooter from "components/Card/CardFooter.js";
+import {
+  CheckCircle,
+  Warning,
+  PriorityHigh,
+  Report,
+} from "@material-ui/icons/";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
+import axios from "axios";
+import CardBody from "components/Card/CardBody";
 
 const useStyles = makeStyles(styles);
 
 export default function Dashboard() {
   const classes = useStyles();
+
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    axios
+      .put(
+        "http://datasaude-api.beloni.dev.br/api/v1/poluentes/cetesb?persist=false"
+      )
+      .then((response) => {
+        setData(response.data);
+        console.log("response: ", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const getCardColor = (qualidade) => {
+    const colorMap = {
+      "N1 - BOA": "success",
+      "N2 - MODERADA": "warning",
+      "N3 - RUIM": "danger",
+      "N4 - MUITO RUIM": "rose",
+    };
+
+    return colorMap[qualidade] || "warning"; // Retorna a cor mapeada ou "rose" se não houver correspondência
+  };
+
+  const getCardIcon = (qualidade) => {
+    const iconMap = {
+      "N1 - BOA": <CheckCircle>content_copy</CheckCircle>,
+      "N2 - MODERADA": <Warning>Warning</Warning>,
+      "N3 - RUIM": <PriorityHigh>PriorityHigh</PriorityHigh>,
+      "N4 - MUITO RUIM": <Report>Report</Report>,
+    };
+
+    return iconMap[qualidade] || <Warning />;
+  };
+
   return (
     <div>
       <GridContainer>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="warning" stats icon>
-              <CardIcon color="warning">
-                <Icon>content_copy</Icon>
-              </CardIcon>
-              <p className={classes.cardCategory}>Used Space</p>
-              <h3 className={classes.cardTitle}>
-                49/50 <small>GB</small>
-              </h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <Danger>
-                  <Warning />
-                </Danger>
-                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  Get more space
-                </a>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="success" stats icon>
-              <CardIcon color="success">
-                <Store />
-              </CardIcon>
-              <p className={classes.cardCategory}>Revenue</p>
-              <h3 className={classes.cardTitle}>$34,245</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <DateRange />
-                Last 24 Hours
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="danger" stats icon>
-              <CardIcon color="danger">
-                <Icon>info_outline</Icon>
-              </CardIcon>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <LocalOffer />
-                Tracked from Github
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                <Accessibility />
-              </CardIcon>
-              <p className={classes.cardCategory}>Followers</p>
-              <h3 className={classes.cardTitle}>+245</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <Update />
-                Just Updated
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
+        {data &&
+          data.Payload.map((card) => {
+            return (
+              <React.Fragment key={card.nome}>
+                <GridItem xs={12} sm={6} md={3}>
+                  <Card>
+                    <CardHeader color={getCardColor(card.qualidade)} stats icon>
+                      <CardIcon color={getCardColor(card.qualidade)}>
+                        {getCardIcon(card.qualidade)}
+                      </CardIcon>
+                      <p className={classes.cardCategory}>{card.nome}</p>
+                      <h3 className={classes.cardTitle}>{card.qualidade}</h3>
+                    </CardHeader>
+                    <CardBody>
+                      <p className={classes.CardBody}>
+                        {card.endereco} - {card.municipio}
+                      </p>
+                      <p className={classes.CardBody}>
+                        poluente: {card.poluente}
+                      </p>
+                      <p className={classes.CardBody}>Índice: {card.indice}</p>
+                    </CardBody>
+                    <CardFooter stats>
+                      <div className={classes.stats}>
+                        <Update />
+                        {card.data}
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </GridItem>
+              </React.Fragment>
+            );
+          })}
       </GridContainer>
     </div>
   );
