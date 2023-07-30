@@ -19,18 +19,18 @@ jobs:
       SERVER_IP: 177.93.131.202
 
     steps:
-    - run: pwd
-    - run: ls
-    - run: cd /home/runner/work/datasaude-app
-    - run: pwd
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'    
-    - run: yarn install
-    - run: yarn build
+    - name: Install Packages
+      run: npm install
+    - name: Build page
+      run: npm run build
+
+
+    
     - run: mkdir ~/.ssh
     - run: 'echo "$SSH_KEY" >> ~/.ssh/github-action'
     - run: chmod 400 ~/.ssh/github-action
