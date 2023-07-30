@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
 // import Warning from "@material-ui/icons/Warning";
-import LocalOffer from "@material-ui/icons/LocalOffer";
 import Update from "@material-ui/icons/Update";
 // core components
 import GridItem from "components/Grid/GridItem.js";
