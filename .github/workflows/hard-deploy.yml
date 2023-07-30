@@ -27,15 +27,13 @@ jobs:
     - name: Install Packages
       run: yarn install
     - name: Build page
-      run: yarn run build
-
-
-    
+      run: yarn run build   
     - run: mkdir ~/.ssh
     - run: 'echo "$SSH_KEY" >> ~/.ssh/github-action'
     - run: chmod 400 ~/.ssh/github-action
     - run: echo -e "Host $SERVER_IP\n\tUser ubuntu\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
-    - run: rsync -e ssh docker-compose.yml:~/
+    - run: rsync -avP docker-compose.yml ubuntu@177.93.131.202:~
+    - run: rsync -avP build ubuntu@177.93.131.202:~/html    
     - run: ssh "$SERVER_IP" "docker-compose stop"
     - run: ssh "$SERVER_IP" "docker-compose down"
     - run: ssh "$SERVER_IP" "docker system prune -a --force"
