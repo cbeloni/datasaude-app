@@ -33,7 +33,8 @@ jobs:
     - run: chmod 400 ~/.ssh/github-action
     - run: echo -e "Host $SERVER_IP\n\tUser ubuntu\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
     - run: rsync -avP docker-compose.yml ubuntu@177.93.131.202:~
-    - run: rsync -avP build ubuntu@177.93.131.202:~/html    
+    - run: rsync -avP Dockerfile ubuntu@177.93.131.202:~
+    - run: rsync -avP build/ ubuntu@177.93.131.202:~/html
     - run: ssh "$SERVER_IP" "docker-compose stop"
     - run: ssh "$SERVER_IP" "docker-compose down"
     - run: ssh "$SERVER_IP" "docker system prune -a --force"
