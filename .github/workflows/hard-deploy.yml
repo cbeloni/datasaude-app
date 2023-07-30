@@ -26,6 +26,7 @@ jobs:
       run: yarn install
     - name: Build page
       run: yarn run build   
+    - run: mkdir ~/.ssh
     - run: 'echo "$SSH_KEY" >> ~/.ssh/github-action'
     - run: chmod 400 ~/.ssh/github-action
     - run: echo -e "Host $SERVER_IP\n\tUser ubuntu\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
