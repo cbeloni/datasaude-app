@@ -33,7 +33,7 @@ const Maps = () => {
       );
   }, []);
 
-  function valuetext(value) {
+  const valuetext = (value) => {
     const months = [
       "Janeiro",
       "Fevereiro",
@@ -49,7 +49,7 @@ const Maps = () => {
       "Dezembro",
     ];
     return months[value - 1];
-  }
+  };
 
   const marks = [
     { value: 1, label: "Jan" },
