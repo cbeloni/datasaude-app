@@ -6,17 +6,12 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import L from "leaflet";
 import { Box, Slider } from "@material-ui/core";
+import GridItem from "components/Grid/GridItem";
+import GridContainer from "components/Grid/GridContainer";
 
 const Maps = () => {
   useEffect(() => {
     const map = L.map("map").setView([-23.6226, -46.5489], 9);
-
-    // const iconMarker = L.icon({
-    //   iconUrl: '/images/marker-icon.png',
-    //   iconSize: [25, 41],
-    //   iconAnchor: [12, 41],
-    //   popupAnchor: [0, -41],
-    // });
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -38,58 +33,60 @@ const Maps = () => {
       );
   }, []);
 
-  const marks = [
-    {
-      value: 0,
-      label: "Jan",
-    },
-    {
-      value: 10,
-      label: "Fev",
-    },
-    {
-      value: 20,
-      label: "Mar",
-    },
-    {
-      value: 30,
-      label: "Abr",
-    },
-    {
-      value: 40,
-      label: "Mai",
-    },
-    {
-      value: 50,
-      label: "Jun",
-    },
-    {
-      value: 60,
-      label: "Jul",
-    },
-    {
-      value: 100,
-      label: "Dez",
-    },
-  ];
-
   function valuetext(value) {
-    return `${value}`;
+    const months = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+    return months[value - 1];
   }
+
+  const marks = [
+    { value: 1, label: "Jan" },
+    { value: 2, label: "Fev" },
+    { value: 3, label: "Mar" },
+    { value: 4, label: "Abr" },
+    { value: 5, label: "Mai" },
+    { value: 6, label: "Jun" },
+    { value: 7, label: "Jul" },
+    { value: 8, label: "Ago" },
+    { value: 9, label: "Set" },
+    { value: 10, label: "Out" },
+    { value: 11, label: "Nov" },
+    { value: 12, label: "Dez" },
+  ];
 
   return (
     <>
-      <Box sx={{ width: 300, paddingLeft: "30px" }}>
-        <Slider
-          aria-label="Custom marks"
-          defaultValue={20}
-          getAriaValueText={valuetext}
-          step={10}
-          valueLabelDisplay="auto"
-          marks={marks}
-        />
-      </Box>
-      <div id="map" style={{ height: "80vh" }}></div>
+      <GridContainer>
+        <GridItem xs={12} sm={4}>
+          <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
+            <Slider
+              aria-label="Custom marks"
+              defaultValue={2}
+              getAriaValueText={valuetext}
+              step={1}
+              valueLabelDisplay="auto"
+              marks={marks}
+              min={1}
+              max={12}
+            />
+          </Box>
+        </GridItem>
+        <GridItem xs={12}>
+          <div id="map" style={{ height: "80vh" }}></div>
+        </GridItem>
+      </GridContainer>
     </>
   );
 };
