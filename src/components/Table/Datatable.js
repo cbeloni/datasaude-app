@@ -10,7 +10,7 @@ import {
 const columns = [
   createColumn("id", {
     dataType: ColumnDataType.Numeric,
-    filterable: true,
+    filterable: false,
     isKey: true,
     label: "Id",
     sortDirection: ColumnSortDirection.Ascending,
