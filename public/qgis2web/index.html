@@ -30,34 +30,48 @@
         <script src="js/rbush.min.js"></script>
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
-        <script src="data/geojs35mun_1.js"></script>
-        <script src="data/amostra_2023_2.js"></script>
+        <script src="data/geojs35mun_2.js"></script>
+        <script src="data/amostra_2023_3.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[-24.14562505106111,-47.24462983196826],[-23.153234640973768,-45.676603068501414]]);
+        }).fitBounds([[-24.07161618459511,-47.324537184277744],[-23.078493309623475,-45.7568914436321]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
-        map.createPane('pane_1_Krig_media_mp10_2_0');
-        map.getPane('pane_1_Krig_media_mp10_2_0').style.zIndex = 400;
-        var img_1_Krig_media_mp10_2_0 = 'data/1_Krig_media_mp10_2_0.png';
-        var img_bounds_1_Krig_media_mp10_2_0 = [[-24.075632306045406,-47.21016939502355],[-23.174450701460348,-45.693560989597614]];
-        var layer_1_Krig_media_mp10_2_0 = new L.imageOverlay(img_1_Krig_media_mp10_2_0,
-                                              img_bounds_1_Krig_media_mp10_2_0,
-                                              {pane: 'pane_1_Krig_media_mp10_2_0'});
-        bounds_group.addLayer(layer_1_Krig_media_mp10_2_0);
-        map.addLayer(layer_1_Krig_media_mp10_2_0);
-        function pop_geojs35mun_1(feature, layer) {
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        map.createPane('pane_1_Krig_media_mp10_2_1');
+        map.getPane('pane_1_Krig_media_mp10_2_1').style.zIndex = 401;
+        var img_1_Krig_media_mp10_2_1 = 'data/1_Krig_media_mp10_2_1.png';
+        var img_bounds_1_Krig_media_mp10_2_1 = [[-24.075632306045406,-47.21016939502355],[-23.174450701460348,-45.693560989597614]];
+        var layer_1_Krig_media_mp10_2_1 = new L.imageOverlay(img_1_Krig_media_mp10_2_1,
+                                              img_bounds_1_Krig_media_mp10_2_1,
+                                              {pane: 'pane_1_Krig_media_mp10_2_1'});
+        bounds_group.addLayer(layer_1_Krig_media_mp10_2_1);
+        map.addLayer(layer_1_Krig_media_mp10_2_1);
+        function pop_geojs35mun_2(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['name'] !== null ? autolinker.link(feature.properties['name'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">name</th>\
+                        <td>' + (feature.properties['name'] !== null ? autolinker.link(feature.properties['name'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['description'] !== null ? autolinker.link(feature.properties['description'].toLocaleString()) : '') + '</td>\
@@ -66,9 +80,9 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_geojs35mun_1_0() {
+        function style_geojs35mun_2_0() {
             return {
-                pane: 'pane_geojs35mun_1',
+                pane: 'pane_geojs35mun_2',
                 opacity: 1,
                 color: 'rgba(53,121,177,1.0)',
                 dashArray: '',
@@ -79,40 +93,40 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_geojs35mun_1');
-        map.getPane('pane_geojs35mun_1').style.zIndex = 401;
-        map.getPane('pane_geojs35mun_1').style['mix-blend-mode'] = 'normal';
-        var layer_geojs35mun_1 = new L.geoJson(json_geojs35mun_1, {
+        map.createPane('pane_geojs35mun_2');
+        map.getPane('pane_geojs35mun_2').style.zIndex = 402;
+        map.getPane('pane_geojs35mun_2').style['mix-blend-mode'] = 'normal';
+        var layer_geojs35mun_2 = new L.geoJson(json_geojs35mun_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_geojs35mun_1',
-            layerName: 'layer_geojs35mun_1',
-            pane: 'pane_geojs35mun_1',
-            onEachFeature: pop_geojs35mun_1,
-            style: style_geojs35mun_1_0,
+            dataVar: 'json_geojs35mun_2',
+            layerName: 'layer_geojs35mun_2',
+            pane: 'pane_geojs35mun_2',
+            onEachFeature: pop_geojs35mun_2,
+            style: style_geojs35mun_2_0,
         });
-        bounds_group.addLayer(layer_geojs35mun_1);
-        map.addLayer(layer_geojs35mun_1);
-        function pop_amostra_2023_2(feature, layer) {
+        bounds_group.addLayer(layer_geojs35mun_2);
+        map.addLayer(layer_geojs35mun_2);
+        function pop_amostra_2023_3(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['max(p.id)'] !== null ? autolinker.link(feature.properties['max(p.id)'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">media_mp10</th>\
-                        <td>' + (feature.properties['media_mp10'] !== null ? autolinker.link(feature.properties['media_mp10'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2"><strong>media_mp10</strong><br />' + (feature.properties['media_mp10'] !== null ? autolinker.link(feature.properties['media_mp10'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>nome</strong><br />' + (feature.properties['nome'] !== null ? autolinker.link(feature.properties['nome'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">nome</th>\
+                        <td>' + (feature.properties['nome'] !== null ? autolinker.link(feature.properties['nome'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_amostra_2023_2_0() {
+        function style_amostra_2023_3_0() {
             return {
-                pane: 'pane_amostra_2023_2',
-                radius: 3.599999999999997,
+                pane: 'pane_amostra_2023_3',
+                radius: 3.6,
                 opacity: 1,
                 color: 'rgba(50,87,128,1.0)',
                 dashArray: '',
@@ -125,34 +139,34 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_amostra_2023_2');
-        map.getPane('pane_amostra_2023_2').style.zIndex = 402;
-        map.getPane('pane_amostra_2023_2').style['mix-blend-mode'] = 'normal';
-        var layer_amostra_2023_2 = new L.geoJson(json_amostra_2023_2, {
+        map.createPane('pane_amostra_2023_3');
+        map.getPane('pane_amostra_2023_3').style.zIndex = 403;
+        map.getPane('pane_amostra_2023_3').style['mix-blend-mode'] = 'normal';
+        var layer_amostra_2023_3 = new L.geoJson(json_amostra_2023_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_amostra_2023_2',
-            layerName: 'layer_amostra_2023_2',
-            pane: 'pane_amostra_2023_2',
-            onEachFeature: pop_amostra_2023_2,
+            dataVar: 'json_amostra_2023_3',
+            layerName: 'layer_amostra_2023_3',
+            pane: 'pane_amostra_2023_3',
+            onEachFeature: pop_amostra_2023_3,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_amostra_2023_2_0(feature));
+                return L.circleMarker(latlng, style_amostra_2023_3_0(feature));
             },
         });
-        bounds_group.addLayer(layer_amostra_2023_2);
-        map.addLayer(layer_amostra_2023_2);
+        bounds_group.addLayer(layer_amostra_2023_3);
+        map.addLayer(layer_amostra_2023_3);
         setBounds();
         var i = 0;
-        layer_amostra_2023_2.eachLayer(function(layer) {
+        layer_amostra_2023_3.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['nome'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Liberation Sans\', sans-serif;">' + layer.feature.properties['nome']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_amostra_2023_2'});
+            layer.bindTooltip((layer.feature.properties['nome'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Liberation Sans\', sans-serif;">' + layer.feature.properties['nome']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_amostra_2023_3'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -164,15 +178,15 @@
                 return this._bounds;
             }
         });
-        resetLabels([layer_amostra_2023_2]);
+        resetLabels([layer_amostra_2023_3]);
         map.on("zoomend", function(){
-            resetLabels([layer_amostra_2023_2]);
+            resetLabels([layer_amostra_2023_3]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_amostra_2023_2]);
+            resetLabels([layer_amostra_2023_3]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_amostra_2023_2]);
+            resetLabels([layer_amostra_2023_3]);
         });
         </script>
     </body>
