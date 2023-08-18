@@ -8,6 +8,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
         <style>
         html, body, #map {
             width: 100%;
@@ -30,12 +31,18 @@
         <script src="js/rbush.min.js"></script>
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
+        <script src="js/leaflet-search.js"></script>
         <script src="data/geojs35mun_2.js"></script>
         <script src="data/amostra_2023_3.js"></script>
         <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[-24.07161618459511,-47.324537184277744],[-23.078493309623475,-45.7568914436321]]);
+        }).fitBounds([[-24.129084084184065,-47.248878778536955],[-23.120669482375348,-45.65574499189287]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -65,6 +72,18 @@
         bounds_group.addLayer(layer_1_Krig_media_mp10_2_1);
         map.addLayer(layer_1_Krig_media_mp10_2_1);
         function pop_geojs35mun_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
@@ -108,6 +127,18 @@
         bounds_group.addLayer(layer_geojs35mun_2);
         map.addLayer(layer_geojs35mun_2);
         function pop_amostra_2023_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['max(p.id)'] !== null ? autolinker.link(feature.properties['max(p.id)'].toLocaleString()) : '') + '</td>\
@@ -126,7 +157,7 @@
         function style_amostra_2023_3_0() {
             return {
                 pane: 'pane_amostra_2023_3',
-                radius: 3.6,
+                radius: 5.2,
                 opacity: 1,
                 color: 'rgba(50,87,128,1.0)',
                 dashArray: '',
@@ -159,6 +190,8 @@
         });
         bounds_group.addLayer(layer_amostra_2023_3);
         map.addLayer(layer_amostra_2023_3);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/amostra_2023_3.png" /> amostra_2023': layer_amostra_2023_3,'<img src="legend/geojs35mun_2.png" /> geojs-35-mun': layer_geojs35mun_2,"1_Krig_media_mp10_2": layer_1_Krig_media_mp10_2_1,"OSM Standard": layer_OSMStandard_0,}).addTo(map);
         setBounds();
         var i = 0;
         layer_amostra_2023_3.eachLayer(function(layer) {
@@ -173,6 +206,13 @@
               addLabel(layer, i);
               i++;
         });
+        map.addControl(new L.Control.Search({
+            layer: layer_geojs35mun_2,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'name'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
         L.ImageOverlay.include({
             getBounds: function () {
                 return this._bounds;
