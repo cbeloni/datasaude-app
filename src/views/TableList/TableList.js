@@ -33,7 +33,7 @@ export default function TableList() {
           <Tab label="Poluente Histórico" value="poluente-historico" />
         </TabList>
       </Box>
-      <TabPanel value="poluente-online">
+      <TabPanel value="poluente-online" className={classes.tabPanelBorder}>
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
@@ -50,7 +50,7 @@ export default function TableList() {
           </GridItem>
         </GridContainer>
       </TabPanel>
-      <TabPanel value="poluente-historico">
+      <TabPanel value="poluente-historico" className={classes.tabPanelBorder}>
         <p>poluente-historico</p>
       </TabPanel>
     </TabContext>

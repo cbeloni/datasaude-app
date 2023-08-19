@@ -26,6 +26,9 @@ const styles = {
       lineHeight: "1",
     },
   },
+  tabPanelBorder: {
+    padding: "0px !important",
+  },
 };
 
 export default styles;
