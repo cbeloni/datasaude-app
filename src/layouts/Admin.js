@@ -52,7 +52,7 @@ export default function Admin({ ...rest }) {
     setMobileOpen(!mobileOpen);
   };
   const getRoute = () => {
-    return window.location.pathname !== "/admin/mapsFull";
+    return window.location.pathname !== "/admin/maps";
   };
   const resizeFunction = () => {
     if (window.innerWidth >= 960) {
