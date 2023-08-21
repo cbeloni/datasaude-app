@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import IframeTable from "components/Table/IframeTable";
+import IframeMap from "components/Map/IframeMap";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
@@ -7,6 +7,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import styles from "layouts/Styles/commom.js";
 import { makeStyles } from "@material-ui/core/styles";
+import ReactMaps from "components/Map/ReactMap";
 
 const useStyles = makeStyles(styles);
 
@@ -26,10 +27,10 @@ const Maps = () => {
         </TabList>
       </Box>
       <TabPanel value="map_estatic" className={classes.tabPanelBorder}>
-        <IframeTable></IframeTable>
+        <IframeMap></IframeMap>
       </TabPanel>
       <TabPanel value="map_dinamic" className={classes.tabPanelBorder}>
-        <p>Mapa dinâmico</p>
+        <ReactMaps></ReactMaps>
       </TabPanel>
     </TabContext>
   );

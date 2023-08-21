@@ -1,8 +1,8 @@
-const styleTable = {
+const styleMap = {
   divStyle: {
     width: "100%",
     height: "90vh",
   },
 };
 
-export default styleTable;
+export default styleMap;

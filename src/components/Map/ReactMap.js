@@ -9,7 +9,7 @@ import { Box, Slider } from "@material-ui/core";
 import GridItem from "components/Grid/GridItem";
 import GridContainer from "components/Grid/GridContainer";
 
-const Maps = () => {
+const ReactMaps = () => {
   useEffect(() => {
     const map = L.map("map").setView([-23.6226, -46.5489], 9);
 
@@ -91,4 +91,4 @@ const Maps = () => {
   );
 };
 
-export default Maps;
+export default ReactMaps;
