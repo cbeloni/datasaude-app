@@ -11,11 +11,12 @@ import GridContainer from "components/Grid/GridContainer";
 
 const ReactMaps = () => {
   useEffect(() => {
+    var bounds_group = new L.featureGroup([]);
     const map = L.map("map").setView([-23.6226, -46.5489], 9);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors",
     }).addTo(map);
 
     L.marker([-23.40563825, -46.30159285])
@@ -31,6 +32,22 @@ const ReactMaps = () => {
       .bindPopup(
         "AVENIDA IMPERATRIZ LEOPOLDINA DE 1585 A 99999 1845 VILA LEOPOLDINA 5305007"
       );
+
+    map.createPane("pane_1_Krig_media_mp10_2_1");
+    map.getPane("pane_1_Krig_media_mp10_2_1").style.zIndex = 401;
+    var img_1_Krig_media_mp10_2_1 =
+      "http://datasaude-app.beloni.dev.br/maps/data/1_Krig_media_mp10_2_1.png";
+    var img_bounds_1_Krig_media_mp10_2_1 = [
+      [-24.075632306045406, -47.21016939502355],
+      [-23.174450701460348, -45.693560989597614],
+    ];
+    var layer_1_Krig_media_mp10_2_1 = new L.imageOverlay(
+      img_1_Krig_media_mp10_2_1,
+      img_bounds_1_Krig_media_mp10_2_1,
+      { pane: "pane_1_Krig_media_mp10_2_1" }
+    );
+    bounds_group.addLayer(layer_1_Krig_media_mp10_2_1);
+    map.addLayer(layer_1_Krig_media_mp10_2_1);
   }, []);
 
   const valuetext = (value) => {
