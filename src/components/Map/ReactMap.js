@@ -48,6 +48,11 @@ const ReactMaps = () => {
     );
     bounds_group.addLayer(layer_1_Krig_media_mp10_2_1);
     map.addLayer(layer_1_Krig_media_mp10_2_1);
+
+    var baseMaps = {};
+    L.control
+      .layers(baseMaps, { "1_Krig_media_mp10_2": layer_1_Krig_media_mp10_2_1 })
+      .addTo(map);
   }, []);
 
   const valuetext = (value) => {
