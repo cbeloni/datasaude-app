@@ -5,14 +5,14 @@ import "leaflet/dist/images/marker-shadow.png";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
 import L from "leaflet";
-import { Box, Slider } from "@material-ui/core";
+import { Box, MenuItem, Select, Slider } from "@material-ui/core";
 import GridItem from "components/Grid/GridItem";
 import GridContainer from "components/Grid/GridContainer";
 
 const ReactMaps = () => {
   useEffect(() => {
     var bounds_group = new L.featureGroup([]);
-    const map = L.map("map").setView([-23.6226, -46.5489], 9);
+    const map = L.map("mapa").setView([-23.6226, -46.5489], 9);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -88,9 +88,25 @@ const ReactMaps = () => {
     { value: 12, label: "Dez" },
   ];
 
+  const anos = [
+    { value: 1, label: "2022" },
+    { value: 2, label: "2023" },
+  ];
+
   return (
     <>
       <GridContainer>
+        <GridItem xs={12} sm={1}>
+          <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
+            <Select label="Selecione uma opção" defaultValue={1} displayEmpty>
+              {anos.map((ano) => (
+                <MenuItem key={ano.value} value={ano.value}>
+                  {ano.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+        </GridItem>
         <GridItem xs={12} sm={4}>
           <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
             <Slider
@@ -106,7 +122,7 @@ const ReactMaps = () => {
           </Box>
         </GridItem>
         <GridItem xs={12}>
-          <div id="map" style={{ height: "80vh" }}></div>
+          <div id="mapa" style={{ height: "80vh" }}></div>
         </GridItem>
       </GridContainer>
     </>

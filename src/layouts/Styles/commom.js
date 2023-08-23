@@ -28,6 +28,11 @@ const styles = {
   },
   tabPanelBorder: {
     padding: "0px !important",
+    paddingTop: "10px !important",
+  },
+  mapPadding: {
+    padding: "10px !important",
+    background: "red",
   },
 };
 

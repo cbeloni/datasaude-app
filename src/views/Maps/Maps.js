@@ -12,7 +12,7 @@ import ReactMaps from "components/Map/ReactMap";
 const useStyles = makeStyles(styles);
 
 const Maps = () => {
-  const [value, setValue] = useState("map_estatic");
+  const [value, setValue] = useState("map_dinamic");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -22,15 +22,15 @@ const Maps = () => {
     <TabContext value={value}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <TabList onChange={handleChange} aria-label="lab API tabs example">
-          <Tab label="mapa estático" value="map_estatic" />
           <Tab label="mapa dinâmico" value="map_dinamic" />
+          <Tab label="mapa estático" value="map_estatic" />
         </TabList>
       </Box>
-      <TabPanel value="map_estatic" className={classes.tabPanelBorder}>
-        <IframeMap></IframeMap>
-      </TabPanel>
       <TabPanel value="map_dinamic" className={classes.tabPanelBorder}>
         <ReactMaps></ReactMaps>
+      </TabPanel>
+      <TabPanel value="map_estatic" className={classes.tabPanelBorder}>
+        <IframeMap></IframeMap>
       </TabPanel>
     </TabContext>
   );
