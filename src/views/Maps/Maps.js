@@ -7,7 +7,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import styles from "layouts/Styles/commom.js";
 import { makeStyles } from "@material-ui/core/styles";
-import ReactMaps from "components/Map/ReactMap";
+import ReactMap2 from "components/Map/ReactMap2";
 
 const useStyles = makeStyles(styles);
 
@@ -27,7 +27,7 @@ const Maps = () => {
         </TabList>
       </Box>
       <TabPanel value="map_dinamic" className={classes.tabPanelBorder}>
-        <ReactMaps></ReactMaps>
+        <ReactMap2></ReactMap2>
       </TabPanel>
       <TabPanel value="map_estatic" className={classes.tabPanelBorder}>
         <IframeMap></IframeMap>
