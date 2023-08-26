@@ -74,7 +74,7 @@ function ReactMap2() {
         <GridItem xs={12}>
           <MapContainer
             center={initialPosition}
-            zoom={9}
+            zoom={10}
             style={{ height: "80vh", width: "100%" }}
           >
             <LayersControl position="topright">
