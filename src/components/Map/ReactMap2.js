@@ -19,7 +19,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Slider, Select } from "@material-ui/core";
+import { Box, Slider, Select, MenuItem } from "@material-ui/core";
 import { IMG_DEFAULT } from "./ConstantsMap";
 function ReactMap2() {
   // Defina as coordenadas iniciais do marcador
@@ -50,9 +50,9 @@ function ReactMap2() {
           <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
             <Select onChange={handleChange} defaultValue={selectMapa[1].value}>
               {selectMapa.map((mapa) => (
-                <option key={mapa.value} value={mapa.value}>
+                <MenuItem key={mapa.value} value={mapa.value}>
                   {mapa.label}
-                </option>
+                </MenuItem>
               ))}
             </Select>
           </Box>
