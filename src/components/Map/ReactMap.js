@@ -1,18 +1,60 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet/dist/images/marker-icon.png";
 import "leaflet/dist/images/marker-shadow.png";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
 import L from "leaflet";
-import { Box, MenuItem, Select, Slider } from "@material-ui/core";
+import { Box, Select, Slider } from "@material-ui/core";
 import GridItem from "components/Grid/GridItem";
 import GridContainer from "components/Grid/GridContainer";
+import { useMap } from "react-leaflet";
 
 const ReactMaps = () => {
+  var { map } = useMap();
+  // const map = useMap(L.map("mapa").setView([-23.6226, -46.5489], 9));
+  const IMG_DEFAULT =
+    "http://datasaude-app.beloni.dev.br/maps/data/1_Krig_media_mp10_2_1.png";
+
+  const [currentMap, setCurrentMap] = useState(
+    "http://datasaude-app.beloni.dev.br/maps/data/1_Krig_media_mp10_2_1.png"
+  );
+
+  const selectMapa = [
+    {
+      value: "http://datasaude-app.beloni.dev.br/maps/data/2022_mp10_2_1.png",
+      label: "2022",
+    },
+    {
+      value: IMG_DEFAULT,
+      label: "2023",
+    },
+  ];
+
+  const handleChange = (e) => {
+    console.log("map:", map);
+    setCurrentMap(e.target.value);
+  };
+
+  const createLayer = (img_layer, bounds_group) => {
+    var img_1_Krig_media_mp10_2_1 = img_layer;
+    var img_bounds_1_Krig_media_mp10_2_1 = [
+      [-24.075632306045406, -47.21016939502355],
+      [-23.174450701460348, -45.693560989597614],
+    ];
+    var layer_1_Krig_media_mp10_2_1 = new L.imageOverlay(
+      img_1_Krig_media_mp10_2_1,
+      img_bounds_1_Krig_media_mp10_2_1,
+      { pane: "pane_1_Krig_media_mp10_2_1" }
+    );
+    bounds_group.addLayer(layer_1_Krig_media_mp10_2_1);
+    map.addLayer(layer_1_Krig_media_mp10_2_1);
+    return layer_1_Krig_media_mp10_2_1;
+  };
+
   useEffect(() => {
     var bounds_group = new L.featureGroup([]);
-    const map = L.map("mapa").setView([-23.6226, -46.5489], 9);
+    map = L.map("mapa").setView([-23.6226, -46.5489], 9);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -35,25 +77,34 @@ const ReactMaps = () => {
 
     map.createPane("pane_1_Krig_media_mp10_2_1");
     map.getPane("pane_1_Krig_media_mp10_2_1").style.zIndex = 401;
-    var img_1_Krig_media_mp10_2_1 =
-      "http://datasaude-app.beloni.dev.br/maps/data/1_Krig_media_mp10_2_1.png";
-    var img_bounds_1_Krig_media_mp10_2_1 = [
-      [-24.075632306045406, -47.21016939502355],
-      [-23.174450701460348, -45.693560989597614],
-    ];
-    var layer_1_Krig_media_mp10_2_1 = new L.imageOverlay(
-      img_1_Krig_media_mp10_2_1,
-      img_bounds_1_Krig_media_mp10_2_1,
-      { pane: "pane_1_Krig_media_mp10_2_1" }
-    );
-    bounds_group.addLayer(layer_1_Krig_media_mp10_2_1);
-    map.addLayer(layer_1_Krig_media_mp10_2_1);
+    var layer_1_Krig_media_mp10_2_1 = createLayer(IMG_DEFAULT, bounds_group);
 
     var baseMaps = {};
     L.control
       .layers(baseMaps, { "1_Krig_media_mp10_2": layer_1_Krig_media_mp10_2_1 })
       .addTo(map);
   }, []);
+
+  const configLayer = () => {
+    map.eachLayer(function (layer) {
+      if (layer.options.pane == "pane_1_Krig_media_mp10_2_1") {
+        console.log("layer krig");
+        map.removeLayer(layer);
+      } else {
+        console.log("outra layer layer");
+      }
+    });
+  };
+
+  useEffect(() => {
+    console.log("Mapa selecionado:", currentMap);
+    console.log("map:", map);
+    // const currentMapa = myMap.current.leafletElement;
+    if (typeof map?.eachLayer === "function" && currentMap != IMG_DEFAULT) {
+      console.log("Verificando layer");
+      configLayer();
+    }
+  }, [currentMap]);
 
   const valuetext = (value) => {
     const months = [
@@ -88,21 +139,16 @@ const ReactMaps = () => {
     { value: 12, label: "Dez" },
   ];
 
-  const anos = [
-    { value: 1, label: "2022" },
-    { value: 2, label: "2023" },
-  ];
-
   return (
     <>
       <GridContainer>
         <GridItem xs={12} sm={1}>
           <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
-            <Select label="Selecione uma opção" defaultValue={1} displayEmpty>
-              {anos.map((ano) => (
-                <MenuItem key={ano.value} value={ano.value}>
-                  {ano.label}
-                </MenuItem>
+            <Select onChange={handleChange} defaultValue={selectMapa[1].value}>
+              {selectMapa.map((mapa) => (
+                <option key={mapa.value} value={mapa.value}>
+                  {mapa.label}
+                </option>
               ))}
             </Select>
           </Box>
