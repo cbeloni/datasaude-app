@@ -19,9 +19,14 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Slider, Select, MenuItem } from "@material-ui/core";
+import { Box, Slider, Select, MenuItem, makeStyles } from "@material-ui/core";
 import { IMG_DEFAULT } from "./ConstantsMap";
+import styles from "./stylesMap";
+
+const useStyles = makeStyles(styles);
+
 function ReactMap2() {
+  const classes = useStyles();
   // Defina as coordenadas iniciais do marcador
   const initialPosition = [-23.6226, -46.5489];
 
@@ -46,11 +51,19 @@ function ReactMap2() {
   return (
     <>
       <GridContainer>
-        <GridItem xs={12} sm={1}>
+        <GridItem xs={12} sm={2}>
           <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
-            <Select onChange={handleChange} defaultValue={selectMapa[1].value}>
+            <Select
+              onChange={handleChange}
+              defaultValue={selectMapa[1].value}
+              className={classes.selectStyle}
+            >
               {selectMapa.map((mapa) => (
-                <MenuItem key={mapa.value} value={mapa.value}>
+                <MenuItem
+                  key={mapa.value}
+                  value={mapa.value}
+                  className={classes.selectStyle}
+                >
                   {mapa.label}
                 </MenuItem>
               ))}
