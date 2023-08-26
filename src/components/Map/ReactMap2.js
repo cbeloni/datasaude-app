@@ -19,7 +19,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Select, Slider } from "@material-ui/core";
+import { Box, Slider, Select } from "@material-ui/core";
 import { IMG_DEFAULT } from "./ConstantsMap";
 function ReactMap2() {
   // Defina as coordenadas iniciais do marcador
@@ -91,7 +91,7 @@ function ReactMap2() {
               </Overlay>
             </LayersControl>
             <button
-              onClick={() => setZoomAndCenter(9, [-23.6226, -46.5489])}
+              onClick={() => setZoomAndCenter(8, [-23.6226, -46.5489])}
               style={{ position: "absolute", top: "10px", left: "10px" }}
             >
               Ajustar Zoom e Centralização
