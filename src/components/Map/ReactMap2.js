@@ -29,6 +29,7 @@ function ReactMap2() {
   const classes = useStyles();
   // Defina as coordenadas iniciais do marcador
   const initialPosition = [-23.6226, -46.5489];
+  const initialZoom = window.innerWidth >= 768 ? 10 : 9;
 
   const [currentMap, setCurrentMap] = useState(IMG_DEFAULT);
   const imageBounds = [
@@ -87,7 +88,7 @@ function ReactMap2() {
         <GridItem xs={12}>
           <MapContainer
             center={initialPosition}
-            zoom={10}
+            zoom={initialZoom}
             style={{ height: "80vh", width: "100%" }}
           >
             <LayersControl position="topright">
