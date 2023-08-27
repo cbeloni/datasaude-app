@@ -37,11 +37,11 @@ const selectMapa = [
   {
     value:
       "https://br-se-1.magaluobjects.com/v1/AUTH_c090bb3917894ed796de8fda36befc83/maps-pub/2022_mp10_2_1.png",
-    label: "2022",
+    label: "2021",
   },
   {
     value: IMG_DEFAULT,
-    label: "2023",
+    label: "2022",
   },
 ];
 
