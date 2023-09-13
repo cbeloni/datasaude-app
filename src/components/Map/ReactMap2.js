@@ -10,7 +10,7 @@ import {
 } from "react-leaflet";
 import { valueMonths, marks, selectMapa } from "./HelperMap";
 
-const { Overlay } = LayersControl;
+const { Overlay, BaseLayer } = LayersControl;
 
 import "leaflet/dist/leaflet.css";
 import "leaflet/dist/images/marker-icon.png";
@@ -92,9 +92,15 @@ function ReactMap2() {
             style={{ height: "80vh", width: "100%" }}
           >
             <LayersControl position="topright">
-              <Overlay checked name="OpenStreetMap">
+              <BaseLayer checked name="Google Maps Street">
+                <TileLayer url="http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}" />
+              </BaseLayer>
+              <BaseLayer name="Google Maps Satélite">
+                <TileLayer url="http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}" />
+              </BaseLayer>
+              <BaseLayer name="Open Street Map">
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              </Overlay>
+              </BaseLayer>
               <Overlay checked name="Interpolação">
                 <ImageOverlay url={currentMap} bounds={imageBounds} />
               </Overlay>
