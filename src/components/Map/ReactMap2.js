@@ -7,6 +7,7 @@ import {
   useMap,
   ImageOverlay,
   LayersControl,
+  LayerGroup,
 } from "react-leaflet";
 import { valueMonths, marks, selectMapa } from "./HelperMap";
 
@@ -105,20 +106,18 @@ function ReactMap2() {
               <Overlay checked name="Interpolação">
                 <ImageOverlay url={currentMap} bounds={imageBounds} />
               </Overlay>
-              {estacoes.map((estacao) => (
-                <Overlay
-                  checked
-                  name={estacao.endereco}
-                  key={estacao.localidade}
-                >
-                  <Marker
-                    position={estacao.localidade}
-                    key={estacao.localidade}
-                  >
-                    <Popup>{estacao.endereco}</Popup>
-                  </Marker>
-                </Overlay>
-              ))}
+              <LayersControl.Overlay name="Estações">
+                <LayerGroup>
+                  {estacoes.map((estacao) => (
+                    <Marker
+                      position={estacao.localidade}
+                      key={estacao.localidade}
+                    >
+                      <Popup>{estacao.endereco}</Popup>
+                    </Marker>
+                  ))}
+                </LayerGroup>
+              </LayersControl.Overlay>
             </LayersControl>
             <button
               onClick={() => setZoomAndCenter(8, [-23.6226, -46.5489])}
