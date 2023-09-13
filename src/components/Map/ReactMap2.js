@@ -105,20 +105,20 @@ function ReactMap2() {
               <Overlay checked name="Interpolação">
                 <ImageOverlay url={currentMap} bounds={imageBounds} />
               </Overlay>
-              <Overlay checked name="Marcadores">
-                <Marker position={initialPosition}>
-                  <Popup>Um marcador personalizado</Popup>
-                </Marker>
-
-                {estacoes.map((estacao) => (
+              {estacoes.map((estacao) => (
+                <Overlay
+                  checked
+                  name={estacao.endereco}
+                  key={estacao.localidade}
+                >
                   <Marker
                     position={estacao.localidade}
                     key={estacao.localidade}
                   >
                     <Popup>{estacao.endereco}</Popup>
                   </Marker>
-                ))}
-              </Overlay>
+                </Overlay>
+              ))}
             </LayersControl>
             <button
               onClick={() => setZoomAndCenter(8, [-23.6226, -46.5489])}
