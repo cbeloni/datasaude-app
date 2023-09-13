@@ -21,6 +21,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { Box, Slider, Select, MenuItem, makeStyles } from "@material-ui/core";
 import { IMG_DEFAULT } from "./ConstantsMap";
+import { estacoes } from "./ConstantsEstacoes";
 import styles from "./stylesMap";
 
 const useStyles = makeStyles(styles);
@@ -108,6 +109,15 @@ function ReactMap2() {
                 <Marker position={initialPosition}>
                   <Popup>Um marcador personalizado</Popup>
                 </Marker>
+
+                {estacoes.map((estacao) => (
+                  <Marker
+                    position={estacao.localidade}
+                    key={estacao.localidade}
+                  >
+                    <Popup>{estacao.endereco}</Popup>
+                  </Marker>
+                ))}
               </Overlay>
             </LayersControl>
             <button
