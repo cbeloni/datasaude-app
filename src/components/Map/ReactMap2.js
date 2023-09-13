@@ -106,7 +106,7 @@ function ReactMap2() {
               <Overlay checked name="Interpolação">
                 <ImageOverlay url={currentMap} bounds={imageBounds} />
               </Overlay>
-              <LayersControl.Overlay name="Estações">
+              <Overlay checked name="Estações">
                 <LayerGroup>
                   {estacoes.map((estacao) => (
                     <Marker
@@ -117,7 +117,7 @@ function ReactMap2() {
                     </Marker>
                   ))}
                 </LayerGroup>
-              </LayersControl.Overlay>
+              </Overlay>
             </LayersControl>
             <button
               onClick={() => setZoomAndCenter(8, [-23.6226, -46.5489])}
