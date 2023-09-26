@@ -1,123 +1,139 @@
 const estacoes = [
   {
-    localidade: [-23.6884138, -46.6137008],
-    endereco: "R BENJAMIN CONSTANT, 3 - Diadema",
+    endereco: "Rua Benjamin Constant, 3, Pref. Mun. de Diadema, Vila Diadema",
+    localidade: [-236889637, -46.6041867],
   },
   {
-    localidade: [-23.6160321, -46.6633094],
-    endereco: "AL DOS TUPINIQUINS, 1571 - Congonhas",
+    endereco:
+      "Alameda dos Tupiniquins, 1571, E.M.Prof.J.C. da Silva Borges, Planalto Paulista",
+    localidade: [-236160321, -46.6633094],
   },
   {
-    localidade: [-23.6545396, -46.7118975],
-    endereco: "AV PE JOSE MARIA, 555 - Santo Amaro",
+    endereco:
+      "Rua Padre José Maria, 555, Centro Ed. e Esp. Mun. Joerg Brüder, Santo Amaro",
+    localidade: [-236548192, -46.7096562],
   },
   {
-    localidade: [-23.5154232, -46.6293295],
-    endereco: "AV SANTOS DUMONT, 1019 - Santana",
+    endereco:
+      "Av. Santos Dumont, 1019, Parque de Material Aeronáutico, Santana",
+    localidade: [-235154239, -46.62933],
   },
   {
-    localidade: [-23.6993401, -46.547356],
-    endereco: "R DOS VIANAS, 625 - S.Bernardo-Centro",
+    endereco: "Rua dos Vianas, 625, Vila Baeta Neves",
+    localidade: [-236993401, -46.547356],
   },
   {
-    localidade: [-23.5611603, -46.7015906],
-    endereco: "AV PRF FREDERICO H JUNIOR, 345 - Pinheiros",
+    endereco:
+      "Av. Prof. Frederico Herman Júnior, 345, CETESB, Alto de Pinheiros",
+    localidade: [-2356119, -46.7015441],
   },
   {
-    localidade: [-23.4150815, -46.75642029999999],
-    endereco: "EST S PAULO-JUNDIAI, 1666 - Perus",
+    endereco: "Estrada São Paulo-Jundiaí, 1666, Perus",
+    localidade: [-234150815, -46.75642029999999],
   },
   {
-    localidade: [-23.5493885, -46.6014959],
-    endereco: "R BRESSER, 2341 - Mooca",
+    endereco:
+      "Rua Bresser, 2341, Centro Esportivo Municipal – Subprefeitura da Moóca, Moóca",
+    localidade: [-235493885, -46.6014959],
   },
   {
-    localidade: [-23.5557714, -46.6395571],
-    endereco: "AV FERNANDO DO E STO A DE MATTOS, 1000 - Itaquera",
+    endereco:
+      "Av. Fernando do Espírito Santo Alves de Mattos, 1000, SESC Itaquera, Prq do Carmo",
+    localidade: [-235825681, -46.470467],
   },
   {
-    localidade: [-23.5017333, -46.4207255],
-    endereco: "R JAGUAR, 225 - Itaim Paulista",
+    endereco:
+      "Rua Jaguar, 225, Bibl. Mun. Vicente Paulo Guimarães, Vila Curuçá",
+    localidade: [-235017463, -46.4206558],
   },
   {
-    localidade: [-23.7813116, -46.6720266],
-    endereco: "R DOMINGAS G BLOTTA, 171 - Interlagos",
+    endereco: "Rua Domingas Galleteri Blotta, 171, Jd Santa Cruz",
+    localidade: [-236808488, -46.6757783],
   },
   {
-    localidade: [-23.5874162, -46.6576336],
-    endereco: "PRQ DO IBIRAPUERA, s/nÂº - Ibirapuera",
+    endereco: "Parque do Ibirapuera, s\\/nº, Setor 25, Prq Ibirapuera",
+    localidade: [-235874162, -46.6576336],
   },
   {
-    localidade: [-23.4400857, -46.41011959999999],
-    endereco: "R IMPERIAL, 230 - Guarulhos-Pimentas",
+    endereco:
+      "Rua Imperial, 230, Hospital Municipal Pimental-Bonsucesso, Prq das Nações",
+    localidade: [-234400857, -46.41011959999999],
   },
   {
-    localidade: [-23.665944, -46.783071],
-    endereco: "EST DE ITAPECERICA, 5859 - Capão Redondo",
+    endereco: "strada de Itapecerica, 5859, Campus UNASP, Capão Redondo",
+    localidade: [-236662666, -46.7831266],
   },
   {
-    localidade: [-23.5301409, -46.8354937],
-    endereco: "AV INOCENCIO SERAFICO, 1051 - Carapicuíba",
+    endereco: "v. Inocêncio Seráfico, 1051, Reservatório da SABESP, Centro",
+    localidade: [-235301409, -46.8354937],
   },
   {
-    localidade: [-23.5535116, -46.6734699],
-    endereco: "AV DR ARNALDO, 725 - Cerqueira César",
+    endereco: "Av. Doutor Arnaldo, 725, Faculdade de Saúde Pública, Sumaré",
+    localidade: [-235535158, -46.673472],
   },
   {
-    localidade: [-23.5666823, -46.7277265],
-    endereco: "AV PRF LINEU PRESTES, 2242 - Cid.Universitária-USP-Ipen",
+    endereco:
+      "Av. Professor Lineu Prestes, 2242, Cidade Universitária, Butantã",
+    localidade: [-235666823, -46.7277265],
   },
   {
-    localidade: [-23.8795648, -46.4182329],
-    endereco: "R SALGADO FILHO, 121 - Cubatão-Centro",
+    endereco: "Rua Salgado Filho, 121, Prq. Fernando Jorge",
+    localidade: [-238795648, -46.4182329],
   },
   {
-    localidade: [-23.7767071, -46.6968901],
-    endereco: "AV PAULO G REIMBERG, 2448 - Grajaú-Parelheiros",
+    endereco:
+      "v. Paulo Guilguer Reimberg, 2448, E.E. Pres. Tancredo A. Neves, Jd Novo Horizonte",
+    localidade: [-219727932, -46.81680859999999],
   },
   {
-    localidade: [-23.4558697, -46.5183867],
-    endereco: "AV JOAO B MEDEIROS, 173 - Guarulhos-Paço Municipal",
+    endereco: "Av. João Bernardo Medeiros, 173, Paço Municipal, Jd Bom Clima",
+    localidade: [-234558697, -46.5183867],
   },
   {
-    localidade: [-23.5186189, -46.7430349],
-    endereco: "AV EMB MACEDO SOARES, 12889 - Marg.Tietê-Pte Remédios",
+    endereco:
+      "Av. Embaixador Macedo Soares, 12889, Centro de Trein. da Polícia Militar, Vl Ribeiro de Barros",
+    localidade: [-235186189, -46.7430349],
   },
   {
-    localidade: [-23.666558, -46.4599145],
-    endereco: "R VITORINO D ANTONIA, S/N - Mauá",
+    endereco: "Rua Vitorino Dell Antônia, s\\/nº, Paço Municipal, Vila Noêmia",
+    localidade: [-236692225, -46.4650134],
   },
   {
-    localidade: [-23.4799634, -46.69236979999999],
-    endereco: "R CAP JOSE AMARAL, 80 - N.Senhora do Ó",
+    endereco:
+      "Rua Capitão José Amaral, 80, E.E. Cacilda Becker, Vila Portuguesa",
+    localidade: [-234799634, -46.69236979999999],
   },
   {
-    localidade: [-23.5340383, -46.7833038],
-    endereco: "AV DOS AUTONOMISTAS, s/nº - Osasco",
+    endereco:
+      "Av. dos Autonomistas, s\\/nº, Esquina com Rua São Mauricio, Vila Quitaúna",
+    localidade: [-235264022, -46.7917002],
   },
   {
-    localidade: [-23.5474819, -46.6304488],
-    endereco: "PRQ D PEDRO II, s/nº - Parque D.Pedro II",
+    endereco: "Parque Dom Pedro II, s\\/nº, Palácio das Indústrias, Centro",
+    localidade: [-235476409, -46.6303335],
   },
   {
-    localidade: [-23.4792899, -46.7543784],
-    endereco: "EST TURISTICA DO JARAGUA, s/nº - Pico do Jaraguá",
+    endereco:
+      "Estrada Turística do Jaraguá, s\\/nº, Altura do n. 9000, Parque Est. do Jaraguá, Vila Jaraguá",
+    localidade: [-23469316, -46.7542667],
   },
   {
-    localidade: [-23.6456889, -46.4932884],
-    endereco: "R MANAGUA, 02 - S.André-Capuava",
+    endereco: "Rua Manágua, 2, Posto Pueric. Alto Capuava, Prq Capuava",
+    localidade: [-236415859, -46.4919545],
   },
   {
-    localidade: [-23.6709435, -46.5849869],
-    endereco: "R XAVIER DE TOLEDO, 521 - S.Bernardo-Paulicéia",
+    endereco:
+      "Rua Xavier de Toledo, 521, EMEB Arlindo Ferreira, Vila Paulicéia",
+    localidade: [-23670996, -46.5850029],
   },
   {
-    localidade: [-23.6184273, -46.55634449999999],
-    endereco: "AV PRES KENNEDY, 700 - São Caetano do Sul",
+    endereco:
+      "Presidente Kennedy, 700, Hosp. Mun. de Emerg. Albert Sabin, Santa Paula",
+    localidade: [-236176297, -46.5668298],
   },
   {
-    localidade: [-23.6092389, -46.7559153],
-    endereco: "PC NICOLA VIVILECHIO, 99 - Taboão da Serra",
+    endereco: "Praça Nicola Vivilechio, 99, Jd Bom Tempo",
+    localidade: [-236092398, -46.7559152],
   },
 ];
 
