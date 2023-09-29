@@ -83,7 +83,7 @@ const estacoes = [
   {
     endereco:
       "v. Paulo Guilguer Reimberg, 2448, E.E. Pres. Tancredo A. Neves, Jd Novo Horizonte",
-    localidade: [-21.9727932, -46.81680859999999],
+    localidade: [-23.4558697, -46.5183867],
   },
   {
     endereco: "Av. João Bernardo Medeiros, 173, Paço Municipal, Jd Bom Clima",
