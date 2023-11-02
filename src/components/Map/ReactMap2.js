@@ -9,7 +9,6 @@ import {
   LayersControl,
   LayerGroup,
 } from "react-leaflet";
-import { valueMonths, marks, selectMapa } from "./HelperMap";
 
 const { Overlay, BaseLayer } = LayersControl;
 
@@ -20,15 +19,19 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Slider, Select, MenuItem, makeStyles } from "@material-ui/core";
-import { IMG_DEFAULT } from "./ConstantsMap";
+import { Box, Button } from "@material-ui/core";
+import { IMG_DEFAULT, IMG_BASE } from "./ConstantsMap";
 import { estacoes } from "./ConstantsEstacoes";
-import styles from "./stylesMap";
-
-const useStyles = makeStyles(styles);
+import DateRange from "components/DataPicker/DateRange";
+import RowRadioButtonsGroup from "components/RadioGroup/RadioGroupHorizontal";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
+import { format } from "date-fns";
+import dayjs from "dayjs";
 
 function ReactMap2() {
-  const classes = useStyles();
   // Defina as coordenadas iniciais do marcador
   const initialPosition = [-23.6226, -46.5489];
   const initialZoom = window.innerWidth >= 768 ? 10 : 9;
@@ -45,46 +48,98 @@ function ReactMap2() {
     map.setView(center, zoomLevel);
   };
 
-  const handleChange = (e) => {
-    // console.log("map:", map);
-    console.log("e:", e.target.value);
-    setCurrentMap(e.target.value);
+  const [selectedDate, setSelectedDate] = useState(dayjs("2022-01-30"));
+
+  const handleDateChange = (newValue) => {
+    console.log("Changing date", newValue.toString());
+    const formattedDate = format(new Date(newValue), "yyyyMMdd");
+    console.log("Data formatada:", formattedDate);
+    setSelectedDate(newValue);
+    setCurrentMap(
+      IMG_BASE + "png_movel/" + "MP10" + "_" + formattedDate + ".png"
+    );
+  };
+
+  const atualizaMapa = () => {
+    const currentDate = selectedDate.format("YYYYMMDD");
+    setCurrentMap(
+      IMG_BASE + "png_movel/" + "MP10" + "_" + currentDate + ".png"
+    );
+  };
+
+  const [selectedValue, setSelectedValue] = React.useState("MP10");
+
+  const dataAnterior = () => {
+    setSelectedDate(selectedDate.subtract(1, "day"));
+    atualizaMapa();
+  };
+
+  const dataPosterior = () => {
+    setSelectedDate(selectedDate.add(1, "day"));
+    atualizaMapa();
+  };
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
   };
 
   return (
     <>
       <GridContainer>
-        <GridItem xs={12} sm={2}>
-          <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
-            <Select
-              onChange={handleChange}
-              defaultValue={selectMapa[1].value}
-              className={classes.selectStyle}
+        <GridItem xs={12} sm={1}>
+          <Box p={2}>
+            <Button
+              variant="text"
+              color="primary"
+              startIcon={<ArrowBackIos />}
+              onClick={dataAnterior}
             >
-              {selectMapa.map((mapa) => (
-                <MenuItem
-                  key={mapa.value}
-                  value={mapa.value}
-                  className={classes.selectStyle}
-                >
-                  {mapa.label}
-                </MenuItem>
-              ))}
-            </Select>
+              Anterior
+            </Button>
           </Box>
         </GridItem>
-        <GridItem xs={12} sm={4}>
-          <Box sx={{ paddingLeft: "30px", paddingRight: "30px" }}>
-            <Slider
-              aria-label="Custom marks"
-              defaultValue={2}
-              getAriaValueText={valueMonths}
-              step={1}
-              valueLabelDisplay="auto"
-              marks={marks}
-              min={1}
-              max={12}
-            />
+        <GridItem xs={12} sm={2}>
+          <Box p={2}>
+            <DateRange
+              value={selectedDate}
+              onChange={handleDateChange}
+            ></DateRange>
+          </Box>
+        </GridItem>
+        <GridItem xs={12} sm={1}>
+          <Box p={2}>
+            <Button
+              variant="text"
+              color="primary"
+              startIcon={<ArrowForwardIos />}
+              onClick={dataPosterior}
+            >
+              Próximo
+            </Button>
+          </Box>
+        </GridItem>
+        <GridItem xs={12} sm={1}></GridItem>
+        <GridItem xs={12} sm={2}>
+          <Box p={2}>
+            <RowRadioButtonsGroup></RowRadioButtonsGroup>
+          </Box>
+        </GridItem>
+        <GridItem xs={12} sm={3}>
+          <Box p={1}>
+            <InputLabel id="select-label">Poluente:</InputLabel>
+            <Select
+              labelId="select-label"
+              id="select"
+              value={selectedValue}
+              onChange={handleChange}
+            >
+              <MenuItem value="MP10">MP10</MenuItem>
+              <MenuItem value="NO">NO</MenuItem>
+              <MenuItem value="NO2">NO2</MenuItem>
+              <MenuItem value="O3">O3</MenuItem>
+              <MenuItem value="TEMP">TEMP</MenuItem>
+              <MenuItem value="UR">UR</MenuItem>
+            </Select>
           </Box>
         </GridItem>
         <GridItem xs={12}>
