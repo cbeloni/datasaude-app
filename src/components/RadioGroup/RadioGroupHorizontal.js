@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-
-export default function RowRadioButtonsGroup() {
-  const [selectedValue, setSelectedValue] = useState("movel");
-
-  const handleRadioChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
-
+import PropTypes from "prop-types";
+export default function RowRadioButtonsGroup({ value, onChange }) {
   return (
     <FormControl>
       <FormLabel id="demo-row-radio-buttons-group-label">Escala:</FormLabel>
@@ -19,8 +13,8 @@ export default function RowRadioButtonsGroup() {
         row
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
-        value={selectedValue}
-        onChange={handleRadioChange}
+        value={value}
+        onChange={onChange}
       >
         <FormControlLabel value="movel" control={<Radio />} label="Móvel" />
         <FormControlLabel value="fixa" control={<Radio />} label="Fixa" />
@@ -28,3 +22,8 @@ export default function RowRadioButtonsGroup() {
     </FormControl>
   );
 }
+
+RowRadioButtonsGroup.propTypes = {
+  value: PropTypes.object,
+  onChange: PropTypes.func,
+};

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -28,7 +28,6 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
-import { format } from "date-fns";
 import dayjs from "dayjs";
 
 function ReactMap2() {
@@ -49,38 +48,47 @@ function ReactMap2() {
   };
 
   const [selectedDate, setSelectedDate] = useState(dayjs("2022-01-30"));
+  const [selectedEscala, setSelectedEscala] = useState("movel");
+  const [selectedPoluenteValue, setSelectedPoluenteValue] = React.useState(
+    "MP10"
+  );
 
-  const handleDateChange = (newValue) => {
-    console.log("Changing date", newValue.toString());
-    const formattedDate = format(new Date(newValue), "yyyyMMdd");
-    console.log("Data formatada:", formattedDate);
-    setSelectedDate(newValue);
-    setCurrentMap(
-      IMG_BASE + "png_movel/" + "MP10" + "_" + formattedDate + ".png"
-    );
-  };
+  useEffect(() => {
+    atualizaMapa();
+  }, [selectedDate, selectedEscala, selectedPoluenteValue]);
 
   const atualizaMapa = () => {
     const currentDate = selectedDate.format("YYYYMMDD");
     setCurrentMap(
-      IMG_BASE + "png_movel/" + "MP10" + "_" + currentDate + ".png"
+      IMG_BASE +
+        "png_" +
+        selectedEscala +
+        "/" +
+        selectedPoluenteValue +
+        "_" +
+        currentDate +
+        ".png"
     );
   };
 
-  const [selectedValue, setSelectedValue] = React.useState("MP10");
+  const handleRadioChange = (event) => {
+    setSelectedEscala(event.target.value);
+  };
+
+  const handleDateChange = (newValue) => {
+    setSelectedDate(newValue);
+  };
 
   const dataAnterior = () => {
     setSelectedDate(selectedDate.subtract(1, "day"));
-    atualizaMapa();
   };
 
   const dataPosterior = () => {
     setSelectedDate(selectedDate.add(1, "day"));
-    atualizaMapa();
   };
 
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value);
+  const handlePoluenteChange = (event) => {
+    setSelectedPoluenteValue(event.target.value);
   };
 
   return (
@@ -121,7 +129,10 @@ function ReactMap2() {
         <GridItem xs={12} sm={1}></GridItem>
         <GridItem xs={12} sm={2}>
           <Box p={2}>
-            <RowRadioButtonsGroup></RowRadioButtonsGroup>
+            <RowRadioButtonsGroup
+              value={selectedEscala}
+              onChange={handleRadioChange}
+            ></RowRadioButtonsGroup>
           </Box>
         </GridItem>
         <GridItem xs={12} sm={3}>
@@ -130,8 +141,8 @@ function ReactMap2() {
             <Select
               labelId="select-label"
               id="select"
-              value={selectedValue}
-              onChange={handleChange}
+              value={selectedPoluenteValue}
+              onChange={handlePoluenteChange}
             >
               <MenuItem value="MP10">MP10</MenuItem>
               <MenuItem value="NO">NO</MenuItem>
