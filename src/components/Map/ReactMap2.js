@@ -31,6 +31,10 @@ import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 import dayjs from "dayjs";
 import obtemPacientes from "../../services/ApiService";
 import formatarPacienteMapa from "utils/formatter";
+import Fab from "@material-ui/core/Fab";
+import { renderToStaticMarkup } from "react-dom/server";
+import { divIcon } from "leaflet";
+import Accessibility from "@material-ui/icons/Accessibility";
 
 function ReactMap2() {
   // Defina as coordenadas iniciais do marcador
@@ -117,6 +121,17 @@ function ReactMap2() {
   const handlePoluenteChange = (event) => {
     setSelectedPoluenteValue(event.target.value);
   };
+
+  const iconMarkup = renderToStaticMarkup(
+    <Fab size="small" variant="extended">
+      <Accessibility />
+    </Fab>
+  );
+
+  const customMarkerIcon = divIcon({
+    className: "",
+    html: iconMarkup,
+  });
 
   return (
     <GridContainer>
@@ -216,6 +231,7 @@ function ReactMap2() {
                   <Marker
                     position={paciente.localidade}
                     key={paciente.objeto.id}
+                    icon={customMarkerIcon}
                   >
                     <Popup>
                       Código Atendimento: {paciente.objeto.cd_atendimento}
