@@ -213,7 +213,7 @@ function ReactMap2() {
             <Overlay checked name="Interpolação">
               <ImageOverlay url={currentMap} bounds={imageBounds} />
             </Overlay>
-            <Overlay name="Estações">
+            <Overlay checked name="Estações">
               <LayerGroup>
                 {estacoes.map((estacao) => (
                   <Marker
