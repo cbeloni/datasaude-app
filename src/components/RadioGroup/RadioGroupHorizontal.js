@@ -24,6 +24,6 @@ export default function RowRadioButtonsGroup({ value, onChange }) {
 }
 
 RowRadioButtonsGroup.propTypes = {
-  value: PropTypes.object,
+  value: PropTypes.any,
   onChange: PropTypes.func,
 };
