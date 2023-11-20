@@ -20,11 +20,7 @@ const obtemPacientes = async (requestData) => {
 
     const data = await response.json();
 
-    // Certifique-se de que a lista de pacientes não está vazia
-    const nomesDosPacientes =
-      data.length > 0 ? data.map((paciente) => paciente.NM_PACIENTE) : [];
-
-    return nomesDosPacientes;
+    return data;
   } catch (error) {
     throw new Error(`Erro na requisição: ${error.message}`);
   }

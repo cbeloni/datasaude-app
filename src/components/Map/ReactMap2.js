@@ -19,7 +19,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Button, Checkbox, ListItemText } from "@material-ui/core";
+import { Box, Button } from "@material-ui/core";
 import { IMG_DEFAULT, IMG_BASE } from "./ConstantsMap";
 import { estacoes } from "./ConstantsEstacoes";
 import DateRange from "components/DataPicker/DateRange";
@@ -29,8 +29,8 @@ import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 import dayjs from "dayjs";
-import { OutlinedInput } from "@mui/material";
 import obtemPacientes from "../../services/ApiService";
+import formatarPacienteMapa from "utils/formatter";
 
 function ReactMap2() {
   // Defina as coordenadas iniciais do marcador
@@ -48,31 +48,33 @@ function ReactMap2() {
     const map = useMap();
     map.setView(center, zoomLevel);
   };
-
+  const [dadosPacientes, setDadosPacientes] = useState([]);
   const [selectedDate, setSelectedDate] = useState(dayjs("2022-01-30"));
   const [selectedEscala, setSelectedEscala] = useState("movel");
   const [selectedPoluenteValue, setSelectedPoluenteValue] = React.useState(
     "MP10"
   );
-  const [nomesPordata, setNomesPorData] = useState([]);
-  const [setErro] = useState(null);
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const nomesDosPacientes = await obtemPacientes({
+        const dadosPacientes = await obtemPacientes({
           dt_atendimento: selectedDate.format("YYYY-MM-DD"),
+          poluente: selectedPoluenteValue,
         });
 
-        console.log("nomes dos pacientes", nomesDosPacientes);
-        setNomesPorData(nomesDosPacientes);
+        const dadosPacientesFormatado = dadosPacientes.map(
+          formatarPacienteMapa
+        );
+        console.log("pacientes: ", dadosPacientesFormatado);
+        setDadosPacientes(dadosPacientesFormatado);
       } catch (error) {
-        setErro(error.message);
+        console.log("Erro ao obter pacietnes:", error);
       }
     };
 
     fetchDataFromApi();
-  }, [selectedDate]);
+  }, [selectedDate, selectedPoluenteValue]);
 
   useEffect(() => {
     atualizaMapa();
@@ -114,29 +116,6 @@ function ReactMap2() {
 
   const handlePoluenteChange = (event) => {
     setSelectedPoluenteValue(event.target.value);
-  };
-
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
-
-  const [pacienteNome, setPacienteNome] = React.useState([]);
-
-  const handleChangePaciente = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPacienteNome(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
   };
 
   return (
@@ -200,28 +179,6 @@ function ReactMap2() {
           </Select>
         </Box>
       </GridItem>
-      <GridItem xs={12} sm={3}>
-        <Box p={1}>
-          <InputLabel id="select-label">Paciente:</InputLabel>
-          <Select
-            labelId="demo-multiple-checkbox-label"
-            id="demo-multiple-checkbox"
-            multiple
-            value={pacienteNome}
-            onChange={handleChangePaciente}
-            input={<OutlinedInput label="Tag" />}
-            renderValue={(selected) => selected.join(", ")}
-            MenuProps={MenuProps}
-          >
-            {nomesPordata.map((name) => (
-              <MenuItem key={name} value={name}>
-                <Checkbox checked={pacienteNome.indexOf(name) > -1} />
-                <ListItemText primary={name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-      </GridItem>
       <GridItem xs={12}>
         <MapContainer
           center={initialPosition}
@@ -241,14 +198,34 @@ function ReactMap2() {
             <Overlay checked name="Interpolação">
               <ImageOverlay url={currentMap} bounds={imageBounds} />
             </Overlay>
-            <Overlay checked name="Estações">
+            <Overlay name="Estações">
               <LayerGroup>
                 {estacoes.map((estacao) => (
                   <Marker
                     position={estacao.localidade}
                     key={estacao.localidade}
                   >
-                    <Popup>{estacao.endereco}</Popup>
+                    <Popup>{estacao.endereco} </Popup>
+                  </Marker>
+                ))}
+              </LayerGroup>
+            </Overlay>
+            <Overlay checked name="Pacientes">
+              <LayerGroup>
+                {dadosPacientes.map((paciente) => (
+                  <Marker
+                    position={paciente.localidade}
+                    key={paciente.objeto.cd_atendimento}
+                  >
+                    <Popup>
+                      Código Atendimento: {paciente.objeto.cd_atendimento}
+                      <br />
+                      Nome: {paciente.objeto.nm_paciente} <br />
+                      Endereco: {paciente.objeto.endereco} <br />
+                      Data Atendimento: {paciente.objeto.data} <br />
+                      Poluente: {paciente.objeto.poluente} <br />
+                      Índice interpolado: {paciente.objeto.indice} <br />
+                    </Popup>
                   </Marker>
                 ))}
               </LayerGroup>
