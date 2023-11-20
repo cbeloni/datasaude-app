@@ -215,7 +215,7 @@ function ReactMap2() {
                 {dadosPacientes.map((paciente) => (
                   <Marker
                     position={paciente.localidade}
-                    key={paciente.objeto.cd_atendimento}
+                    key={paciente.objeto.id}
                   >
                     <Popup>
                       Código Atendimento: {paciente.objeto.cd_atendimento}
