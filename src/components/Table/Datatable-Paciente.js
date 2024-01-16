@@ -100,7 +100,7 @@ function DataTablePacienteComponent() {
   return (
     <div>
       <DataGrid
-        dataSource="http://localhost:8000/api/v1/paciente/listar/"
+        dataSource="http://datasaude-api.beloni.dev.br/api/v1/paciente/listar/ "
         gridName="Tubular-React"
         columns={pacienteColumns}
         storage={new LocalStorage()}
