@@ -14,11 +14,14 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import styles from "layouts/Styles/commom.js";
+import PoluentesHelper from "views/TableList/PoluentesHelper";
+import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
 
 const useStyles = makeStyles(styles);
+const poluentesHelper = PoluentesHelper();
 
 export default function TableList() {
-  const [value, setValue] = useState("poluente-online");
+  const [value, setValue] = useState("paciente");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -30,7 +33,7 @@ export default function TableList() {
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <TabList onChange={handleChange} aria-label="lab API tabs example">
           <Tab label="Poluente online" value="poluente-online" />
-          <Tab label="Poluente Histórico" value="poluente-historico" />
+          <Tab label="Paciente" value="paciente" />
         </TabList>
       </Box>
       <TabPanel value="poluente-online" className={classes.tabPanelBorder}>
@@ -40,18 +43,34 @@ export default function TableList() {
               <CardHeader color="primary">
                 <h4 className={classes.cardTitleWhite}>Online poluente</h4>
                 <p className={classes.cardCategoryWhite}>
-                  coletas em cada uma hora
+                  Coletas em cada uma hora
                 </p>
               </CardHeader>
               <CardBody>
-                <DataTableComponent></DataTableComponent>
+                <DataTableComponent
+                  poluentesHelper={poluentesHelper}
+                ></DataTableComponent>
               </CardBody>
             </Card>
           </GridItem>
         </GridContainer>
       </TabPanel>
-      <TabPanel value="poluente-historico" className={classes.tabPanelBorder}>
-        <p>poluente-historico</p>
+      <TabPanel value="paciente" className={classes.tabPanelBorder}>
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary">
+                <h4 className={classes.cardTitleWhite}>Pacientes</h4>
+                <p className={classes.cardCategoryWhite}>
+                  Pacientes com dados dos poluentes coletados
+                </p>
+              </CardHeader>
+              <CardBody>
+                <DataTablePacienteComponent></DataTablePacienteComponent>
+              </CardBody>
+            </Card>
+          </GridItem>
+        </GridContainer>
       </TabPanel>
     </TabContext>
   );

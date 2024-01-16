@@ -42,7 +42,7 @@ const dashboardRoutes = [
   // },
   {
     path: "/table",
-    name: "Poluentes",
+    name: "Tabelas",
     rtlName: "قائمة الجدول",
     icon: "content_paste",
     component: TableList,
