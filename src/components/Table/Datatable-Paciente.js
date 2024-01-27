@@ -23,7 +23,7 @@ const pacienteColumns = [
   }),
   createColumn("CD_ATENDIMENTO", {
     dataType: ColumnDataType.Numeric,
-    filterable: true,
+    filterable: false,
     label: "Código Atendimento",
   }),
   createColumn("NM_PACIENTE", {
@@ -112,6 +112,9 @@ function DataTablePacienteComponent() {
   };
 
   const toolbarOptions = new ToolbarOptions({
+    searchText: false,
+    exportButton: false,
+    printButton: false,
     customItems: (
       <div>
         <Box display="flex" justifyContent="space-between">
@@ -144,7 +147,6 @@ function DataTablePacienteComponent() {
       </div>
     ),
   });
-
   return (
     <div>
       <DataGrid
