@@ -1,11 +1,15 @@
-import React from "react";
-import { DataGrid } from "tubular-react";
+import React, { useState } from "react";
+import { DataGrid, ToolbarOptions } from "tubular-react";
 import {
   createColumn,
   ColumnDataType,
   LocalStorage,
   ColumnSortDirection,
 } from "tubular-common";
+import DatePicker from "components/DataPicker/ReactDatePicker";
+import { Input } from "@mui/material";
+import { Box, Button, Typography } from "@material-ui/core";
+import RowRadioButtonsPeriodo from "components/RadioGroup/RadioGroupPeriodo";
 
 const pacienteColumns = [
   createColumn("id", {
@@ -97,6 +101,50 @@ const pacienteColumns = [
 ];
 
 function DataTablePacienteComponent() {
+  const [selectedPeriod, setSelectedPeriod] = useState("anos");
+
+  const handleChangePeriodo = (event) => {
+    setSelectedPeriod(event.target.value);
+  };
+
+  const handleButtonClick = () => {
+    alert(`Período selecionado: ${selectedPeriod}`);
+  };
+
+  const toolbarOptions = new ToolbarOptions({
+    customItems: (
+      <div>
+        <Box display="flex" justifyContent="space-between">
+          <div style={{ padding: "10px" }}>
+            <Typography>Data Atendimento:</Typography>
+            <DatePicker></DatePicker>
+          </div>
+          <div style={{ paddingLeft: "50px" }}>
+            <Typography>Idade:</Typography>
+            <Input type="number" id="idade" name="idade"></Input>
+          </div>
+          <div
+            style={{
+              paddingLeft: "20px",
+              paddingRight: "50px",
+              paddingTop: "10px",
+            }}
+          >
+            <RowRadioButtonsPeriodo
+              value={selectedPeriod}
+              onChange={handleChangePeriodo}
+            ></RowRadioButtonsPeriodo>
+          </div>
+          <div style={{ padding: "10px" }}>
+            <Button color="primary" onClick={handleButtonClick}>
+              Filtrar
+            </Button>
+          </div>
+        </Box>
+      </div>
+    ),
+  });
+
   return (
     <div>
       <DataGrid
@@ -107,6 +155,7 @@ function DataTablePacienteComponent() {
         onPageChange={(params) => {
           console.log("===params===", params);
         }}
+        toolbarOptions={toolbarOptions}
       />
     </div>
   );
