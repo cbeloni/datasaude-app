@@ -7,6 +7,7 @@ import { Box, Button, Typography } from "@material-ui/core";
 import RowRadioButtonsPeriodo from "components/RadioGroup/RadioGroupPeriodo";
 import { pacienteColumns } from "./PacienteHelper";
 import { format } from "date-fns";
+import "./styles.css";
 
 function DataTablePacienteComponent() {
   const [selectedPeriod, setSelectedPeriod] = useState("anos");
@@ -55,12 +56,12 @@ function DataTablePacienteComponent() {
     printButton: false,
     customItems: (
       <div>
-        <Box display="flex" justifyContent="space-between">
-          <div style={{ padding: "10px" }}>
+        <Box className="estiloHorizontal" justifyContent="space-between">
+          <div style={{ padding: "10px", paddingLeft: "40px" }}>
             <Typography>Data Atendimento:</Typography>
             <DatePicker value={dateRange} onChange={atualizaData}></DatePicker>
           </div>
-          <div style={{ paddingLeft: "50px" }}>
+          <div style={{ paddingLeft: "40px" }}>
             <Typography>Idade:</Typography>
             <Input
               type="number"
@@ -73,7 +74,7 @@ function DataTablePacienteComponent() {
           <div
             style={{
               paddingLeft: "20px",
-              paddingRight: "50px",
+              paddingRight: "40px",
               paddingTop: "10px",
             }}
           >
