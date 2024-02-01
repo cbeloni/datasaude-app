@@ -91,6 +91,26 @@ const pacienteColumns = [
     dataType: ColumnDataType.String,
     label: "Sexo",
   }),
+  createColumn("endereco", {
+    dataType: ColumnDataType.String,
+    label: "Endereco",
+  }),
+  createColumn("latitude", {
+    dataType: ColumnDataType.String,
+    label: "Latitude",
+  }),
+  createColumn("longitude", {
+    dataType: ColumnDataType.String,
+    label: "Longitude",
+  }),
+  createColumn("poluente", {
+    dataType: ColumnDataType.String,
+    label: "Poluente",
+  }),
+  createColumn("indice_interpolado", {
+    dataType: ColumnDataType.String,
+    label: "Indice Interpolado",
+  }),
 ];
 
 export { pacienteColumns };
