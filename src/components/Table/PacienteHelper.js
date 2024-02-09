@@ -23,6 +23,10 @@ const pacienteColumns = [
     dataType: ColumnDataType.String,
     label: "Nome do Paciente",
   }),
+  createColumn("DT_NASC", {
+    dataType: ColumnDataType.Date,
+    label: "Data Nascimento",
+  }),
   createColumn("DT_ATENDIMENTO", {
     dataType: ColumnDataType.Date,
     label: "Data Atendimento",
@@ -78,10 +82,6 @@ const pacienteColumns = [
   createColumn("NR_CEP", {
     dataType: ColumnDataType.Numeric,
     label: "CEP",
-  }),
-  createColumn("DT_NASC", {
-    dataType: ColumnDataType.Date,
-    label: "Data Nascimento",
   }),
   createColumn("IDADE", {
     dataType: ColumnDataType.String,
