@@ -96,6 +96,7 @@ function DataTablePacienteComponent() {
   return (
     <div>
       <DataGrid
+        key={url}
         dataSource={url}
         gridName="Tubular-React"
         columns={pacienteColumns}
