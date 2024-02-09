@@ -17,7 +17,12 @@ function DataTablePacienteComponent() {
   const [idade, setIdade] = useState("");
 
   const handleIdadeChange = (event) => {
-    setIdade(event.target.value);
+    console.log(event.target.value);
+    if (event.target.value >= 0) {
+      setIdade(event.target.value);
+      return;
+    }
+    setIdade("");
   };
   const handleChangePeriodo = (event) => {
     setSelectedPeriod(event.target.value);
