@@ -17,9 +17,11 @@
 */
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
+import BarChart from "@material-ui/icons/BarChart";
 import LocationOn from "@material-ui/icons/LocationOn";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
+import IndicadoresPage from "views/Indicadores/Indicadores.js";
 import TableList from "views/TableList/TableList.js";
 import Maps from "views/Maps/Maps.js";
 
@@ -30,6 +32,14 @@ const dashboardRoutes = [
     rtlName: "لوحة القيادة",
     icon: Dashboard,
     component: DashboardPage,
+    layout: "/admin",
+  },
+  {
+    path: "/indicadores",
+    name: "Indicadores",
+    rtlName: "لوحة القيادة",
+    icon: BarChart,
+    component: IndicadoresPage,
     layout: "/admin",
   },
   // {
