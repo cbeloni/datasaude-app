@@ -41,9 +41,9 @@ export default function Dashboard() {
               <p className={classes.cardCategory}>GRÁFICO</p>
             </CardHeader>
             <CardBody>
-              <p className={classes.CardBody}>
+              <div className={classes.CardBody}>
                 <TickPlacementBars></TickPlacementBars>
-              </p>
+              </div>
             </CardBody>
             <CardFooter stats>
               <div className={classes.stats}>

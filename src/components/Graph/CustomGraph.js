@@ -1,103 +1,10 @@
-import * as React from "react";
-import Stack from "@mui/material/Stack";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
+import React, { useEffect } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
-
-function TickParamsSelector({
-  // eslint-disable-next-line react/prop-types
-  tickPlacement,
-  // eslint-disable-next-line react/prop-types
-  tickLabelPlacement,
-  // eslint-disable-next-line react/prop-types
-  setTickPlacement,
-  // eslint-disable-next-line react/prop-types
-  setTickLabelPlacement,
-}) {
-  return (
-    <Stack
-      direction="column"
-      justifyContent="space-between"
-      sx={{ width: "100%" }}
-    >
-      <FormControl>
-        <FormLabel id="tick-placement-radio-buttons-group-label">
-          tickPlacement
-        </FormLabel>
-        <RadioGroup
-          row
-          aria-labelledby="tick-placement-radio-buttons-group-label"
-          name="tick-placement"
-          value={tickPlacement}
-          onChange={(event) => setTickPlacement(event.target.value)}
-        >
-          <FormControlLabel value="start" control={<Radio />} label="start" />
-          <FormControlLabel value="end" control={<Radio />} label="end" />
-          <FormControlLabel value="middle" control={<Radio />} label="middle" />
-          <FormControlLabel
-            value="extremities"
-            control={<Radio />}
-            label="extremities"
-          />
-        </RadioGroup>
-      </FormControl>
-      <FormControl>
-        <FormLabel id="label-placement-radio-buttons-group-label">
-          tickLabelPlacement
-        </FormLabel>
-        <RadioGroup
-          row
-          aria-labelledby="label-placement-radio-buttons-group-label"
-          name="label-placement"
-          value={tickLabelPlacement}
-          onChange={(event) => setTickLabelPlacement(event.target.value)}
-        >
-          <FormControlLabel value="tick" control={<Radio />} label="tick" />
-          <FormControlLabel value="middle" control={<Radio />} label="middle" />
-        </RadioGroup>
-      </FormControl>
-    </Stack>
-  );
-}
-
-const dataset = [
-  {
-    qtd: 109,
-    DT_ATENDIMENTO: "2022-06-24",
-  },
-  {
-    qtd: 99,
-    DT_ATENDIMENTO: "2022-06-25",
-  },
-  {
-    qtd: 114,
-    DT_ATENDIMENTO: "2022-06-26",
-  },
-  {
-    qtd: 146,
-    DT_ATENDIMENTO: "2022-06-27",
-  },
-  {
-    qtd: 117,
-    DT_ATENDIMENTO: "2022-06-28",
-  },
-  {
-    qtd: 115,
-    DT_ATENDIMENTO: "2022-06-29",
-  },
-  {
-    qtd: 132,
-    DT_ATENDIMENTO: "2022-06-30",
-  },
-  {
-    qtd: 117,
-    DT_ATENDIMENTO: "2022-07-01",
-  },
-];
+import axios from "axios";
+import DatePicker from "components/DataPicker/ReactDatePicker";
+import { format } from "date-fns";
+import { Button } from "@mui/material";
 
 const valueFormatter = (value) => `${value} pacientes`;
 
@@ -117,25 +24,63 @@ const chartSetting = {
 };
 
 export default function TickPlacementBars() {
-  const [tickPlacement, setTickPlacement] = React.useState("middle");
-  const [tickLabelPlacement, setTickLabelPlacement] = React.useState("middle");
+  const [dateRange, setDateRange] = React.useState([null, null]);
+  const [dados, setDados] = React.useState([{ qtd: 0, DT_ATENDIMENTO: "" }]);
+  const URL_BASE =
+    "http://datasaude-api.beloni.dev.br/api/v1/paciente/agrupado/";
+  const [url, setUrl] = React.useState(URL_BASE);
+
+  const handleButtonClick = () => {
+    const [dataInicial, dataFinal] = dateRange;
+    let filtros = "";
+    if (dataInicial && dataFinal) {
+      let dataInicialFormatada = format(dataInicial, "ddMMyyyy");
+      let dataFinalFormatada = format(dataFinal, "ddMMyyyy");
+      console.log("dataInicial", dataInicialFormatada);
+      console.log("dataFinal", dataFinalFormatada);
+      filtros += `${dataInicialFormatada}/${dataFinalFormatada}`;
+    }
+
+    let urlChanged = `${URL_BASE}${filtros}`;
+    console.log("Resultado url alterada ", urlChanged);
+    setUrl(urlChanged);
+  };
+
+  useEffect(() => {
+    axios
+      .get(url)
+      .then((response) => {
+        console.log("response: ", response.data);
+        setDados(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [url]);
+
+  useEffect(() => {
+    handleButtonClick();
+  }, []);
+
+  const atualizaData = (data) => {
+    setDateRange(data);
+    console.log(data);
+  };
 
   return (
     <div style={{ width: "100%" }}>
-      <TickParamsSelector
-        tickPlacement={tickPlacement}
-        tickLabelPlacement={tickLabelPlacement}
-        setTickPlacement={setTickPlacement}
-        setTickLabelPlacement={setTickLabelPlacement}
-      />
+      <DatePicker value={dateRange} onChange={atualizaData}></DatePicker>
+      <Button color="primary" onClick={handleButtonClick}>
+        Filtrar
+      </Button>
       <BarChart
-        dataset={dataset}
+        dataset={dados}
         xAxis={[
           {
             scaleType: "band",
             dataKey: "DT_ATENDIMENTO",
-            tickPlacement,
-            tickLabelPlacement,
+            tickPlacement: "middle",
+            tickLabelPlacement: "middle",
           },
         ]}
         {...chartSetting}
