@@ -11,7 +11,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody";
 import CardFooter from "components/Card/CardFooter";
 import Card from "components/Card/Card.js";
-import TickPlacementBars from "components/Graph/CustomGraph";
+import CustomGraphBars from "components/Graph/CustomGraph";
 
 const useStyles = makeStyles(styles);
 
@@ -42,7 +42,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardBody>
               <div className={classes.CardBody}>
-                <TickPlacementBars></TickPlacementBars>
+                <CustomGraphBars></CustomGraphBars>
               </div>
             </CardBody>
             <CardFooter stats>
