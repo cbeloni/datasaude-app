@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import axios from "axios";
-import DatePicker from "components/DataPicker/ReactDatePicker";
 import { format } from "date-fns";
 import RadioGroupMesAno from "components/RadioGroup/RadioGroupMesAno";
 import { Box, Button } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 const valueFormatter = (value) => `${value} pacientes`;
 
@@ -24,8 +24,7 @@ const chartSetting = {
   },
 };
 
-export default function CustomGraphBars() {
-  const [dateRange, setDateRange] = React.useState([null, null]);
+export default function CustomGraphBars(props) {
   const [dados, setDados] = React.useState([{ qtd: 0, DT_ATENDIMENTO: "" }]);
   const [selectedPeriod, setSelectedPeriod] = React.useState("dia");
   const [chave, setChave] = React.useState("DT_ATENDIMENTO");
@@ -38,7 +37,8 @@ export default function CustomGraphBars() {
   };
 
   const handleButtonClick = () => {
-    const [dataInicial, dataFinal] = dateRange;
+    console.log("props:", props);
+    const [dataInicial, dataFinal] = props.dateRange || [null, null];
     let filtros = "";
     if (dataInicial && dataFinal) {
       let dataInicialFormatada = format(dataInicial, "ddMMyyyy");
@@ -64,10 +64,20 @@ export default function CustomGraphBars() {
   };
 
   useEffect(() => {
+    console.log("DataRange foi alterado");
+    let [dataInicial, dataFinal] = props.dateRange || [null, null];
+
+    if (dataInicial && dataFinal) {
+      console.log(dataInicial);
+      console.log(dataFinal);
+      handleButtonClick();
+    }
+  }, [props.dateRange]);
+
+  useEffect(() => {
     axios
       .get(url)
       .then((response) => {
-        console.log("response: ", response.data);
         setDados(response.data);
       })
       .catch((error) => {
@@ -79,15 +89,9 @@ export default function CustomGraphBars() {
     handleButtonClick();
   }, []);
 
-  const atualizaData = (data) => {
-    setDateRange(data);
-    console.log(data);
-  };
-
   return (
     <div style={{ width: "100%" }}>
       <Box className="estiloHorizontal" justifyContent="space-between">
-        <DatePicker value={dateRange} onChange={atualizaData}></DatePicker>
         <div
           style={{
             paddingLeft: "20px",
@@ -100,9 +104,7 @@ export default function CustomGraphBars() {
             onChange={handleChangePeriodo}
           ></RadioGroupMesAno>
         </div>
-        <Button color="primary" onClick={handleButtonClick}>
-          Filtrar
-        </Button>
+        <Button onClick={handleButtonClick}>Atualizar</Button>
       </Box>
       <BarChart
         dataset={dados}
@@ -119,3 +121,7 @@ export default function CustomGraphBars() {
     </div>
   );
 }
+
+CustomGraphBars.propTypes = {
+  dateRange: PropTypes.any,
+};
