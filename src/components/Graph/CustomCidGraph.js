@@ -3,19 +3,18 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import axios from "axios";
 import { format } from "date-fns";
-import RadioGroupMesAno from "components/RadioGroup/RadioGroupMesAno";
-import { Box, Button } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import PropTypes from "prop-types";
 
-const valueFormatter = (value) => `${value} pacientes`;
+const valueFormatter = (value) => `${value} ocorrências`;
 
 const chartSetting = {
   yAxis: [
     {
-      label: "Qtd atendimentos",
+      label: "Qtd CID",
     },
   ],
-  series: [{ dataKey: "qtd", label: "Qtd atendimentos", valueFormatter }],
+  series: [{ dataKey: "qtd", label: "Qtd CID", valueFormatter }],
   height: 300,
   sx: {
     [`& .${axisClasses.directionY} .${axisClasses.label}`]: {
@@ -24,17 +23,12 @@ const chartSetting = {
   },
 };
 
-export default function CustomGraphBars(props) {
+export default function CustomCidGraphBars(props) {
   const [dados, setDados] = React.useState([{ qtd: 0, DT_ATENDIMENTO: "" }]);
-  const [selectedPeriod, setSelectedPeriod] = React.useState("dia");
-  const [chave, setChave] = React.useState("DT_ATENDIMENTO");
+  const [chave] = React.useState("cid");
   const URL_BASE =
     "http://datasaude-api.beloni.dev.br/api/v1/paciente/queries/";
   const [url, setUrl] = React.useState(URL_BASE);
-
-  const handleChangePeriodo = (event) => {
-    setSelectedPeriod(event.target.value);
-  };
 
   const handleButtonClick = () => {
     console.log("props:", props);
@@ -48,15 +42,7 @@ export default function CustomGraphBars(props) {
       filtros += `${dataInicialFormatada}/${dataFinalFormatada}`;
     }
 
-    if (selectedPeriod === "dia") {
-      filtros += `?query=dia`;
-      setChave("DT_ATENDIMENTO");
-    }
-    if (selectedPeriod === "mes") {
-      filtros += `?query=mes`;
-      setChave("mes");
-      console.log(chave);
-    }
+    filtros += `?query=cid`;
 
     let urlChanged = `${URL_BASE}${filtros}`;
     console.log("Resultado url alterada ", urlChanged);
@@ -98,13 +84,7 @@ export default function CustomGraphBars(props) {
             paddingRight: "40px",
             paddingTop: "10px",
           }}
-        >
-          <RadioGroupMesAno
-            value={selectedPeriod}
-            onChange={handleChangePeriodo}
-          ></RadioGroupMesAno>
-        </div>
-        <Button onClick={handleButtonClick}>Atualizar</Button>
+        ></div>
       </Box>
       <BarChart
         dataset={dados}
@@ -122,6 +102,6 @@ export default function CustomGraphBars(props) {
   );
 }
 
-CustomGraphBars.propTypes = {
+CustomCidGraphBars.propTypes = {
   dateRange: PropTypes.any,
 };

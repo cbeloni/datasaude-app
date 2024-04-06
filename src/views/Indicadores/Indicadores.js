@@ -14,6 +14,7 @@ import Card from "components/Card/Card.js";
 import CustomGraphBars from "components/Graph/CustomGraph";
 import DatePicker from "components/DataPicker/ReactDatePicker";
 import moment from "moment";
+import CustomCidGraphBars from "components/Graph/CustomCidGraph";
 // import { Button } from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
@@ -69,6 +70,27 @@ export default function Dashboard() {
             <CardBody>
               <div className={classes.CardBody}>
                 <CustomGraphBars dateRange={dateRange}></CustomGraphBars>
+              </div>
+            </CardBody>
+            <CardFooter stats>
+              <div className={classes.stats}>
+                <Update />
+                <p>Dados de 2022</p>
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={6} md={6}>
+          <Card>
+            <CardHeader color={getCardColor("N1 - BOA")} stats icon>
+              <CardIcon color={getCardColor("N1 - BOA")}>
+                <InsertChart></InsertChart>
+              </CardIcon>
+              <p className={classes.cardCategory}>Pacientes por cid</p>
+            </CardHeader>
+            <CardBody>
+              <div className={classes.CardBody}>
+                <CustomCidGraphBars dateRange={dateRange}></CustomCidGraphBars>
               </div>
             </CardBody>
             <CardFooter stats>

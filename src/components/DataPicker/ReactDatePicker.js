@@ -19,6 +19,8 @@ export default function DatePicker(props) {
       onChange={props.onChange}
       locale="pt-BR"
       placeholderText="Filtro data atendimento"
+      openToDate={new Date("01/01/2022")}
+      withPortal
     />
   );
 }
