@@ -3,8 +3,9 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import axios from "axios";
 import { format } from "date-fns";
-import { Box } from "@material-ui/core";
+import { Box, Button } from "@material-ui/core";
 import PropTypes from "prop-types";
+import RadioGroupCid from "components/RadioGroup/RadioGroupCid";
 
 const valueFormatter = (value) => `${value} ocorrências`;
 
@@ -26,9 +27,14 @@ const chartSetting = {
 export default function CustomCidGraphBars(props) {
   const [dados, setDados] = React.useState([{ qtd: 0, DT_ATENDIMENTO: "" }]);
   const [chave] = React.useState("cid");
+  const [query, setQuery] = React.useState("cid_maiores");
   const URL_BASE =
     "http://datasaude-api.beloni.dev.br/api/v1/paciente/queries/";
   const [url, setUrl] = React.useState(URL_BASE);
+
+  const handleChangeQuery = (event) => {
+    setQuery(event.target.value);
+  };
 
   const handleButtonClick = () => {
     console.log("props:", props);
@@ -42,7 +48,12 @@ export default function CustomCidGraphBars(props) {
       filtros += `${dataInicialFormatada}/${dataFinalFormatada}`;
     }
 
-    filtros += `?query=cid`;
+    if (query === "cid") {
+      filtros += `?query=cid`;
+    }
+    if (query === "cid_maiores") {
+      filtros += `?query=cid_maiores`;
+    }
 
     let urlChanged = `${URL_BASE}${filtros}`;
     console.log("Resultado url alterada ", urlChanged);
@@ -84,7 +95,13 @@ export default function CustomCidGraphBars(props) {
             paddingRight: "40px",
             paddingTop: "10px",
           }}
-        ></div>
+        >
+          <RadioGroupCid
+            value={query}
+            onChange={handleChangeQuery}
+          ></RadioGroupCid>
+        </div>
+        <Button onClick={handleButtonClick}>Atualizar</Button>
       </Box>
       <BarChart
         dataset={dados}
