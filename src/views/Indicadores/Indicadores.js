@@ -15,6 +15,7 @@ import CustomGraphBars from "components/Graph/CustomGraph";
 import DatePicker from "components/DataPicker/ReactDatePicker";
 import moment from "moment";
 import CustomCidGraphBars from "components/Graph/CustomCidGraph";
+import CustomInternacaGraphBars from "components/Graph/CustomInternacaoGraph";
 // import { Button } from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
@@ -57,7 +58,7 @@ export default function Dashboard() {
             <DatePicker value={dateRange} onChange={atualizaData} />
           </div>
         </GridItem>
-        <GridItem xs={12} sm={6} md={6}>
+        <GridItem xs={12} sm={12} md={6}>
           <Card>
             <CardHeader color={getCardColor("N1 - BOA")} stats icon>
               <CardIcon color={getCardColor("N1 - BOA")}>
@@ -80,7 +81,32 @@ export default function Dashboard() {
             </CardFooter>
           </Card>
         </GridItem>
-        <GridItem xs={12} sm={6} md={6}>
+        <GridItem xs={12} sm={12} md={6}>
+          <Card>
+            <CardHeader color={getCardColor("N1 - BOA")} stats icon>
+              <CardIcon color={getCardColor("N1 - BOA")}>
+                <InsertChart></InsertChart>
+              </CardIcon>
+              <p className={classes.cardCategory}>
+                Paciente por internação e alta
+              </p>
+            </CardHeader>
+            <CardBody>
+              <div className={classes.CardBody}>
+                <CustomInternacaGraphBars
+                  dateRange={dateRange}
+                ></CustomInternacaGraphBars>
+              </div>
+            </CardBody>
+            <CardFooter stats>
+              <div className={classes.stats}>
+                <Update />
+                <p>Dados de 2022</p>
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color={getCardColor("N1 - BOA")} stats icon>
               <CardIcon color={getCardColor("N1 - BOA")}>
