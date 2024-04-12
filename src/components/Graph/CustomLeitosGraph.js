@@ -8,27 +8,29 @@ const data = [
 ];
 
 const size = {
-  width: 400,
-  height: 200,
+  width: 500,
+  height: 350,
 };
 
 export default function CustomLeitosGraph() {
   return (
-    <PieChart
-      series={[
-        {
-          arcLabel: (item) => `${item.label} (${item.value})`,
-          arcLabelMinAngle: 45,
-          data,
-        },
-      ]}
-      sx={{
-        [`& .${pieArcLabelClasses.root}`]: {
-          fill: "white",
-          fontWeight: "bold",
-        },
-      }}
-      {...size}
-    />
+    <div style={{ width: "100%" }}>
+      <PieChart
+        series={[
+          {
+            arcLabel: (item) => `${item.label} (${item.value})`,
+            arcLabelMinAngle: 45,
+            data,
+          },
+        ]}
+        sx={{
+          [`& .${pieArcLabelClasses.root}`]: {
+            fill: "white",
+            fontWeight: "bold",
+          },
+        }}
+        {...size}
+      />
+    </div>
   );
 }
