@@ -19,6 +19,7 @@ import CustomInternacaGraphBars from "components/Graph/CustomInternacaoGraph";
 import { format } from "date-fns";
 import { Typography } from "@mui/material";
 import isValidDate from "utils/validators";
+import CustomLeitosGraph from "components/Graph/CustomLeitosGraph";
 
 const useStyles = makeStyles(styles);
 
@@ -120,7 +121,7 @@ export default function Dashboard() {
             </CardFooter>
           </Card>
         </GridItem>
-        <GridItem xs={12} sm={12} md={12}>
+        <GridItem xs={12} sm={12} md={6}>
           <Card>
             <CardHeader color={getCardColor("N1 - BOA")} stats icon>
               <CardIcon color={getCardColor("N1 - BOA")}>
@@ -131,6 +132,27 @@ export default function Dashboard() {
             <CardBody>
               <div className={classes.CardBody}>
                 <CustomCidGraphBars dateRange={dateRange}></CustomCidGraphBars>
+              </div>
+            </CardBody>
+            <CardFooter stats>
+              <div className={classes.stats}>
+                <Update />
+                <Typography>{getDateRangeText(dateRange)}</Typography>
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={12} md={6}>
+          <Card>
+            <CardHeader color={getCardColor("N1 - BOA")} stats icon>
+              <CardIcon color={getCardColor("N1 - BOA")}>
+                <InsertChart></InsertChart>
+              </CardIcon>
+              <p className={classes.cardCategory}>Pacientes por cid</p>
+            </CardHeader>
+            <CardBody>
+              <div className={classes.CardBody}>
+                <CustomLeitosGraph dateRange={dateRange}></CustomLeitosGraph>
               </div>
             </CardBody>
             <CardFooter stats>
