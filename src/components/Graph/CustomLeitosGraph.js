@@ -8,7 +8,6 @@ const data = [
 ];
 
 const size = {
-  width: 500,
   height: 350,
 };
 
