@@ -82,7 +82,7 @@ export default function Dashboard() {
             <CardBody>
               <div className={classes.CardBody}>
                 <img
-                  src={`${process.env.PUBLIC_URL}/output.png`}
+                  src="https://raw.githubusercontent.com/cbeloni/datasaude-app/main/public/output.png"
                   style={{ width: "95%", height: "100%" }}
                 />
               </div>
