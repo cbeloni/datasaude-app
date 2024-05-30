@@ -18,9 +18,11 @@
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
 import BarChart from "@material-ui/icons/BarChart";
+import BlurOn from "@material-ui/icons/BlurOn";
 import LocationOn from "@material-ui/icons/LocationOn";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
+import PrevisaoPage from "views/Previsao/Previsao.js";
 import IndicadoresPage from "views/Indicadores/Indicadores.js";
 import TableList from "views/TableList/TableList.js";
 import Maps from "views/Maps/Maps.js";
@@ -29,15 +31,20 @@ const dashboardRoutes = [
   {
     path: "/dashboard",
     name: "Dashboard",
-    rtlName: "لوحة القيادة",
     icon: Dashboard,
     component: DashboardPage,
     layout: "/admin",
   },
   {
+    path: "/previsao",
+    name: "Previsão",
+    icon: BlurOn,
+    component: PrevisaoPage,
+    layout: "/admin",
+  },
+  {
     path: "/indicadores",
     name: "Indicadores",
-    rtlName: "لوحة القيادة",
     icon: BarChart,
     component: IndicadoresPage,
     layout: "/admin",
@@ -53,7 +60,6 @@ const dashboardRoutes = [
   {
     path: "/table",
     name: "Tabelas",
-    rtlName: "قائمة الجدول",
     icon: "content_paste",
     component: TableList,
     layout: "/admin",
@@ -61,7 +67,6 @@ const dashboardRoutes = [
   {
     path: "/maps",
     name: "Mapas",
-    rtlName: "خرائط",
     icon: LocationOn,
     component: Maps,
     layout: "/admin",
