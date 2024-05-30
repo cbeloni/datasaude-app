@@ -81,8 +81,10 @@ export default function Dashboard() {
             </CardHeader>
             <CardBody>
               <div className={classes.CardBody}>
-                <img src={`${process.env.PUBLIC_URL}/output.png`} 
-                     style={{ width: '95%', height: '100%' }}/>
+                <img
+                  src={`${process.env.PUBLIC_URL}/output.png`}
+                  style={{ width: "95%", height: "100%" }}
+                />
               </div>
             </CardBody>
             <CardFooter stats>
