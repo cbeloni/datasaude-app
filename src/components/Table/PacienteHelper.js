@@ -67,22 +67,6 @@ const pacienteColumns = [
     dataType: ColumnDataType.String,
     label: "Internado",
   }),
-  createColumn("DS_ENDERECO", {
-    dataType: ColumnDataType.String,
-    label: "Endereço",
-  }),
-  createColumn("NR_ENDERECO", {
-    dataType: ColumnDataType.Numeric,
-    label: "Número do Endereço",
-  }),
-  createColumn("NM_BAIRRO", {
-    dataType: ColumnDataType.String,
-    label: "Bairro",
-  }),
-  createColumn("NR_CEP", {
-    dataType: ColumnDataType.Numeric,
-    label: "CEP",
-  }),
   createColumn("IDADE", {
     dataType: ColumnDataType.String,
     label: "Idade",
@@ -90,10 +74,6 @@ const pacienteColumns = [
   createColumn("TP_SEXO", {
     dataType: ColumnDataType.String,
     label: "Sexo",
-  }),
-  createColumn("endereco", {
-    dataType: ColumnDataType.String,
-    label: "Endereco",
   }),
   createColumn("latitude", {
     dataType: ColumnDataType.String,
