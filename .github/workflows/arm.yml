@@ -26,5 +26,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: cbeloni/$:latest
+          tags: $:latest
           platforms: linux/arm/v7
