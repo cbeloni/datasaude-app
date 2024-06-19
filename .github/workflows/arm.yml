@@ -1,4 +1,4 @@
-name: Build ARM Docker Image
+name: Build ARM Tiny Docker Image
 
 on:
   push:
