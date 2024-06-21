@@ -93,32 +93,6 @@ export default function Dashboard() {
             </CardFooter>
           </Card>
         </GridItem>
-        <GridItem xs={12} sm={12} md={6}>
-          <Card>
-            <CardHeader color={getCardColor("N1 - BOA")} stats icon>
-              <CardIcon color={getCardColor("N1 - BOA")}>
-                <InsertChart></InsertChart>
-              </CardIcon>
-              <p className={classes.cardCategory}>
-                Pacientes por data de atendimento
-              </p>
-            </CardHeader>
-            <CardBody>
-              <div className={classes.CardBody}>
-                <img
-                  src={`${process.env.PUBLIC_URL}/output.png`}
-                  style={{ width: "95%", height: "100%" }}
-                />
-              </div>
-            </CardBody>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <Update />
-                <Typography>{getDateRangeText(dateRange)}</Typography>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
       </GridContainer>
     </div>
   );
