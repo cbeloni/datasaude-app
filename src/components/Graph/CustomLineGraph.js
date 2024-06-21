@@ -5,13 +5,13 @@ import { xLabels, previsao, historico } from "./CustomLineGraphValues";
 export default function CustomLineGraph() {
   return (
     <LineChart
-      width={700}
+      width={1200}
       height={500}
       series={[
         { data: historico, label: "Histórico", lineStyle: { stroke: "blue" } },
         { data: previsao, label: "Previsão", lineStyle: { stroke: "red" } },
       ]}
-      xAxis={[{ scaleType: "point", data: xLabels }]}
+      xAxis={[{ scaleType: "time", data: xLabels }]}
     />
   );
 }
