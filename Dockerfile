@@ -1,7 +1,7 @@
 FROM arm64v8/node:hydrogen-buster-slim AS build
 WORKDIR /app
 COPY package*.json ./
-RUN yarn install --verbose
+RUN yarn install
 COPY . .
 RUN yarn run build
 EXPOSE 3000
