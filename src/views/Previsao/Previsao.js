@@ -16,6 +16,7 @@ import DatePicker from "components/DataPicker/ReactDatePicker";
 import { format } from "date-fns";
 import moment from "moment";
 import isValidDate from "utils/validators";
+import CustomLineGraph from "components/Graph/CustomLineGraph";
 
 const useStyles = makeStyles(styles);
 
@@ -69,7 +70,7 @@ export default function Dashboard() {
             <DatePicker value={dateRange} onChange={atualizaData} />
           </div>
         </GridItem>
-        <GridItem xs={12} sm={12} md={6}>
+        <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color={getCardColor("N1 - BOA")} stats icon>
               <CardIcon color={getCardColor("N1 - BOA")}>
@@ -81,10 +82,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardBody>
               <div className={classes.CardBody}>
-                <img
-                  src="https://raw.githubusercontent.com/cbeloni/datasaude-app/main/public/output.png"
-                  style={{ width: "95%", height: "100%" }}
-                />
+                <CustomLineGraph></CustomLineGraph>
               </div>
             </CardBody>
             <CardFooter stats>
