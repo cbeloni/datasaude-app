@@ -2,7 +2,7 @@ name: Build Docker Image
 
 on:
   push:
-    branches: [ arm64 ]
+    branches: [ old-arm64 ]
 
 env:
   REGISTRY: hub.docker.com
