@@ -1,7 +1,6 @@
 FROM arm64v8/node:hydrogen-buster-slim AS build
 WORKDIR /app
 COPY package*.json ./
-RUN yarn config set registry https://registry.npm.taobao.org
 RUN yarn config set strict-ssl false
 RUN yarn install
 COPY . .
