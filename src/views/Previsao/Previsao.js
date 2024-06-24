@@ -20,7 +20,7 @@ import CustomLineGraph from "components/Graph/CustomLineGraph";
 const useStyles = makeStyles(styles);
 
 export default function Dashboard() {
-  const [dateRange, setDateRange] = React.useState([
+  const [dateRange] = React.useState([
     moment("01/01/2022", "DD/MM/YYYY").toDate(),
     moment("28/02/2022", "DD/MM/YYYY").toDate(),
   ]);
