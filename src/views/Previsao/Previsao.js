@@ -58,19 +58,6 @@ export default function Dashboard() {
     <div>
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              backgroundColor: "white",
-              padding: "10px",
-              borderRadius: "8px",
-            }}
-          >
-            <DatePicker value={dateRange} onChange={atualizaData} />
-          </div>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color={getCardColor("N1 - BOA")} stats icon>
               <CardIcon color={getCardColor("N1 - BOA")}>
