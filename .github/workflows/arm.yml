@@ -25,20 +25,13 @@ jobs:
           username: cbeloni
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - name: Build
+        id: build
+        uses: cloudposse/github-action-docker-build-push@main
         with:
-          path: |
-            **/node_modules
-            **/package-lock.json
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
+          registry: registry.hub.docker.com
+          organization: "cbeloni"
+          repository: "datasaude-app"
+          login: "cbeloni"
+          password: "${{ secrets.DOCKERHUB_TOKEN }}"
           platforms: linux/arm64
-          push: true
-          tags: cbeloni/datasaude-app:latest
