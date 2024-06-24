@@ -1,12 +1,18 @@
-FROM arm64v8/node:18.20.3-slim AS build
+# Use uma imagem base do Alpine
+FROM alpine:3.18
 
-WORKDIR /app
-RUN apt-get update && apt-get install -y ca-certificates
+# Instale dependências necessárias
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    ca-certificates \
+    nodejs \
+    npm \
+    yarn
+
 COPY package*.json ./
 # RUN yarn config set strict-ssl false
 # RUN yarn install --network-timeout 1000000
-RUN yarn config set registry https://registry.npmjs.org
-RUN yarn install -network-concurrency 1
+RUN yarn install
 COPY . .
 RUN yarn run build
 EXPOSE 3000
