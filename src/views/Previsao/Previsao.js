@@ -49,10 +49,6 @@ export default function Dashboard() {
     return colorMap[qualidade] || "warning"; // Retorna a cor mapeada ou "rose" se não houver correspondência
   };
 
-  const atualizaData = (data) => {
-    setDateRange(data);
-  };
-
   return (
     <div>
       <GridContainer>
