@@ -12,7 +12,6 @@ import CardBody from "components/Card/CardBody";
 import CardFooter from "components/Card/CardFooter";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
-import DatePicker from "components/DataPicker/ReactDatePicker";
 import { format } from "date-fns";
 import moment from "moment";
 import isValidDate from "utils/validators";
