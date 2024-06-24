@@ -5,7 +5,7 @@ import { xLabels, previsao, historico } from "./CustomLineGraphValues";
 export default function CustomLineGraph() {
   return (
     <LineChart
-      width={1200}
+      width={1300}
       height={500}
       series={[
         { data: historico, label: "Histórico", lineStyle: { stroke: "blue" } },
