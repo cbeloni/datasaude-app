@@ -11,7 +11,9 @@ RUN apk update && apk upgrade && \
 
 COPY package*.json ./
 # RUN yarn config set strict-ssl false
-RUN yarn install --network-timeout 1000000
+RUN yarn config set network-timeout 1000000 \
+    && yarn config set network-concurrency 1
+    RUN yarn install    
 COPY . .
 RUN yarn run build
 EXPOSE 3000
