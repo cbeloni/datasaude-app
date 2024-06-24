@@ -25,13 +25,10 @@ jobs:
           username: cbeloni
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build
-        id: build
-        uses: cloudposse/github-action-docker-build-push@main
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
-          registry: registry.hub.docker.com
-          organization: "cbeloni"
-          repository: "datasaude-app"
-          login: "cbeloni"
-          password: "${{ secrets.DOCKERHUB_TOKEN }}"
+          context: .
           platforms: linux/arm64
+          push: true
+          tags: cbeloni/datasaude-app:latest
