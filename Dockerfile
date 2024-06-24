@@ -12,6 +12,7 @@ RUN apk update && apk upgrade && \
 COPY package*.json ./
 # RUN yarn config set strict-ssl false
 # RUN yarn install --network-timeout 1000000
+RUN yarn config set registry https://registry.npmjs.org
 RUN yarn install
 COPY . .
 RUN yarn run build
