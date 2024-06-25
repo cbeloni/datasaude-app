@@ -1,5 +1,5 @@
 // apiService.js
-const API_BASE_URL = "https://datasaude-api.beloni.dev.br/api";
+const API_BASE_URL = "http://177.93.130.51/api";
 
 const obtemPacientes = async (requestData) => {
   const apiUrl = `${API_BASE_URL}/v1/paciente`;
