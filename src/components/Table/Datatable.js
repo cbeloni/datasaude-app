@@ -10,7 +10,7 @@ function DataTableComponent(props) {
       <DataGrid
         gridName="Tubular-React"
         columns={poluentesHelper.poluentesColumns}
-        dataSource="http://datasaude-api.beloni.dev.br/api/v1/poluentes"
+        dataSource="https://datasaude-api.beloni.dev.br/api/v1/poluentes"
         storage={new LocalStorage()}
         onPageChange={(params) => {
           console.log("===params===", params);

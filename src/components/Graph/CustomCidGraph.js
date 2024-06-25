@@ -29,7 +29,7 @@ export default function CustomCidGraphBars(props) {
   const [chave] = React.useState("cid");
   const [query, setQuery] = React.useState("cid_maiores");
   const URL_BASE =
-    "http://datasaude-api.beloni.dev.br/api/v1/paciente/queries/";
+    "https://datasaude-api.beloni.dev.br/api/v1/paciente/queries/";
   const [url, setUrl] = React.useState(URL_BASE);
 
   const handleChangeQuery = (event) => {

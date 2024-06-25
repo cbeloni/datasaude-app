@@ -30,7 +30,7 @@ export default function CustomInternacaGraphBars(props) {
   const [dados, setDados] = React.useState([{ qtd: 0, DT_ATENDIMENTO: "" }]);
   const [chave] = React.useState("DT_ATENDIMENTO");
   const URL_BASE =
-    "http://datasaude-api.beloni.dev.br/api/v1/paciente/queries/";
+    "https://datasaude-api.beloni.dev.br/api/v1/paciente/queries/";
   const [url, setUrl] = React.useState(URL_BASE);
 
   const handleButtonClick = () => {
