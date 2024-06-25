@@ -1,9 +1,9 @@
-name: Deploy to Docker Hub
+name: Deploy Staging ARM
 
 on:
   push:
     branches:
-      - arm64 
+      - release 
 
 jobs:
   build-and-deploy:
