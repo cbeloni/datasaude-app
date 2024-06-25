@@ -46,4 +46,6 @@ jobs:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
       - name: Apply Kubernetes manifests
-        run: kubectl apply -f datasaude-app.yaml --insecure-skip-tls-verify
+        run: |
+          kubectl apply -f datasaude-app.yaml --insecure-skip-tls-verify
+          kubectl rollout restart deployment/datasaude-app --insecure-skip-tls-verify
