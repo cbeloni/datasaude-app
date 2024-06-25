@@ -12,7 +12,8 @@ import "./styles.css";
 function DataTablePacienteComponent() {
   const [selectedPeriod, setSelectedPeriod] = useState("anos");
   const [dateRange, setDateRange] = useState([null, null]);
-  const URL_BASE = "https://datasaude-api.beloni.dev.br/api/v1/paciente/listar?";
+  const URL_BASE = 
+     "https://datasaude-api.beloni.dev.br/api/v1/paciente/listar?";
   const [url, setUrl] = useState(URL_BASE);
   const [idade, setIdade] = useState("");
 
