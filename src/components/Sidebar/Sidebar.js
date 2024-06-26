@@ -45,10 +45,6 @@ export default function Sidebar(props) {
         const whiteFontClasses = classNames({
           [" " + classes.whiteFont]: activeRoute(prop.layout + prop.path),
         });
-        let publicUrl = process.env.PUBLIC_URL;
-        if (publicUrl.includes("/material-dashboard-react")) {
-          publicUrl = publicUrl.replace("/material-dashboard-react", "");
-        };
         
         return (
           <NavLink
@@ -96,7 +92,7 @@ export default function Sidebar(props) {
         target="_blank"
       >
         <div className={classes.logoImage}>
-          <img src={`${publicUrl}/logo.png`} alt="Logo" />
+          <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Logo" />
         </div>
       </a>
     </div>
