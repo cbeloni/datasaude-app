@@ -39,8 +39,8 @@
   },
   "scripts": {
     "start": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts build && mkdir build/material-dashboard-react && mv build/static build/material-dashboard-react/static",
-    "build:prod": "react-scripts build && mkdir build/material-dashboard-react && mv build/static build/material-dashboard-react/static",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts build && mkdir build && mv build/static build/static",
+    "build:prod": "react-scripts build && mkdir build && mv build/static build/static",
     "test": "export NODE_OPTIONS=--openssl-legacy-provider &&  react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "install:clean": "export NODE_OPTIONS=--openssl-legacy-provider && rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
@@ -59,7 +59,7 @@
   "bugs": {
     "url": "https://github.com/creativetimofficial/material-dashboard-react/issues"
   },
-  "homepage": "/material-dashboard-react/#/dashboard",
+  "homepage": "/#/dashboard",
   "optionalDependencies": {
     "@babel/core": "7.14.0",
     "typescript": "4.2.4"
@@ -79,5 +79,5 @@
     ],
     "development": []
   },
-  "postbuild": "mv build/static build/material-dashboard-react/static"
+  "postbuild": "mv build/static build/static"
 }
