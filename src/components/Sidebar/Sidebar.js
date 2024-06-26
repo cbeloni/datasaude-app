@@ -91,9 +91,8 @@ export default function Sidebar(props) {
         target="_blank"
       >
         <div className={classes.logoImage}>
-          <img src={logo} alt="logo" className={classes.img} />
+          <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Logo" />
         </div>
-        DATASAUDE-APP
       </a>
     </div>
   );
