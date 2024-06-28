@@ -53,7 +53,7 @@ jobs:
 
       - name: Apply Kubernetes manifests
         run: |
-          echo "Enviroment: ${{ REACT_APP_API_URL }}"
+          echo "Enviroment: ${{ secrets.REACT_APP_API_URL }}"
           cat .env
           kubectl apply -f datasaude-app-mgc.yaml --insecure-skip-tls-verify
           kubectl rollout restart deployment/datasaude-app --insecure-skip-tls-verify
