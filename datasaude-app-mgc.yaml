@@ -5,7 +5,7 @@ metadata:
     app: datasaude-app
   name: datasaude-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: datasaude-app
@@ -15,7 +15,7 @@ spec:
         app: datasaude-app
     spec:
       containers:
-        - image: cbeloni/datasaude-app:latest
+        - image: cbeloni/datasaude-app-amd64:latest
           name: datasaude-app
           ports:
             - containerPort: 3000
