@@ -44,12 +44,7 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG_MGC }}" > ~/.kube/config
         env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG_MGC }}
-      
-      - uses: danielr1996/envsubst-action@1.0.0
-        with:
-          input: .github/workflows/.env
-          output: .env
+          KUBECONFIG: ${{ secrets.KUBECONFIG_MGC }}      
 
       - name: Apply Kubernetes manifests
         run: |
