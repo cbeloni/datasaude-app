@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
+    environment: staging
     runs-on: ubuntu-latest
 
     steps:
@@ -44,9 +45,16 @@ jobs:
           echo "${{ secrets.KUBECONFIG_MGC }}" > ~/.kube/config
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG_MGC }}
+      
+      - uses: danielr1996/envsubst-action@1.0.0
+        with:
+          input: .github/workflows/.env
+          output: .env
 
       - name: Apply Kubernetes manifests
         run: |
+          echo "Enviroment: ${{ REACT_APP_API_URL }}"
+          cat .env
           kubectl apply -f datasaude-app-mgc.yaml --insecure-skip-tls-verify
           kubectl rollout restart deployment/datasaude-app --insecure-skip-tls-verify
 
