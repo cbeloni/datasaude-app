@@ -1,8 +1,6 @@
 // apiService.js
-const API_BASE_URL = "https://datasaude-api.beloni.dev.br/api";
-
 const obtemPacientes = async (requestData) => {
-  const apiUrl = `${API_BASE_URL}/v1/paciente`;
+  const apiUrl = `${process.env.REACT_APP_API_URL}/v1/paciente`;
 
   try {
     const response = await fetch(apiUrl, {

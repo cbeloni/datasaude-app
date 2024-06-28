@@ -33,9 +33,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     axios
-      .put(
-        "https://datasaude-api.beloni.dev.br/api/v1/poluentes/cetesb?persist=false"
-      )
+      .put(`${process.env.REACT_APP_API_URL}/v1/poluentes/cetesb?persist=false`)
       .then((response) => {
         setData(response.data);
       })

@@ -28,8 +28,7 @@ export default function CustomGraphBars(props) {
   const [dados, setDados] = React.useState([{ qtd: 0, DT_ATENDIMENTO: "" }]);
   const [selectedPeriod, setSelectedPeriod] = React.useState("dia");
   const [chave, setChave] = React.useState("DT_ATENDIMENTO");
-  const URL_BASE =
-    "https://datasaude-api.beloni.dev.br/api/v1/paciente/queries/";
+  const URL_BASE = `${process.env.REACT_APP_API_URL}/v1/paciente/queries/`;
   const [url, setUrl] = React.useState(URL_BASE);
 
   const handleChangePeriodo = (event) => {
