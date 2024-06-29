@@ -10,15 +10,7 @@ jobs:
     environment: staging
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Getting enviroment 
-        run: |
-          echo "Environment: ${{ secrets.ENVIRONMENT }}"
-          echo "env.REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}"
-          cat .env.template
-          envsubst < .env.template > .env
-          cat .env 
-      
+    steps:     
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -33,6 +25,18 @@ jobs:
         with:
           username: cbeloni
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Getting enviroment 
+        run: |
+          echo "Environment: ${{ secrets.ENVIRONMENT }}"
+          echo "env.REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}"
+          echo "listando:"
+          ls
+          echo "diretório atual"
+          pwd
+          cat .env.template
+          envsubst < .env.template > .env
+          cat .env 
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
