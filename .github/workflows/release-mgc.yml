@@ -26,16 +26,21 @@ jobs:
           username: cbeloni
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Carregar variáveis do .env.template
+        run: |
+          set -a
+          source .env.template
+          set +a
+          for var in $(cat .env.template | grep -v '^#' | sed 's/=.*//'); do
+            echo "$var=${!var}" >> $GITHUB_ENV
+          done
+
       - name: Getting enviroment 
         run: |
-          echo "Environment: ${{ secrets.ENVIRONMENT }}"
-          echo "env.REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}"
-          echo "listando:"
-          ls
-          echo "diretório atual"
-          pwd
+          echo "vars.REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}"
           cat .env.template
           envsubst < .env.template > .env
+          echo "cat .env"
           cat .env 
 
       - name: Build and push Docker image
