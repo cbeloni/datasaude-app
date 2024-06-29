@@ -15,8 +15,8 @@ jobs:
         run: |
           echo "Environment: ${{ secrets.ENVIRONMENT }}"
           echo "env.REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}"
-          cat .github/workflows/.env 
-          envsubst < .github/workflows/.env > .env
+          cat .env.template
+          envsubst < .env.template > .env
           cat .env 
       
       - name: Checkout repository
