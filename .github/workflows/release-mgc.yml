@@ -28,12 +28,7 @@ jobs:
 
       - name: Carregar variáveis do .env.template
         run: |
-          set -a
-          source .env.template
-          set +a
-          for var in $(cat .env.template | grep -v '^#' | sed 's/=.*//'); do
-            echo "$var=${!var}" >> $GITHUB_ENV
-          done
+          echo "REACT_APP_API_URL2=${{ vars.REACT_APP_API_URL }}" >> $GITHUB_ENV
 
       - name: Getting enviroment 
         run: |
