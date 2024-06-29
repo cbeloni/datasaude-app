@@ -58,9 +58,8 @@ jobs:
 
       - name: Apply Kubernetes manifests
         run: |          
-          cat .github/workflows/.env | envsubst > .env
           cat .env
-          kubectl create secret generic datasaude-app-env-staging --from-env-file=.env
+          kubectl create secret generic datasaude-app-env-staging --from-env-file=.env --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -f datasaude-app-mgc.yaml --insecure-skip-tls-verify
           kubectl rollout restart deployment/datasaude-app --insecure-skip-tls-verify
 
