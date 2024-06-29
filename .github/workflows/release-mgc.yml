@@ -11,6 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Getting enviroment 
+        run: |
+          echo "Environment: ${{ secrets.ENVIRONMENT }}"
+          echo "secrets.REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}"
+          echo "env.REACT_APP_API_URL: ${{ env.REACT_APP_API_URL }}"
+          echo "REACT_APP_API_URL: ${{ REACT_APP_API_URL }}"
+          echo "REACT_APP_API_URL: $REACT_APP_API_URL"
+          echo "secrets.TESTE: ${{ secrets.TESTE }}"
+          echo "env.TESTE: ${{ env.TESTE }}"
+          echo "TESTE: ${{ TESTE }}"
+          echo "TESTE2: $TESTE"
+
+      
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -47,8 +60,7 @@ jobs:
           KUBECONFIG: ${{ secrets.KUBECONFIG_MGC }}      
 
       - name: Apply Kubernetes manifests
-        run: |
-          echo "Enviroment: ${{ env.REACT_APP_API_URL }}"
+        run: |          
           cat .github/workflows/.env | envsubst > .env
           cat .env
           kubectl create secret generic datasaude-app-env-staging --from-env-file=.env
