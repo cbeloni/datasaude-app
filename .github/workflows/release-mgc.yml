@@ -26,17 +26,15 @@ jobs:
           username: cbeloni
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Carregar variáveis do .env.template
+      - name: Carregar variáveis em .env
         run: |
-          echo "REACT_APP_API_URL2=${{ vars.REACT_APP_API_URL }}" >> $GITHUB_ENV
+          echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" >> .env
 
-      - name: Getting enviroment 
-        run: |
-          echo "vars.REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}"
-          cat .env.template
-          envsubst < .env.template > .env
-          echo "cat .env"
-          cat .env 
+      # - name: Getting enviroment 
+      #   run: |
+      #     cat .env.template
+      #     envsubst < .env.template > .env
+      #     cat .env 
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
