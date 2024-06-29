@@ -14,12 +14,8 @@ jobs:
       - name: Getting enviroment 
         run: |
           echo "Environment: ${{ secrets.ENVIRONMENT }}"
-          echo "env.REACT_APP_API_URL: ${{ env.REACT_APP_API_URL }}"
+          echo "env.REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}"
           echo "REACT_APP_API_URL: $REACT_APP_API_URL"
-          echo "secrets.TESTE: ${{ secrets.TESTE }}"
-          echo "env.TESTE: ${{ env.TESTE }}"
-          echo "TESTE2: $TESTE"
-
       
       - name: Checkout repository
         uses: actions/checkout@v2
