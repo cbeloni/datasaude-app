@@ -1,6 +1,6 @@
 // apiService.js
 const obtemPacientes = async (requestData) => {
-  const apiUrl = `${process.env.REACT_APP_API_URL}/v1/paciente`;
+  const apiUrl = `https://datasaude-api.beloni.dev.br/api/v1/paciente/`;
 
   try {
     const response = await fetch(apiUrl, {
