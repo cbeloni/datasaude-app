@@ -48,6 +48,8 @@ jobs:
 
       - name: Set up kubeconfig
         run: |
+          echo "kubeconfig"
+          echo "${{ secrets.KUBECONFIG }}"
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
         env:
