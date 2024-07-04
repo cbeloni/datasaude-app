@@ -32,11 +32,6 @@ jobs:
         with:
           input: .env.template
           output: .env
-      
-      - name: Set up kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
