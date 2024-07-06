@@ -237,7 +237,6 @@ function ReactMap2() {
                       Código Atendimento: {paciente.objeto.cd_atendimento}
                       <br />
                       Nome: {paciente.objeto.nm_paciente} <br />
-                      Endereco: {paciente.objeto.endereco} <br />
                       Data Atendimento: {paciente.objeto.data} <br />
                       Poluente: {paciente.objeto.poluente} <br />
                       Índice interpolado: {paciente.objeto.indice} <br />
