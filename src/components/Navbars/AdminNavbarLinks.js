@@ -18,6 +18,7 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
+import { isAuthenticated } from "auth";
 
 const useStyles = makeStyles(styles);
 
@@ -33,6 +34,11 @@ export default function AdminNavbarLinks() {
   };
   const handleCloseProfile = () => {
     setOpenProfile(null);
+  };
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
+    window.location.reload();
   };
   return (
     <div>
@@ -103,12 +109,16 @@ export default function AdminNavbarLinks() {
                       Settings
                     </MenuItem>
                     <Divider light />
-                    <MenuItem
-                      onClick={handleCloseProfile}
-                      className={classes.dropdownItem}
-                    >
-                      Logout
-                    </MenuItem>
+                    <>
+                      {isAuthenticated() && (
+                        <MenuItem
+                          onClick={handleLogout}
+                          className={classes.dropdownItem}
+                        >
+                          Logout
+                        </MenuItem>
+                      )}
+                    </>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

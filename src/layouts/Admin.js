@@ -5,7 +5,6 @@ import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-// core components
 import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
@@ -16,22 +15,35 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/reactlogo.png";
+import { isAuthenticated } from "auth";
+import LoginForm from "views/Login/LoginForm";
 
 let ps;
 
 const switchRoutes = (
   <Switch>
+    <Route path="/admin/login" component={LoginForm} />
     {routes.map((prop, key) => {
       if (prop.layout === "/admin") {
         return (
           <Route
             path={prop.layout + prop.path}
-            component={prop.component}
             key={key}
+            render={(props) =>
+              isAuthenticated() ? (
+                <prop.component {...props} />
+              ) : (
+                <Redirect
+                  to={{
+                    pathname: "/admin/login",
+                    state: { from: props.location },
+                  }}
+                />
+              )
+            }
           />
         );
       }
-      return null;
     })}
     <Redirect from="/admin" to="/admin/dashboard" />
   </Switch>
