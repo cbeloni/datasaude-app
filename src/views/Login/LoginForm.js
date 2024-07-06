@@ -9,10 +9,10 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const history = useHistory();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Aqui você faria a lógica de autenticação real
-    if (login(email, password)) {
+    if (await login(email, password)) {
       console.log("Autenticado: ", isAuthenticated());
       history.push("/admin/dashboard");
     } else {
