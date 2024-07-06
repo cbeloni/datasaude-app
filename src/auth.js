@@ -1,17 +1,17 @@
 import axios from "axios";
 
-const apiURL = "https://datasaude-api.beloni.dev.br/api/v1/users/login";
+const apiURL = "https://datasaude-api.beloni.dev.br";
 
 export const login = async (email, password) => {
   try {
-    const response = await axios.post(apiURL, {
+    const response = await axios.post(apiURL + "/api/v1/users/login", {
       email,
       password,
     });
 
     if (response.data && response.data.token) {
-      localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("refreshToken", response.data.refresh_token);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("refresh_token", response.data.refresh_token);
       return true;
     }
   } catch (error) {
@@ -21,5 +21,26 @@ export const login = async (email, password) => {
 };
 
 export const isAuthenticated = () => {
-  return !!localStorage.getItem("authToken");
+  refreshToken();
+  return !!localStorage.getItem("token");
+};
+
+export const refreshToken = async () => {
+  try {
+    console.log("Validando token");
+    let token = localStorage.getItem("token");
+    let refresh_token = localStorage.getItem("refresh_token");
+    const response = await axios.post(apiURL + "/auth/refresh", {
+      token,
+      refresh_token,
+    });
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("refresh_token", response.data.refresh_token);
+    return true;
+  } catch (error) {
+    console.error("Error on refresh token:", error);
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh_token");
+    return false;
+  }
 };

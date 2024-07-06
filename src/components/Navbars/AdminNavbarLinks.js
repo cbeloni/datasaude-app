@@ -19,10 +19,12 @@ import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 import { isAuthenticated } from "auth";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks() {
+  const history = useHistory();
   const classes = useStyles();
   const [openProfile, setOpenProfile] = React.useState(null);
   const handleClickProfile = (event) => {
@@ -36,9 +38,10 @@ export default function AdminNavbarLinks() {
     setOpenProfile(null);
   };
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("refreshToken");
-    window.location.reload();
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh_token");
+    // window.location.reload();
+    history.push("/admin/login");
   };
   return (
     <div>
