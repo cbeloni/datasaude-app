@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
@@ -15,43 +15,48 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/reactlogo.png";
-import { isAuthenticated } from "auth";
 import LoginForm from "views/Login/LoginForm";
+import { UserContext } from "Contexto";
 
 let ps;
 
-const switchRoutes = (
-  <Switch>
-    <Route path="/admin/login" component={LoginForm} />
-    {routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
-        return (
-          <Route
-            path={prop.layout + prop.path}
-            key={key}
-            render={(props) =>
-              isAuthenticated() ? (
-                <prop.component {...props} />
-              ) : (
-                <Redirect
-                  to={{
-                    pathname: "/admin/login",
-                    state: { from: props.location },
-                  }}
-                />
-              )
-            }
-          />
-        );
-      }
-    })}
-    <Redirect from="/admin" to="/admin/dashboard" />
-  </Switch>
-);
+const useSwitchRoutes = () => {
+  const { user } = useContext(UserContext);
+
+  return (
+    <Switch>
+      <Route path="/admin/login" component={LoginForm} />
+      {routes.map((prop, key) => {
+        if (prop.layout === "/admin") {
+          return (
+            <Route
+              path={prop.layout + prop.path}
+              key={key}
+              render={(props) =>
+                user.isAuthenticated ? (
+                  <prop.component {...props} />
+                ) : (
+                  <Redirect
+                    to={{
+                      pathname: "/admin/login",
+                      state: { from: props.location },
+                    }}
+                  />
+                )
+              }
+            />
+          );
+        }
+      })}
+      <Redirect from="/admin" to="/admin/dashboard" />
+    </Switch>
+  );
+};
 
 const useStyles = makeStyles(styles);
 
 export default function Admin({ ...rest }) {
+  const switchRoutes = useSwitchRoutes();
   // styles
   const classes = useStyles();
   // ref to help us initialize PerfectScrollbar on windows devices

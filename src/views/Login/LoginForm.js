@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, TextField, Container, Typography, Box } from "@mui/material";
 import { login } from "auth";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { isAuthenticated } from "auth";
+import { UserContext } from "Contexto";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
+  const { setUser } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aqui você faria a lógica de autenticação real
     if (await login(email, password)) {
       console.log("Autenticado: ", isAuthenticated());
+      setUser({ isAuthenticated: true });
       history.push("/admin/dashboard");
     } else {
       alert("Credenciais inválidas!");
