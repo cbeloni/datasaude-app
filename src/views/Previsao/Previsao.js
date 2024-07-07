@@ -59,7 +59,7 @@ export default function Dashboard() {
                 <InsertChart></InsertChart>
               </CardIcon>
               <p className={classes.cardCategory}>
-                Pacientes por data de atendimento
+                Pacientes atendidos x previsto
               </p>
             </CardHeader>
             <CardBody>
