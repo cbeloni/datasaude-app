@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiURL = "https://datasaude-api.beloni.dev.br";
+const apiURL = `${process.env.REACT_APP_API_URL}`;
 
 export const login = async (email, password) => {
   try {

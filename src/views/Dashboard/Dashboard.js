@@ -33,7 +33,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     axios
-      .put(`${process.env.REACT_APP_API_URL}/v1/poluentes/cetesb?persist=false`)
+      .put(
+        `${process.env.REACT_APP_API_URL}/api/v1/poluentes/cetesb?persist=false`
+      )
       .then((response) => {
         setData(response.data);
       })
