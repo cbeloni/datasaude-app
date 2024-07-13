@@ -1,8 +1,8 @@
 import * as React from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { xLabels, previsao, historico } from "./CustomLineGraphValues";
+import PropTypes from "prop-types";
 
-export default function CustomLineGraph() {
+export default function CustomLineGraph({ xLabels, previsao, historico }) {
   return (
     <div style={{ width: "100%" }}>
       <LineChart
@@ -20,3 +20,9 @@ export default function CustomLineGraph() {
     </div>
   );
 }
+
+CustomLineGraph.propTypes = {
+  xLabels: PropTypes.array.isRequired,
+  previsao: PropTypes.array.isRequired,
+  historico: PropTypes.array.isRequired,
+};
