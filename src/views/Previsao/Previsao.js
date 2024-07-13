@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -16,14 +16,16 @@ import { format } from "date-fns";
 import moment from "moment";
 import isValidDate from "utils/validators";
 import CustomLineGraph from "components/Graph/CustomLineGraph";
-import {
-  xLabels,
-  previsao,
-  historico,
-} from "components/Graph/CustomLineGraphValues";
+// import {
+//   xLabels,
+//   previsao,
+//   historico,
+// } from "components/Graph/CustomLineGraphValues";
 import axios from "axios";
 
 const useStyles = makeStyles(styles);
+
+const base_url_api_ml = "https://datasaude-api-ml.beloni.dev.br";
 
 export default function Dashboard() {
   const [dateRange] = React.useState([
@@ -35,6 +37,9 @@ export default function Dashboard() {
   const [cid, setCid] = React.useState("TODOS");
   const [previsaoPath, setPrevisaoPath] = React.useState("5");
   const [sazonalidade, setSazonalidade] = React.useState("90");
+  const [xLabels, setXLabels] = React.useState([]);
+  const [previsao, setPrevisao] = React.useState([]);
+  const [historico, setHistorico] = React.useState([]);
 
   const getDateRangeText = (dataRange) => {
     if (dataRange && isValidDate(dataRange)) {
@@ -48,25 +53,56 @@ export default function Dashboard() {
     return `Dados de ${dataInicialFormatada} até  ${dataFinalFormatada}`;
   };
 
-  // qtd_dias_previsao, qtd_dias_sazonalidade, cid
   const treinarModelo = async () => {
     try {
       const response = await axios.post(
-        "https://datasaude-api-ml.beloni.dev.br/api/temporal/treinar",
-        null, // Sem payload no corpo da requisição
+        `${base_url_api_ml}/api/temporal/treinar`,
+        {}, //body
         {
           params: {
-            qtd_dias_previsao: 5,
-            qtd_dias_sazonalidade: 90,
+            qtd_dias_previsao: previsaoPath,
+            qtd_dias_sazonalidade: sazonalidade,
             cid: "TODOS",
           },
         }
       );
 
-      console.log("Resposta da API:", response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao fazer a requisição:", error);
+      throw error;
+    }
+  };
+
+  const getPrevisoes = async () => {
+    try {
+      const response = await axios.get(
+        `${base_url_api_ml}/api/temporal/previsao`,
+        {}, //body
+        {
+          params: {
+            cid: "TODOS",
+          },
+        }
+      );
+
+      const datas = response.data
+        .map((item) => item.data)
+        .map((dateStr) => new Date(dateStr));
+      const valoresHistoricos = response.data.map(
+        (item) => item.valor_historico
+      );
+      const valoresPrevisao = response.data.map((item) => item.valor_previsao);
+
+      setXLabels(datas);
+      setHistorico(valoresHistoricos);
+      setPrevisao(valoresPrevisao);
+
+      console.log("Finalizado get previsoes");
+
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao fazer a requisição get api:", error);
       throw error;
     }
   };
@@ -97,10 +133,16 @@ export default function Dashboard() {
     setCid(event.target.value);
   };
 
-  const handleTreinarClick = () => {
+  const handleTreinarClick = async () => {
     console.log("Atualizando");
-    treinarModelo();
+    await treinarModelo();
+    await getPrevisoes();
+    console.log("finalizado");
   };
+
+  useEffect(() => {
+    getPrevisoes();
+  }, []);
 
   return (
     <div>
