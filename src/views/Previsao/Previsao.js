@@ -36,7 +36,7 @@ export default function Dashboard() {
 
   const [cid, setCid] = React.useState("TODOS");
   const [previsaoPath, setPrevisaoPath] = React.useState("5");
-  const [sazonalidade, setSazonalidade] = React.useState("90");
+  const [sazonalidade, setSazonalidade] = React.useState("180");
   const [xLabels, setXLabels] = React.useState([]);
   const [previsao, setPrevisao] = React.useState([]);
   const [historico, setHistorico] = React.useState([]);
