@@ -89,7 +89,11 @@ function DataTablePacienteComponent() {
             ></RowRadioButtonsPeriodo>
           </div>
           <div style={{ padding: "10px" }}>
-            <Button color="primary" onClick={handleButtonClick}>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleButtonClick}
+            >
               Filtrar
             </Button>
           </div>

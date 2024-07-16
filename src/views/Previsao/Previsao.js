@@ -1,11 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem";
 
 import { InsertChart, Update } from "@material-ui/icons";
-import { Box, Input, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Input,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody";
@@ -22,6 +31,7 @@ import CustomLineGraph from "components/Graph/CustomLineGraph";
 //   historico,
 // } from "components/Graph/CustomLineGraphValues";
 import axios from "axios";
+import LoadingModal from "components/Progress/LoadingModal";
 
 const useStyles = makeStyles(styles);
 
@@ -40,6 +50,8 @@ export default function Dashboard() {
   const [xLabels, setXLabels] = React.useState([]);
   const [previsao, setPrevisao] = React.useState([]);
   const [historico, setHistorico] = React.useState([]);
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const getDateRangeText = (dataRange) => {
     if (dataRange && isValidDate(dataRange)) {
@@ -62,7 +74,7 @@ export default function Dashboard() {
           params: {
             qtd_dias_previsao: previsaoPath,
             qtd_dias_sazonalidade: sazonalidade,
-            cid: "TODOS",
+            cid: cid,
           },
         }
       );
@@ -78,10 +90,9 @@ export default function Dashboard() {
     try {
       const response = await axios.get(
         `${base_url_api_ml}/api/temporal/previsao`,
-        {}, //body
         {
           params: {
-            cid: "TODOS",
+            cid: cid,
           },
         }
       );
@@ -134,10 +145,16 @@ export default function Dashboard() {
   };
 
   const handleTreinarClick = async () => {
-    console.log("Atualizando");
-    await treinarModelo();
-    await getPrevisoes();
-    console.log("finalizado");
+    try {
+      setModalIsOpen(true);
+      await treinarModelo();
+      await getPrevisoes();
+      console.log("finalizado");
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+    } finally {
+      setModalIsOpen(false);
+    }
   };
 
   useEffect(() => {
@@ -170,8 +187,9 @@ export default function Dashboard() {
                       paddingTop: "10px",
                     }}
                   >
-                    <Typography>Dias previsão:</Typography>
+                    <InputLabel id="previsao-label">Dias previsão:</InputLabel>
                     <Input
+                      labelId="previsao-label"
                       type="number"
                       id="previsao"
                       name="previsao"
@@ -186,8 +204,11 @@ export default function Dashboard() {
                       paddingTop: "10px",
                     }}
                   >
-                    <Typography>Dias sazonalidade:</Typography>
+                    <InputLabel id="sazonalidade-label">
+                      Dias sazonalidade:
+                    </InputLabel>
                     <Input
+                      labelId="cid-label"
                       type="number"
                       id="sazonalidade"
                       name="sazonalidade"
@@ -202,26 +223,76 @@ export default function Dashboard() {
                       paddingTop: "10px",
                     }}
                   >
-                    <Typography>CID:</Typography>
-                    <Input
-                      disabled
-                      type="number"
-                      id="cid"
-                      name="cid"
-                      value={cid}
-                      onChange={handleCidChange}
-                    ></Input>
+                    <FormControl
+                      variant="standard"
+                      sx={{ m: 1, minWidth: 120 }}
+                    >
+                      <InputLabel id="cid-label">CID</InputLabel>
+                      <Select
+                        labelId="cid-label"
+                        id="cid"
+                        value={cid}
+                        onChange={handleCidChange}
+                        label="CID"
+                      >
+                        <MenuItem value="TODOS">
+                          <em>TODOS</em>
+                        </MenuItem>
+                        <MenuItem value={"BRONQUITE AGUDA"}>
+                          BRONQUITE AGUDA
+                        </MenuItem>
+                        <MenuItem
+                          value={
+                            "INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA"
+                          }
+                        >
+                          INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO
+                          ESPECIFICADA
+                        </MenuItem>
+                        <MenuItem
+                          value={"NASOFARINGITE AGUDA [RESFRIADO COMUM]"}
+                        >
+                          NASOFARINGITE AGUDA [RESFRIADO COMUM]
+                        </MenuItem>
+                        <MenuItem value={"SINUSITE AGUDA"}>
+                          SINUSITE AGUDA
+                        </MenuItem>
+                        <MenuItem value={"BRONQUIOLITE AGUDA"}>
+                          BRONQUIOLITE AGUDA
+                        </MenuItem>
+                        <MenuItem value={"AMIGDALITE AGUDA"}>
+                          AMIGDALITE AGUDA
+                        </MenuItem>
+                        <MenuItem value={"ASMA"}>ASMA</MenuItem>
+                        <MenuItem value={"BRONCOPNEUMONIA NAO ESPECIFICADA"}>
+                          BRONCOPNEUMONIA NAO ESPECIFICADA
+                        </MenuItem>
+                        <MenuItem value={"LARINGITE AGUDA"}>
+                          LARINGITE AGUDA
+                        </MenuItem>
+                        <MenuItem
+                          value={
+                            "INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO"
+                          }
+                        >
+                          INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
                   </div>
                   <div
                     style={{
                       paddingLeft: "20px",
-                      paddingRight: "500px",
+                      paddingRight: "300px",
+                      paddingTop: "20px",
                     }}
                   >
                     <Button
                       color="primary"
-                      variant="text"
                       onClick={handleTreinarClick}
+                      variant="contained"
+                      size="large"
+                      disableElevation
                     >
                       Calcular
                     </Button>
@@ -243,6 +314,10 @@ export default function Dashboard() {
           </Card>
         </GridItem>
       </GridContainer>
+      <LoadingModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+      />
     </div>
   );
 }
