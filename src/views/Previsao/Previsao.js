@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem";
 
 import { InsertChart, Update } from "@material-ui/icons";
-import { Typography } from "@mui/material";
+import {
+  Box,
+  Input,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody";
@@ -16,8 +25,17 @@ import { format } from "date-fns";
 import moment from "moment";
 import isValidDate from "utils/validators";
 import CustomLineGraph from "components/Graph/CustomLineGraph";
+// import {
+//   xLabels,
+//   previsao,
+//   historico,
+// } from "components/Graph/CustomLineGraphValues";
+import axios from "axios";
+import LoadingModal from "components/Progress/LoadingModal";
 
 const useStyles = makeStyles(styles);
+
+const base_url_api_ml = "https://datasaude-api-ml.beloni.dev.br";
 
 export default function Dashboard() {
   const [dateRange] = React.useState([
@@ -25,6 +43,15 @@ export default function Dashboard() {
     moment("28/02/2022", "DD/MM/YYYY").toDate(),
   ]);
   const classes = useStyles();
+
+  const [cid, setCid] = React.useState("TODOS");
+  const [previsaoPath, setPrevisaoPath] = React.useState("5");
+  const [sazonalidade, setSazonalidade] = React.useState("180");
+  const [xLabels, setXLabels] = React.useState([]);
+  const [previsao, setPrevisao] = React.useState([]);
+  const [historico, setHistorico] = React.useState([]);
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const getDateRangeText = (dataRange) => {
     if (dataRange && isValidDate(dataRange)) {
@@ -38,6 +65,59 @@ export default function Dashboard() {
     return `Dados de ${dataInicialFormatada} até  ${dataFinalFormatada}`;
   };
 
+  const treinarModelo = async () => {
+    try {
+      const response = await axios.post(
+        `${base_url_api_ml}/api/temporal/treinar`,
+        {}, //body
+        {
+          params: {
+            qtd_dias_previsao: previsaoPath,
+            qtd_dias_sazonalidade: sazonalidade,
+            cid: cid,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao fazer a requisição:", error);
+      throw error;
+    }
+  };
+
+  const getPrevisoes = async () => {
+    try {
+      const response = await axios.get(
+        `${base_url_api_ml}/api/temporal/previsao`,
+        {
+          params: {
+            cid: cid,
+          },
+        }
+      );
+
+      const datas = response.data
+        .map((item) => item.data)
+        .map((dateStr) => new Date(dateStr));
+      const valoresHistoricos = response.data.map(
+        (item) => item.valor_historico
+      );
+      const valoresPrevisao = response.data.map((item) => item.valor_previsao);
+
+      setXLabels(datas);
+      setHistorico(valoresHistoricos);
+      setPrevisao(valoresPrevisao);
+
+      console.log("Finalizado get previsoes");
+
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao fazer a requisição get api:", error);
+      throw error;
+    }
+  };
+
   const getCardColor = (qualidade) => {
     const colorMap = {
       "N1 - BOA": "success",
@@ -49,6 +129,38 @@ export default function Dashboard() {
     return colorMap[qualidade] || "warning"; // Retorna a cor mapeada ou "rose" se não houver correspondência
   };
 
+  const handleSazonalidadeChange = (event) => {
+    console.log(event.target.value);
+    setSazonalidade(event.target.value);
+  };
+
+  const handlePrevisaoChange = (event) => {
+    console.log(event.target.value);
+    setPrevisaoPath(event.target.value);
+  };
+
+  const handleCidChange = (event) => {
+    console.log(event.target.value);
+    setCid(event.target.value);
+  };
+
+  const handleTreinarClick = async () => {
+    try {
+      setModalIsOpen(true);
+      await treinarModelo();
+      await getPrevisoes();
+      console.log("finalizado");
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+    } finally {
+      setModalIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    getPrevisoes();
+  }, []);
+
   return (
     <div>
       <GridContainer>
@@ -59,12 +171,138 @@ export default function Dashboard() {
                 <InsertChart></InsertChart>
               </CardIcon>
               <p className={classes.cardCategory}>
-                Pacientes por data de atendimento
+                Pacientes atendidos x previsto
               </p>
             </CardHeader>
             <CardBody>
               <div className={classes.CardBody}>
-                <CustomLineGraph></CustomLineGraph>
+                <Box
+                  className="estiloHorizontal"
+                  justifyContent="space-between"
+                >
+                  <div
+                    style={{
+                      paddingLeft: "100px",
+                      paddingRight: "20px",
+                      paddingTop: "10px",
+                    }}
+                  >
+                    <InputLabel id="previsao-label">Dias previsão:</InputLabel>
+                    <Input
+                      labelId="previsao-label"
+                      type="number"
+                      id="previsao"
+                      name="previsao"
+                      value={previsaoPath}
+                      onChange={handlePrevisaoChange}
+                    ></Input>
+                  </div>
+                  <div
+                    style={{
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      paddingTop: "10px",
+                    }}
+                  >
+                    <InputLabel id="sazonalidade-label">
+                      Dias sazonalidade:
+                    </InputLabel>
+                    <Input
+                      labelId="cid-label"
+                      type="number"
+                      id="sazonalidade"
+                      name="sazonalidade"
+                      value={sazonalidade}
+                      onChange={handleSazonalidadeChange}
+                    ></Input>
+                  </div>
+                  <div
+                    style={{
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      paddingTop: "10px",
+                    }}
+                  >
+                    <FormControl
+                      variant="standard"
+                      sx={{ m: 1, minWidth: 120 }}
+                    >
+                      <InputLabel id="cid-label">CID</InputLabel>
+                      <Select
+                        labelId="cid-label"
+                        id="cid"
+                        value={cid}
+                        onChange={handleCidChange}
+                        label="CID"
+                      >
+                        <MenuItem value="TODOS">
+                          <em>TODOS</em>
+                        </MenuItem>
+                        <MenuItem value={"BRONQUITE AGUDA"}>
+                          BRONQUITE AGUDA
+                        </MenuItem>
+                        <MenuItem
+                          value={
+                            "INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA"
+                          }
+                        >
+                          INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO
+                          ESPECIFICADA
+                        </MenuItem>
+                        <MenuItem
+                          value={"NASOFARINGITE AGUDA [RESFRIADO COMUM]"}
+                        >
+                          NASOFARINGITE AGUDA [RESFRIADO COMUM]
+                        </MenuItem>
+                        <MenuItem value={"SINUSITE AGUDA"}>
+                          SINUSITE AGUDA
+                        </MenuItem>
+                        <MenuItem value={"BRONQUIOLITE AGUDA"}>
+                          BRONQUIOLITE AGUDA
+                        </MenuItem>
+                        <MenuItem value={"AMIGDALITE AGUDA"}>
+                          AMIGDALITE AGUDA
+                        </MenuItem>
+                        <MenuItem value={"ASMA"}>ASMA</MenuItem>
+                        <MenuItem value={"BRONCOPNEUMONIA NAO ESPECIFICADA"}>
+                          BRONCOPNEUMONIA NAO ESPECIFICADA
+                        </MenuItem>
+                        <MenuItem value={"LARINGITE AGUDA"}>
+                          LARINGITE AGUDA
+                        </MenuItem>
+                        <MenuItem
+                          value={
+                            "INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO"
+                          }
+                        >
+                          INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div
+                    style={{
+                      paddingLeft: "20px",
+                      paddingRight: "300px",
+                      paddingTop: "20px",
+                    }}
+                  >
+                    <Button
+                      color="primary"
+                      onClick={handleTreinarClick}
+                      variant="contained"
+                      size="large"
+                      disableElevation
+                    >
+                      Calcular
+                    </Button>
+                  </div>
+                </Box>
+                <CustomLineGraph
+                  xLabels={xLabels}
+                  previsao={previsao}
+                  historico={historico}
+                ></CustomLineGraph>
               </div>
             </CardBody>
             <CardFooter stats>
@@ -76,6 +314,10 @@ export default function Dashboard() {
           </Card>
         </GridItem>
       </GridContainer>
+      <LoadingModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+      />
     </div>
   );
 }

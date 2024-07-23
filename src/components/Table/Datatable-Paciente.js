@@ -12,7 +12,7 @@ import "./styles.css";
 function DataTablePacienteComponent() {
   const [selectedPeriod, setSelectedPeriod] = useState("anos");
   const [dateRange, setDateRange] = useState([null, null]);
-  const URL_BASE = `${process.env.REACT_APP_API_URL}/v1/paciente/listar?`;
+  const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar?`;
   const [url, setUrl] = useState(URL_BASE);
   const [idade, setIdade] = useState("");
 
@@ -89,7 +89,11 @@ function DataTablePacienteComponent() {
             ></RowRadioButtonsPeriodo>
           </div>
           <div style={{ padding: "10px" }}>
-            <Button color="primary" onClick={handleButtonClick}>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleButtonClick}
+            >
               Filtrar
             </Button>
           </div>

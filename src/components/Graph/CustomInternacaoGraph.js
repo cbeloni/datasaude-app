@@ -29,7 +29,7 @@ const chartSetting = {
 export default function CustomInternacaGraphBars(props) {
   const [dados, setDados] = React.useState([{ qtd: 0, DT_ATENDIMENTO: "" }]);
   const [chave] = React.useState("DT_ATENDIMENTO");
-  const URL_BASE = `${process.env.REACT_APP_API_URL}/v1/paciente/queries/`;
+  const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/queries/`;
   const [url, setUrl] = React.useState(URL_BASE);
 
   const handleButtonClick = () => {
