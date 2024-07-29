@@ -20,7 +20,7 @@ const Chat = () => {
     try {
       setModalIsOpen(true);
       const response = await axios.post(
-        "http://ollama.187.2.175.237.sslip.io/api/generate",
+        "https://ollama-staging.beloni.dev.br/api/generate",
         {
           model: "mistral",
           prompt: input,
