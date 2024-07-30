@@ -29,6 +29,7 @@ jobs:
       - uses: danielr1996/envsubst-action@1.0.0
         env:
             REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
+            LLAMA_API_URL: ${{ vars.LLAMA_API_URL }}
         with:
           input: .env.template
           output: .env
