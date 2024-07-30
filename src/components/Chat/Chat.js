@@ -21,6 +21,7 @@ const Chat = () => {
 
     try {
       setModalIsOpen(true);
+      console.log("Enviando mensagem para o Llama API: ", ollamaURL);
       const response = await axios.post(ollamaURL + "/api/generate", {
         model: "mistral",
         prompt: input,
