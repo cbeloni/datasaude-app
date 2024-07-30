@@ -6,6 +6,8 @@ import { Button } from "@mui/material";
 import LoadingModal from "components/Progress/LoadingModal";
 import { TextareaAutosize } from "@material-ui/core";
 
+const ollamaURL = `${process.env.LLAMA_API_URL}`;
+
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -20,7 +22,7 @@ const Chat = () => {
     try {
       setModalIsOpen(true);
       const response = await axios.post(
-        "https://ollama-staging.beloni.dev.br/api/generate",
+        ollamaURL + "/api/generate",
         {
           model: "mistral",
           prompt: input,
