@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 import LoadingModal from "components/Progress/LoadingModal";
 import { TextareaAutosize } from "@material-ui/core";
 
-const ollamaURL = `${process.env.LLAMA_API_URL}`;
+const ollamaURL = `${process.env.REACT_APP_LLAMA_API_URL}`;
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -21,7 +21,6 @@ const Chat = () => {
 
     try {
       setModalIsOpen(true);
-      console.log("Enviando mensagem para o Llama API: ", ollamaURL);
       const response = await axios.post(ollamaURL + "/api/generate", {
         model: "mistral",
         prompt: input,
