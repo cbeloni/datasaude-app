@@ -21,14 +21,11 @@ const Chat = () => {
 
     try {
       setModalIsOpen(true);
-      const response = await axios.post(
-        ollamaURL + "/api/generate",
-        {
-          model: "mistral",
-          prompt: input,
-          stream: false,
-        }
-      );
+      const response = await axios.post(ollamaURL + "/api/generate", {
+        model: "mistral",
+        prompt: input,
+        stream: false,
+      });
       console.log("Resposta do Llama API", response.data);
       const botMessage = { text: response.data.response, isUser: false };
       setMessages([...messages, userMessage, botMessage]);
