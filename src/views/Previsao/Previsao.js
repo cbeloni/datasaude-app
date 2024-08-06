@@ -16,14 +16,10 @@ import { format } from "date-fns";
 import moment from "moment";
 import isValidDate from "utils/validators";
 import CustomLineGraph from "components/Graph/CustomLineGraph";
-// import {
-//   xLabels,
-//   previsao,
-//   historico,
-// } from "components/Graph/CustomLineGraphValues";
 import axios from "axios";
 import LoadingModal from "components/Progress/LoadingModal";
 import CidSelect from "./CidSelect";
+import TipoSelect from "./TipoSelect";
 
 const useStyles = makeStyles(styles);
 
@@ -37,6 +33,7 @@ export default function Dashboard() {
   const classes = useStyles();
 
   const [cid, setCid] = React.useState("TODOS");
+  const [tipo, setTipo] = React.useState("ATENDIMENTO");
   const [previsaoPath, setPrevisaoPath] = React.useState("5");
   const [sazonalidade, setSazonalidade] = React.useState("180");
   const [xLabels, setXLabels] = React.useState([]);
@@ -136,6 +133,11 @@ export default function Dashboard() {
     setCid(event.target.value);
   };
 
+  const handleTipoChange = (event) => {
+    console.log(event.target.value);
+    setTipo(event.target.value);
+  };
+
   const handleTreinarClick = async () => {
     try {
       setModalIsOpen(true);
@@ -188,6 +190,18 @@ export default function Dashboard() {
                       value={previsaoPath}
                       onChange={handlePrevisaoChange}
                     ></Input>
+                  </div>
+                  <div
+                    style={{
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      paddingTop: "10px",
+                    }}
+                  >
+                    <TipoSelect
+                      tipo={tipo}
+                      handleTipoChange={handleTipoChange}
+                    ></TipoSelect>
                   </div>
                   <div
                     style={{
