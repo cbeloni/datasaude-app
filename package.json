@@ -71,6 +71,9 @@
     "gulp-append-prepend": "1.0.9",
     "prettier": "2.2.1"
   },
+  "resolutions": {
+    "@babel/core": "^7.16.0"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
