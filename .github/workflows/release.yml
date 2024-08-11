@@ -40,12 +40,12 @@ jobs:
           context: .
           platforms: linux/arm64
           push: true
-          tags: cbeloni/datasaude-app:latest
+          tags: cbeloni/datasaude-app:arm64
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'latest'
+          version: 'arm64'
 
       - name: Set up kubeconfig
         run: |
@@ -56,7 +56,7 @@ jobs:
 
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f datasaude-app.yaml --insecure-skip-tls-verify
+          kubectl apply -f datasaude-app-arm.yaml --insecure-skip-tls-verify
           kubectl rollout restart deployment/datasaude-app --insecure-skip-tls-verify
 
       - name: Purge cache
