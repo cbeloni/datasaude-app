@@ -40,12 +40,12 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: cbeloni/datasaude-app-amd64:latest
+          tags: cbeloni/datasaude-app:amd64
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'latest'
+          version: 'amd64'
 
       - name: Set up kubeconfig
         run: |
