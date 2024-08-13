@@ -15,7 +15,7 @@ spec:
         app: datasaude-app
     spec:
       containers:
-        - image: cbeloni/datasaude-app:amd64
+        - image: cbeloni/datasaude-app:arm64
           name: datasaude-app
           ports:
             - containerPort: 3000

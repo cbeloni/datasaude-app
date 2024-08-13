@@ -5,16 +5,7 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem";
 
 import { InsertChart, Update } from "@material-ui/icons";
-import {
-  Box,
-  Input,
-  Button,
-  Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
+import { Box, Input, Button, Typography, InputLabel } from "@mui/material";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody";
@@ -25,13 +16,10 @@ import { format } from "date-fns";
 import moment from "moment";
 import isValidDate from "utils/validators";
 import CustomLineGraph from "components/Graph/CustomLineGraph";
-// import {
-//   xLabels,
-//   previsao,
-//   historico,
-// } from "components/Graph/CustomLineGraphValues";
 import axios from "axios";
 import LoadingModal from "components/Progress/LoadingModal";
+import CidSelect from "./CidSelect";
+import TipoSelect from "./TipoSelect";
 
 const useStyles = makeStyles(styles);
 
@@ -45,6 +33,7 @@ export default function Dashboard() {
   const classes = useStyles();
 
   const [cid, setCid] = React.useState("TODOS");
+  const [tipo, setTipo] = React.useState("ATENDIMENTO");
   const [previsaoPath, setPrevisaoPath] = React.useState("5");
   const [sazonalidade, setSazonalidade] = React.useState("180");
   const [xLabels, setXLabels] = React.useState([]);
@@ -144,6 +133,11 @@ export default function Dashboard() {
     setCid(event.target.value);
   };
 
+  const handleTipoChange = (event) => {
+    console.log(event.target.value);
+    setTipo(event.target.value);
+  };
+
   const handleTreinarClick = async () => {
     try {
       setModalIsOpen(true);
@@ -204,6 +198,18 @@ export default function Dashboard() {
                       paddingTop: "10px",
                     }}
                   >
+                    <TipoSelect
+                      tipo={tipo}
+                      handleTipoChange={handleTipoChange}
+                    ></TipoSelect>
+                  </div>
+                  <div
+                    style={{
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      paddingTop: "10px",
+                    }}
+                  >
                     <InputLabel id="sazonalidade-label">
                       Dias sazonalidade:
                     </InputLabel>
@@ -223,62 +229,10 @@ export default function Dashboard() {
                       paddingTop: "10px",
                     }}
                   >
-                    <FormControl
-                      variant="standard"
-                      sx={{ m: 1, minWidth: 120 }}
-                    >
-                      <InputLabel id="cid-label">CID</InputLabel>
-                      <Select
-                        labelId="cid-label"
-                        id="cid"
-                        value={cid}
-                        onChange={handleCidChange}
-                        label="CID"
-                      >
-                        <MenuItem value="TODOS">
-                          <em>TODOS</em>
-                        </MenuItem>
-                        <MenuItem value={"BRONQUITE AGUDA"}>
-                          BRONQUITE AGUDA
-                        </MenuItem>
-                        <MenuItem
-                          value={
-                            "INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA"
-                          }
-                        >
-                          INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO
-                          ESPECIFICADA
-                        </MenuItem>
-                        <MenuItem
-                          value={"NASOFARINGITE AGUDA [RESFRIADO COMUM]"}
-                        >
-                          NASOFARINGITE AGUDA [RESFRIADO COMUM]
-                        </MenuItem>
-                        <MenuItem value={"SINUSITE AGUDA"}>
-                          SINUSITE AGUDA
-                        </MenuItem>
-                        <MenuItem value={"BRONQUIOLITE AGUDA"}>
-                          BRONQUIOLITE AGUDA
-                        </MenuItem>
-                        <MenuItem value={"AMIGDALITE AGUDA"}>
-                          AMIGDALITE AGUDA
-                        </MenuItem>
-                        <MenuItem value={"ASMA"}>ASMA</MenuItem>
-                        <MenuItem value={"BRONCOPNEUMONIA NAO ESPECIFICADA"}>
-                          BRONCOPNEUMONIA NAO ESPECIFICADA
-                        </MenuItem>
-                        <MenuItem value={"LARINGITE AGUDA"}>
-                          LARINGITE AGUDA
-                        </MenuItem>
-                        <MenuItem
-                          value={
-                            "INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO"
-                          }
-                        >
-                          INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
+                    <CidSelect
+                      cid={cid}
+                      handleCidChange={handleCidChange}
+                    ></CidSelect>
                   </div>
                   <div
                     style={{
