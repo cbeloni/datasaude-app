@@ -64,6 +64,7 @@ export default function Dashboard() {
             qtd_dias_previsao: previsaoPath,
             qtd_dias_sazonalidade: sazonalidade,
             cid: cid,
+            tipo: tipo,
           },
         }
       );
