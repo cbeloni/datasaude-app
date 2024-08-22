@@ -158,7 +158,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    handleTreinarClick();
+    getPrevisoes();
   }, [tipo, cid]);
 
   return (
