@@ -133,13 +133,11 @@ export default function Dashboard() {
   const handleCidChange = (event) => {
     console.log(event.target.value);
     setCid(event.target.value);
-    handleTreinarClick();
   };
 
   const handleTipoChange = (event) => {
     console.log(event.target.value);
     setTipo(event.target.value);
-    handleTreinarClick();
   };
 
   const handleTreinarClick = async () => {
@@ -158,6 +156,10 @@ export default function Dashboard() {
   useEffect(() => {
     getPrevisoes();
   }, []);
+
+  useEffect(() => {
+    handleTreinarClick();
+  }, [tipo, cid]);
 
   return (
     <div>
