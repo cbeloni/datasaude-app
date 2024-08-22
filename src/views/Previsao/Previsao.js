@@ -83,6 +83,7 @@ export default function Dashboard() {
         {
           params: {
             cid: cid,
+            tipo_analise: tipo,
           },
         }
       );
@@ -132,11 +133,13 @@ export default function Dashboard() {
   const handleCidChange = (event) => {
     console.log(event.target.value);
     setCid(event.target.value);
+    handleTreinarClick();
   };
 
   const handleTipoChange = (event) => {
     console.log(event.target.value);
     setTipo(event.target.value);
+    handleTreinarClick();
   };
 
   const handleTreinarClick = async () => {
@@ -199,18 +202,6 @@ export default function Dashboard() {
                       paddingTop: "10px",
                     }}
                   >
-                    <TipoSelect
-                      tipo={tipo}
-                      handleTipoChange={handleTipoChange}
-                    ></TipoSelect>
-                  </div>
-                  <div
-                    style={{
-                      paddingLeft: "20px",
-                      paddingRight: "20px",
-                      paddingTop: "10px",
-                    }}
-                  >
                     <InputLabel id="sazonalidade-label">
                       Dias sazonalidade:
                     </InputLabel>
@@ -222,6 +213,18 @@ export default function Dashboard() {
                       value={sazonalidade}
                       onChange={handleSazonalidadeChange}
                     ></Input>
+                  </div>
+                  <div
+                    style={{
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      paddingTop: "10px",
+                    }}
+                  >
+                    <TipoSelect
+                      tipo={tipo}
+                      handleTipoChange={handleTipoChange}
+                    ></TipoSelect>
                   </div>
                   <div
                     style={{
