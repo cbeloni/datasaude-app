@@ -30,6 +30,7 @@ jobs:
         env:
             REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
             REACT_APP_LLAMA_API_URL: ${{ vars.REACT_APP_LLAMA_API_URL }}
+            REACT_APP_API_ML_URL: ${{ vars.REACT_APP_API_ML_URL }}
         with:
           input: .env.template
           output: .env
