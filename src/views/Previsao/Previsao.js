@@ -23,7 +23,7 @@ import TipoSelect from "./TipoSelect";
 
 const useStyles = makeStyles(styles);
 
-const base_url_api_ml = "https://datasaude-api-ml.beloni.dev.br";
+const base_url_api_ml = `${process.env.REACT_APP_API_ML_URL}`;
 
 export default function Dashboard() {
   const [dateRange] = React.useState([
