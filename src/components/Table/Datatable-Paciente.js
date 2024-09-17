@@ -81,6 +81,15 @@ function DataTablePacienteComponent() {
           <div style={{ padding: "10px", paddingLeft: "40px" }}>
             <Typography>Data Atendimento:</Typography>
             <DatePicker value={dateRange} onChange={atualizaData}></DatePicker>
+          </div>         
+          <div style={{ paddingLeft: "40px" }}>
+            <SexoSelect
+              sexo={sexo}
+              handleSexoChange={handleSexoChange}
+            ></SexoSelect>
+          </div>
+          <div style={{ paddingLeft: "40px" }}>
+            <CidSelect cid={cid} handleCidChange={handleCidChange}></CidSelect>
           </div>
           <div style={{ paddingLeft: "40px" }}>
             <Typography>Idade:</Typography>
@@ -91,15 +100,6 @@ function DataTablePacienteComponent() {
               value={idade}
               onChange={handleIdadeChange}
             ></Input>
-          </div>
-          <div style={{ paddingLeft: "40px" }}>
-            <SexoSelect
-              sexo={sexo}
-              handleSexoChange={handleSexoChange}
-            ></SexoSelect>
-          </div>
-          <div style={{ paddingLeft: "40px" }}>
-            <CidSelect cid={cid} handleCidChange={handleCidChange}></CidSelect>
           </div>
           <div
             style={{
