@@ -18,7 +18,7 @@ import isValidDate from "utils/validators";
 import CustomLineGraph from "components/Graph/CustomLineGraph";
 import axios from "axios";
 import LoadingModal from "components/Progress/LoadingModal";
-import CidSelect from "./CidSelect";
+import CidSelect from "components/Select/CidSelect";
 import TipoSelect from "./TipoSelect";
 
 const useStyles = makeStyles(styles);

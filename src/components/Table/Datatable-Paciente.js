@@ -8,6 +8,8 @@ import RowRadioButtonsPeriodo from "components/RadioGroup/RadioGroupPeriodo";
 import { pacienteColumns } from "./PacienteHelper";
 import { format } from "date-fns";
 import "./styles.css";
+import CidSelect from "components/Select/CidSelect";
+import SexoSelect from "components/Select/SexoSelect";
 
 function DataTablePacienteComponent() {
   const [selectedPeriod, setSelectedPeriod] = useState("anos");
@@ -15,6 +17,8 @@ function DataTablePacienteComponent() {
   const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar?`;
   const [url, setUrl] = useState(URL_BASE);
   const [idade, setIdade] = useState("");
+  const [cid, setCid] = useState("TODOS");
+  const [sexo, setSexo] = useState("TODOS");
 
   const handleIdadeChange = (event) => {
     console.log(event.target.value);
@@ -23,6 +27,12 @@ function DataTablePacienteComponent() {
       return;
     }
     setIdade("");
+  };
+  const handleCidChange = (event) => {
+    setCid(event.target.value);
+  };
+  const handleSexoChange = (event) => {
+    setSexo(event.target.value);
   };
   const handleChangePeriodo = (event) => {
     setSelectedPeriod(event.target.value);
@@ -43,6 +53,12 @@ function DataTablePacienteComponent() {
     }
     if (selectedPeriod === "meses" && idade) {
       filtros += `&idade_meses=${idade}`;
+    }
+    if (cid && cid != "TODOS") {
+      filtros += `&cid=${cid}`;
+    }
+    if (sexo && sexo != "TODOS") {
+      filtros += `&sexo=${sexo}`;
     }
 
     let urlChanged = `${URL_BASE}${filtros}`;
@@ -75,6 +91,15 @@ function DataTablePacienteComponent() {
               value={idade}
               onChange={handleIdadeChange}
             ></Input>
+          </div>
+          <div style={{ paddingLeft: "40px" }}>
+            <SexoSelect
+              sexo={sexo}
+              handleSexoChange={handleSexoChange}
+            ></SexoSelect>
+          </div>
+          <div style={{ paddingLeft: "40px" }}>
+            <CidSelect cid={cid} handleCidChange={handleCidChange}></CidSelect>
           </div>
           <div
             style={{
