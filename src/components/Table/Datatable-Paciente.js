@@ -81,7 +81,7 @@ function DataTablePacienteComponent() {
           <div style={{ padding: "10px", paddingLeft: "40px" }}>
             <Typography>Data Atendimento:</Typography>
             <DatePicker value={dateRange} onChange={atualizaData}></DatePicker>
-          </div>         
+          </div>
           <div style={{ paddingLeft: "40px" }}>
             <SexoSelect
               sexo={sexo}
