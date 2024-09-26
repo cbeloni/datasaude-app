@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DataGrid, ToolbarOptions } from "tubular-react";
 import { LocalStorage } from "tubular-common";
 import DatePicker from "components/DataPicker/ReactDatePicker";
-import { Input } from "@mui/material";
+import Slider from "@mui/material/Slider";
 import { Box, Button, Typography } from "@material-ui/core";
 import RowRadioButtonsPeriodo from "components/RadioGroup/RadioGroupPeriodo";
 import { pacienteColumns } from "./PacienteHelper";
@@ -16,17 +16,15 @@ function DataTablePacienteComponent() {
   const [dateRange, setDateRange] = useState([null, null]);
   const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar?`;
   const [url, setUrl] = useState(URL_BASE);
-  const [idade, setIdade] = useState("");
+  const [idade] = useState("");
   const [cid, setCid] = useState("TODOS");
   const [sexo, setSexo] = useState("TODOS");
+  const [anosSlider, setAnosSlider] = React.useState([0, 18]);
+  const [maxRangeSlider, setMaxRangeSlider] = React.useState(18);
 
-  const handleIdadeChange = (event) => {
-    console.log(event.target.value);
-    if (event.target.value >= 0) {
-      setIdade(event.target.value);
-      return;
-    }
-    setIdade("");
+  const handleChangeSlider = (event, newValue) => {
+    setAnosSlider(newValue);
+    console.log("Anos: ", newValue);
   };
   const handleCidChange = (event) => {
     setCid(event.target.value);
@@ -36,6 +34,13 @@ function DataTablePacienteComponent() {
   };
   const handleChangePeriodo = (event) => {
     setSelectedPeriod(event.target.value);
+    if (event.target.value === "anos") {
+      setMaxRangeSlider(18);
+      setAnosSlider([0, 18]);
+    } else {
+      setMaxRangeSlider(24);
+      setAnosSlider([0, 24]);
+    }
   };
 
   const handleButtonClick = () => {
@@ -73,7 +78,7 @@ function DataTablePacienteComponent() {
 
   const toolbarOptions = new ToolbarOptions({
     searchText: false,
-    exportButton: false,
+    exportButton: true,
     printButton: false,
     customItems: (
       <div>
@@ -91,21 +96,11 @@ function DataTablePacienteComponent() {
           <div style={{ paddingLeft: "40px" }}>
             <CidSelect cid={cid} handleCidChange={handleCidChange}></CidSelect>
           </div>
-          <div style={{ paddingLeft: "40px" }}>
-            <Typography>Idade:</Typography>
-            <Input
-              type="number"
-              id="idade"
-              name="idade"
-              value={idade}
-              onChange={handleIdadeChange}
-            ></Input>
-          </div>
           <div
             style={{
-              paddingLeft: "20px",
-              paddingRight: "40px",
+              paddingLeft: "60px",
               paddingTop: "10px",
+              maxWidth: "100px",
             }}
           >
             <RowRadioButtonsPeriodo
@@ -113,7 +108,31 @@ function DataTablePacienteComponent() {
               onChange={handleChangePeriodo}
             ></RowRadioButtonsPeriodo>
           </div>
-          <div style={{ padding: "10px" }}>
+          <div style={{ paddingTop: "20px", paddingRight: "20px" }}>
+            <Box
+              sx={{
+                width: {
+                  xs: 200,
+                  md: 300,
+                },
+              }}
+            >
+              <Typography id="non-linear-slider" gutterBottom>
+                Selecionado de {anosSlider[0]} até {anosSlider[1]}
+                &nbsp;{selectedPeriod}:
+              </Typography>
+              <Slider
+                getAriaLabel={() => "Temperature range"}
+                value={anosSlider}
+                onChange={handleChangeSlider}
+                valueLabelDisplay="auto"
+                step={1}
+                min={0}
+                max={maxRangeSlider}
+              />
+            </Box>
+          </div>
+          <div style={{ padding: "20px", paddingTop: "40px" }}>
             <Button
               color="primary"
               variant="contained"
