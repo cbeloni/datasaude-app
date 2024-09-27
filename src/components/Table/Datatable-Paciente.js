@@ -16,14 +16,15 @@ function DataTablePacienteComponent() {
   const [dateRange, setDateRange] = useState([null, null]);
   const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar?`;
   const [url, setUrl] = useState(URL_BASE);
-  const [idade] = useState("");
   const [cid, setCid] = useState("TODOS");
   const [sexo, setSexo] = useState("TODOS");
-  const [anosSlider, setAnosSlider] = React.useState([0, 18]);
+  const [idadeSlider, setIdadeSlider] = React.useState([0, 18]);
+  const [idadeSliderChanged, setIdadeSliderChanged] = React.useState(false);
   const [maxRangeSlider, setMaxRangeSlider] = React.useState(18);
 
   const handleChangeSlider = (event, newValue) => {
-    setAnosSlider(newValue);
+    setIdadeSlider(newValue);
+    setIdadeSliderChanged(true);
     console.log("Anos: ", newValue);
   };
   const handleCidChange = (event) => {
@@ -36,10 +37,10 @@ function DataTablePacienteComponent() {
     setSelectedPeriod(event.target.value);
     if (event.target.value === "anos") {
       setMaxRangeSlider(18);
-      setAnosSlider([0, 18]);
+      setIdadeSlider([0, 18]);
     } else {
       setMaxRangeSlider(24);
-      setAnosSlider([0, 24]);
+      setIdadeSlider([0, 24]);
     }
   };
 
@@ -53,11 +54,11 @@ function DataTablePacienteComponent() {
       console.log("dataFinal", dataFinalFormatada);
       filtros += `dt_atendimento_inicial=${dataInicialFormatada}&dt_atendimento_final=${dataFinalFormatada}`;
     }
-    if (selectedPeriod === "anos" && idade) {
-      filtros += `&idade_anos=${idade}`;
+    if (selectedPeriod === "anos" && idadeSliderChanged) {
+      filtros += `&idade_anos_ini=${idadeSlider[0]}&idade_anos_fim=${idadeSlider[1]}`;
     }
-    if (selectedPeriod === "meses" && idade) {
-      filtros += `&idade_meses=${idade}`;
+    if (selectedPeriod === "meses" && idadeSliderChanged) {
+      filtros += `&idade_meses_ini=${idadeSlider[0]}&idade_meses_fim=${idadeSlider[1]}`;
     }
     if (cid && cid != "TODOS") {
       filtros += `&cid=${cid}`;
@@ -118,12 +119,12 @@ function DataTablePacienteComponent() {
               }}
             >
               <Typography id="non-linear-slider" gutterBottom>
-                Selecionado de {anosSlider[0]} até {anosSlider[1]}
+                Selecionado de {idadeSlider[0]} até {idadeSlider[1]}
                 &nbsp;{selectedPeriod}:
               </Typography>
               <Slider
                 getAriaLabel={() => "Temperature range"}
-                value={anosSlider}
+                value={idadeSlider}
                 onChange={handleChangeSlider}
                 valueLabelDisplay="auto"
                 step={1}

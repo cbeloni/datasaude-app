@@ -67,10 +67,6 @@ const pacienteColumns = [
     dataType: ColumnDataType.String,
     label: "Internado",
   }),
-  createColumn("IDADE", {
-    dataType: ColumnDataType.String,
-    label: "Idade",
-  }),
   createColumn("TP_SEXO", {
     dataType: ColumnDataType.String,
     label: "Sexo",
