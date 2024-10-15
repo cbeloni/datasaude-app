@@ -57,7 +57,7 @@ jobs:
 
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f datasaude-app-arm.yaml --insecure-skip-tls-verify
+          kubectl apply -f argocd-arm/datasaude-app-arm.yaml --insecure-skip-tls-verify
           kubectl rollout restart deployment/datasaude-app --insecure-skip-tls-verify
 
       - name: Purge cache
