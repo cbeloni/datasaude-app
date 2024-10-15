@@ -30,6 +30,16 @@ spec:
                 name: datasaude-app-svc
                 port:
                   number: 80
+    - host: datasaude-app.187.2.175.237.sslip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: datasaude-app-svc
+                port:
+                  number: 80                  
     - host: datasaude-app-staging.beloni.dev.br
       http:
         paths:

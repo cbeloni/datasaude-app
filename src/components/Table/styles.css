@@ -3,3 +3,12 @@
       display: flex;
     }
   }
+
+.grid-container {
+  overflow-x: auto; /* Habilita o scroll horizontal */
+  white-space: nowrap; /* Garante que o conteúdo não quebre em múltiplas linhas */
+}
+
+.grid-container .tb-grid {
+  display: inline-block; /* Evita que o grid estique além do necessário */
+}

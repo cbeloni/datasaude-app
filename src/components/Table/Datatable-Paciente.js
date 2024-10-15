@@ -21,6 +21,7 @@ function DataTablePacienteComponent() {
   const [idadeSlider, setIdadeSlider] = React.useState([0, 18]);
   const [idadeSliderChanged, setIdadeSliderChanged] = React.useState(false);
   const [maxRangeSlider, setMaxRangeSlider] = React.useState(18);
+  const [gridKey, setGridKey] = useState(Date.now());
 
   const handleChangeSlider = (event, newValue) => {
     setIdadeSlider(newValue);
@@ -70,6 +71,7 @@ function DataTablePacienteComponent() {
     let urlChanged = `${URL_BASE}${filtros}`;
     console.log("Resultado url alterada ", urlChanged);
     setUrl(urlChanged);
+    setGridKey(Date.now());
   };
 
   const atualizaData = (data) => {
@@ -148,15 +150,16 @@ function DataTablePacienteComponent() {
   });
 
   return (
-    <div>
+    <div className="grid-container">
       <DataGrid
-        key={url}
+        key={gridKey}
         dataSource={url}
         gridName="Tubular-React"
         columns={pacienteColumns}
         storage={new LocalStorage()}
         onPageChange={(params) => {
           console.log("===params===", params);
+          setGridKey(Date.now());
         }}
         toolbarOptions={toolbarOptions}
       />
