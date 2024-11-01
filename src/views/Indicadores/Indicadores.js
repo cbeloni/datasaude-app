@@ -68,6 +68,8 @@ export default function Dashboard() {
               backgroundColor: "white",
               padding: "10px",
               borderRadius: "8px",
+              zIndex: 10,
+              position: "relative",
             }}
           >
             <DatePicker value={dateRange} onChange={atualizaData} />

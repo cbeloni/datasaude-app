@@ -20,16 +20,13 @@ import axios from "axios";
 import LoadingModal from "components/Progress/LoadingModal";
 import CidSelect from "components/Select/CidSelect";
 import TipoSelect from "./TipoSelect";
+import DatePicker from "components/DataPicker/ReactDatePicker";
 
 const useStyles = makeStyles(styles);
 
 const base_url_api_ml = `${process.env.REACT_APP_API_ML_URL}`;
 
 export default function Dashboard() {
-  const [dateRange] = React.useState([
-    moment("01/01/2022", "DD/MM/YYYY").toDate(),
-    moment("28/02/2022", "DD/MM/YYYY").toDate(),
-  ]);
   const classes = useStyles();
 
   const [cid, setCid] = React.useState("TODOS");
@@ -41,6 +38,11 @@ export default function Dashboard() {
   const [historico, setHistorico] = React.useState([]);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const [dateRange, setDateRange] = React.useState([
+    moment("01/01/2023", "DD/MM/YYYY").toDate(),
+    moment("31/12/2024", "DD/MM/YYYY").toDate(),
+  ]);
 
   const getDateRangeText = (dataRange) => {
     if (dataRange && isValidDate(dataRange)) {
@@ -78,12 +80,17 @@ export default function Dashboard() {
 
   const getPrevisoes = async () => {
     try {
+      let [dataInicial, dataFinal] = dateRange;
+      let dataInicialFormatada = format(dataInicial, "yyyy-MM-dd");
+      let dataFinalFormatada = format(dataFinal, "yyyy-MM-dd");
       const response = await axios.get(
         `${base_url_api_ml}/api/temporal/previsao`,
         {
           params: {
             cid: cid,
             tipo_analise: tipo,
+            dt_previsao_inicial: dataInicialFormatada,
+            dt_previsao_final: dataFinalFormatada,
           },
         }
       );
@@ -95,7 +102,6 @@ export default function Dashboard() {
         (item) => item.valor_historico
       );
       const valoresPrevisao = response.data.map((item) => item.valor_previsao);
-
       setXLabels(datas);
       setHistorico(valoresHistoricos);
       setPrevisao(valoresPrevisao);
@@ -158,8 +164,14 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    getPrevisoes();
-  }, [tipo, cid]);
+    if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
+      getPrevisoes();
+    }
+  }, [tipo, cid, dateRange]);
+
+  const atualizaData = (data) => {
+    setDateRange(data);
+  };
 
   return (
     <div>
@@ -239,6 +251,18 @@ export default function Dashboard() {
                       cid={cid}
                       handleCidChange={handleCidChange}
                     ></CidSelect>
+                  </div>
+                  <div
+                    style={{
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      paddingTop: "20px",
+                    }}
+                  >
+                    <InputLabel id="data-atendimento-label">
+                      Data Atendimento
+                    </InputLabel>
+                    <DatePicker value={dateRange} onChange={atualizaData} />
                   </div>
                   <div
                     style={{

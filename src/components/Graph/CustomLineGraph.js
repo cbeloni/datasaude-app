@@ -3,6 +3,12 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import PropTypes from "prop-types";
 
 export default function CustomLineGraph({ xLabels, previsao, historico }) {
+  if (
+    xLabels.length != previsao.length ||
+    previsao.length != historico.length
+  ) {
+    return null;
+  }
   return (
     <div style={{ width: "100%" }}>
       <LineChart
