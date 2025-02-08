@@ -6,7 +6,9 @@ import { Button } from "@mui/material";
 import LoadingModal from "components/Progress/LoadingModal";
 import { TextareaAutosize } from "@material-ui/core";
 
-const ollamaURL = `${process.env.REACT_APP_LLAMA_API_URL}`;
+const chatGPTURL = "https://api.openai.com/v1/chat/completions";
+
+const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -21,13 +23,25 @@ const Chat = () => {
 
     try {
       setModalIsOpen(true);
-      const response = await axios.post(ollamaURL + "/api/generate", {
-        model: "mistral",
-        prompt: input,
-        stream: false,
-      });
-      console.log("Resposta do Llama API", response.data);
-      const botMessage = { text: response.data.response, isUser: false };
+      const response = await axios.post(
+        chatGPTURL,
+        {
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: input }],
+          temperature: 0.7,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+        }
+      );
+      console.log("Resposta do ChatGPT API", response.data);
+      const botMessage = {
+        text: response.data.choices[0].message.content,
+        isUser: false,
+      };
       setMessages([...messages, userMessage, botMessage]);
       setModalIsOpen(false);
     } catch (error) {
