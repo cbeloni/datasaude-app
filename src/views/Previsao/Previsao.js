@@ -40,8 +40,8 @@ export default function Dashboard() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const [dateRange, setDateRange] = React.useState([
-    moment("01/01/2023", "DD/MM/YYYY").toDate(),
-    moment("31/12/2024", "DD/MM/YYYY").toDate(),
+    moment("01/01/2022", "DD/MM/YYYY").toDate(),
+    moment("31/12/2023", "DD/MM/YYYY").toDate(),
   ]);
 
   const getDateRangeText = (dataRange) => {
