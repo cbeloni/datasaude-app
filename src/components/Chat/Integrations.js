@@ -1,81 +1,75 @@
+import axios from "axios";
+
 const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
-const threadKey = process.env.REACT_APP_THREAD_KEY;
+const THREAD_KEY = process.env.REACT_APP_AI_THREAD_KEY;
+
+const axiosInstance = axios.create({
+  baseURL: "https://api.openai.com/v1",
+  headers: {
+    "OpenAI-Beta": "assistants=v2",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
+  },
+});
 
 export const sendOpenAIMessage = async (content) => {
-    const url = `https://api.openai.com/v1/threads/${threadKey}/messages`;
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'OpenAI-Beta': 'assistants=v2',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-            role: 'user',
-            content
-        })
+  try {
+    const url = `/threads/${THREAD_KEY}/messages`;
+    const response = await axiosInstance.post(url, {
+      role: "user",
+      content: content,
     });
-
-    if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
-    }
-
-    return response.json();
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `OpenAI API error: ${error.response?.statusText || error.message}`
+    );
+  }
 };
 
 export const runOpenAIThread = async (body) => {
-    const url = `https://api.openai.com/v1/threads/${threadKey}/runs`;
+  try {
+    const url = `/threads/${THREAD_KEY}/runs`;
+    const response = await axiosInstance.post(url, body);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `OpenAI API error: ${error.response?.statusText || error.message}`
+    );
+  }
+};
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'OpenAI-Beta': 'assistants=v2',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify(body)
-    });
-
-    if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
-    }
-
-    return response.json();
+export const runStatusLoop = async (runId) => {
+  const runStatus = await getOpenAIRunStatus(runId);
+  console.log("aguardando status, atual: ", runStatus.status);
+  if (runStatus.status !== "completed") {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await runStatusLoop(runId);
+  }
 };
 
 export const getOpenAIRunStatus = async (runId) => {
-    const url = `https://api.openai.com/v1/threads/${threadKey}/runs/${runId}`;
-
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'OpenAI-Beta': 'assistants=v2',
-            'Authorization': `Bearer ${apiKey}`,
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
-    }
-
-    return response.json();
+  try {
+    const url = `/threads/${THREAD_KEY}/runs/${runId}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `OpenAI API error: ${error.response?.statusText || error.message}`
+    );
+  }
 };
 
-export const getOpenAIMessages = async () => {
-    const url = `https://api.openai.com/v1/threads/${threadKey}/messages`;
-
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'OpenAI-Beta': 'assistants=v2',
-            'Authorization': `Bearer ${apiKey}`,
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
-    }
-
-    return response.json();
+export const getOpenAIMessages = async (runId) => {
+  try {
+    const url = `/threads/${THREAD_KEY}/messages?run_id=${encodeURIComponent(
+      runId
+    )}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `OpenAI API error: ${error.response?.statusText || error.message}`
+    );
+  }
 };
