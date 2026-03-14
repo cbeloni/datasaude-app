@@ -58,14 +58,19 @@ function ReactMap2() {
   const [selectedPoluenteValue, setSelectedPoluenteValue] = React.useState(
     "MP10"
   );
+  const [selectedCidValue, setSelectedCidValue] = React.useState("TODOS");
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const dadosPacientes = await obtemPacientes({
+        const requestData = {
           dt_atendimento: selectedDate.format("YYYY-MM-DD"),
           poluente: selectedPoluenteValue,
-        });
+        };
+        if (selectedCidValue !== "TODOS") {
+          requestData.ds_cid = selectedCidValue;
+        }
+        const dadosPacientes = await obtemPacientes(requestData);
 
         const dadosPacientesFormatado = dadosPacientes.map(
           formatarPacienteMapa
@@ -78,7 +83,7 @@ function ReactMap2() {
     };
 
     fetchDataFromApi();
-  }, [selectedDate, selectedPoluenteValue]);
+  }, [selectedDate, selectedPoluenteValue, selectedCidValue]);
 
   useEffect(() => {
     atualizaMapa();
@@ -120,6 +125,10 @@ function ReactMap2() {
 
   const handlePoluenteChange = (event) => {
     setSelectedPoluenteValue(event.target.value);
+  };
+
+  const handleCidChange = (event) => {
+    setSelectedCidValue(event.target.value);
   };
 
   const iconMarkup = renderToStaticMarkup(
@@ -191,6 +200,23 @@ function ReactMap2() {
             <MenuItem value="O3">O3</MenuItem>
             <MenuItem value="TEMP">TEMP</MenuItem>
             <MenuItem value="UR">UR</MenuItem>
+          </Select>
+        </Box>
+      </GridItem>
+      <GridItem xs={12} sm={2}>
+        <Box p={1}>
+          <InputLabel id="cid-label">CID:</InputLabel>
+          <Select
+            labelId="cid-label"
+            id="select-cid"
+            value={selectedCidValue}
+            onChange={handleCidChange}
+          >
+            <MenuItem value="TODOS">Todos</MenuItem>
+            <MenuItem value="BRONQUIOLITE AGUDA">Bronquiolite Aguda</MenuItem>
+            <MenuItem value="INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA">
+              Infec&ccedil;&atilde;o Aguda Vias A&eacute;reas Superiores
+            </MenuItem>
           </Select>
         </Box>
       </GridItem>
