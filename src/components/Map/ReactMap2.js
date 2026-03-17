@@ -58,7 +58,7 @@ function ReactMap2() {
   const [selectedPoluenteValue, setSelectedPoluenteValue] = React.useState(
     "MP10"
   );
-  const [selectedCidValue, setSelectedCidValue] = React.useState("TODOS");
+  const [selectedCidValues, setSelectedCidValues] = React.useState([]);
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
@@ -67,8 +67,8 @@ function ReactMap2() {
           dt_atendimento: selectedDate.format("YYYY-MM-DD"),
           poluente: selectedPoluenteValue,
         };
-        if (selectedCidValue !== "TODOS") {
-          requestData.ds_cid = selectedCidValue;
+        if (selectedCidValues.length > 0) {
+          requestData.ds_cid = selectedCidValues.join(", ");
         }
         const dadosPacientes = await obtemPacientes(requestData);
 
@@ -83,7 +83,7 @@ function ReactMap2() {
     };
 
     fetchDataFromApi();
-  }, [selectedDate, selectedPoluenteValue, selectedCidValue]);
+  }, [selectedDate, selectedPoluenteValue, selectedCidValues]);
 
   useEffect(() => {
     atualizaMapa();
@@ -128,7 +128,8 @@ function ReactMap2() {
   };
 
   const handleCidChange = (event) => {
-    setSelectedCidValue(event.target.value);
+    const value = event.target.value;
+    setSelectedCidValues(typeof value === "string" ? value.split(", ") : value);
   };
 
   const iconMarkup = renderToStaticMarkup(
@@ -209,10 +210,22 @@ function ReactMap2() {
           <Select
             labelId="cid-label"
             id="select-cid"
-            value={selectedCidValue}
+            multiple
+            value={selectedCidValues}
             onChange={handleCidChange}
+            renderValue={(selected) =>
+              selected.length === 0
+                ? "Todos"
+                : selected
+                    .map((v) =>
+                      v === "BRONQUIOLITE AGUDA"
+                        ? "Bronquiolite Aguda"
+                        : "Infec\u00e7\u00e3o Vias A\u00e9reas"
+                    )
+                    .join(", ")
+            }
+            displayEmpty
           >
-            <MenuItem value="TODOS">Todos</MenuItem>
             <MenuItem value="BRONQUIOLITE AGUDA">Bronquiolite Aguda</MenuItem>
             <MenuItem value="INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA">
               Infec&ccedil;&atilde;o Aguda Vias A&eacute;reas Superiores
