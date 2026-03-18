@@ -132,16 +132,24 @@ function ReactMap2() {
     setSelectedCidValues(typeof value === "string" ? value.split(", ") : value);
   };
 
-  const iconMarkup = renderToStaticMarkup(
-    <Fab size="small" variant="extended">
-      <Accessibility />
-    </Fab>
-  );
+  const CID_COLORS = {
+    "BRONQUIOLITE AGUDA": "#1976d2",
+    "INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA": "#e65100",
+  };
 
-  const customMarkerIcon = divIcon({
-    className: "",
-    html: iconMarkup,
-  });
+  const getMarkerIcon = (ds_cid) => {
+    const color = CID_COLORS[ds_cid] || "#757575";
+    const markup = renderToStaticMarkup(
+      <Fab
+        size="small"
+        variant="extended"
+        style={{ backgroundColor: color, color: "#fff" }}
+      >
+        <Accessibility />
+      </Fab>
+    );
+    return divIcon({ className: "", html: markup });
+  };
 
   return (
     <GridContainer>
@@ -270,7 +278,7 @@ function ReactMap2() {
                   <Marker
                     position={paciente.localidade}
                     key={paciente.objeto.id}
-                    icon={customMarkerIcon}
+                    icon={getMarkerIcon(paciente.objeto.ds_cid)}
                   >
                     <Popup>
                       Código Atendimento: {paciente.objeto.cd_atendimento}
