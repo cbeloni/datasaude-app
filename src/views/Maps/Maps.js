@@ -8,6 +8,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import styles from "layouts/Styles/commom.js";
 import { makeStyles } from "@material-ui/core/styles";
 import ReactMap2 from "components/Map/ReactMap2";
+import ReactMapMaxacali from "components/Map/ReactMapMaxacali";
 
 const useStyles = makeStyles(styles);
 
@@ -24,6 +25,7 @@ const Maps = () => {
         <TabList onChange={handleChange} aria-label="lab API tabs example">
           <Tab label="mapa dinâmico" value="map_dinamic" />
           <Tab label="mapa estático" value="map_estatic" />
+          <Tab label="mapa maxacali" value="map_maxacali" />
         </TabList>
       </Box>
       <TabPanel value="map_dinamic" className={classes.tabPanelBorder}>
@@ -31,6 +33,9 @@ const Maps = () => {
       </TabPanel>
       <TabPanel value="map_estatic" className={classes.tabPanelBorder}>
         <IframeMap></IframeMap>
+      </TabPanel>
+      <TabPanel value="map_maxacali" className={classes.tabPanelBorder}>
+        <ReactMapMaxacali></ReactMapMaxacali>
       </TabPanel>
     </TabContext>
   );
