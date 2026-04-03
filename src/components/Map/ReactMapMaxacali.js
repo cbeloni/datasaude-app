@@ -50,6 +50,15 @@ ResetViewButton.propTypes = {
   zoom: PropTypes.number.isRequired,
 };
 
+const SETOR_COLORS = [
+  "#e53935",
+  "#8e24aa",
+  "#1e88e5",
+  "#00897b",
+  "#f4511e",
+  "#6d4c41",
+];
+
 function ReactMapMaxacali() {
   const initialPosition = [-16.886, -40.545];
   const initialZoom = window.innerWidth >= 768 ? 12 : 11;
@@ -65,7 +74,7 @@ function ReactMapMaxacali() {
   useEffect(() => {
     const loadGeoJson = async () => {
       try {
-        const response = await fetch("/dados/territorio/setores.geojson");
+        const response = await fetch("/setores.geojson");
         if (!response.ok) throw new Error("Falha ao carregar GeoJSON");
         const data = await response.json();
         setGeoData(data);
@@ -126,6 +135,39 @@ function ReactMapMaxacali() {
       ".png";
   };
 
+  // ─── Mapa de cores por setor (calculado uma vez que geoData carrega) ───
+  const setorColorMap = React.useMemo(() => {
+    if (!geoData) return {};
+    const map = {};
+    geoData.features.forEach((feature, index) => {
+      map[feature.properties.CD_SETOR] =
+        SETOR_COLORS[index % SETOR_COLORS.length];
+    });
+    return map;
+  }, [geoData]);
+
+  const getSetorStyle = (feature) => ({
+    fillColor: setorColorMap[feature.properties.CD_SETOR] || "#999",
+    weight: 2,
+    opacity: 1,
+    color: "white",
+    dashArray: "3",
+    fillOpacity: 0.45,
+  });
+
+  const onEachSetor = (feature, layer) => {
+    const p = feature.properties;
+    const nome = p.NM_AGLOM || p.NM_DIST || p.NM_MUN || "Setor";
+    layer.bindPopup(
+      `<b>${nome}</b><br/>
+      <b>Código do Setor:</b> ${p.CD_SETOR}<br/>
+      <b>Município:</b> ${p.NM_MUN}<br/>
+      <b>Distrito:</b> ${p.NM_DIST || "—"}<br/>
+      <b>Situação:</b> ${p.SITUACAO}<br/>
+      <b>Área (km²):</b> ${Number(p.AREA_KM2).toFixed(4)}`
+    );
+  };
+
   return (
     <GridContainer>
       <GridItem xs={12}>
@@ -147,19 +189,25 @@ function ReactMapMaxacali() {
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             </BaseLayer>
 
-            {!loading && geoData && (
-              <Overlay checked name="Território Maxacali">
-                <GeoJSON
-                  data={geoData}
-                  style={() => ({
-                    color: "#4a83ec",
-                    weight: 2,
-                    fillColor: "#1a1d62",
-                    fillOpacity: 0.4,
-                  })}
-                />
-              </Overlay>
-            )}
+            {!loading &&
+              geoData &&
+              geoData.features.map((feature) => {
+                const p = feature.properties;
+                const nome = p.NM_AGLOM || p.NM_DIST || `Setor ${p.CD_SETOR}`;
+                const singleFeatureCollection = {
+                  type: "FeatureCollection",
+                  features: [feature],
+                };
+                return (
+                  <Overlay checked name={nome} key={p.CD_SETOR}>
+                    <GeoJSON
+                      data={singleFeatureCollection}
+                      style={() => getSetorStyle(feature)}
+                      onEachFeature={onEachSetor}
+                    />
+                  </Overlay>
+                );
+              })}
           </LayersControl>
         </MapContainer>
       </GridItem>
