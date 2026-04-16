@@ -83,10 +83,6 @@ function ReactMap2() {
     "MP10"
   );
   const CID_ALL = "TODOS";
-  const CID_OPTIONS = [
-    "BRONQUIOLITE AGUDA",
-    "INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA",
-  ];
 
   const [selectedCidValues, setSelectedCidValues] = React.useState([CID_ALL]);
   const [cidSelectOpen, setCidSelectOpen] = React.useState(false);
@@ -174,12 +170,6 @@ function ReactMap2() {
     }
 
     if (nextValues.length === 0) {
-      setSelectedCidValues([CID_ALL]);
-      setCidSelectOpen(false);
-      return;
-    }
-
-    if (nextValues.length === CID_OPTIONS.length) {
       setSelectedCidValues([CID_ALL]);
       setCidSelectOpen(false);
       return;
