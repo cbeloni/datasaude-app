@@ -2,6 +2,36 @@ import axios from "axios";
 
 const apiURL = `${process.env.REACT_APP_API_URL}`;
 
+const clearAuthCache = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("refresh_token");
+};
+
+const parseJwtPayload = (token) => {
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) {
+      return null;
+    }
+
+    const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decodedPayload = atob(normalizedPayload);
+    return JSON.parse(decodedPayload);
+  } catch (error) {
+    return null;
+  }
+};
+
+const isTokenExpired = (token) => {
+  const payload = parseJwtPayload(token);
+  if (!payload || !payload.exp) {
+    return true;
+  }
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  return currentTimestamp >= payload.exp;
+};
+
 export const login = async (email, password) => {
   try {
     const response = await axios.post(apiURL + "/api/v1/users/login", {
@@ -21,8 +51,17 @@ export const login = async (email, password) => {
 };
 
 export const isAuthenticated = () => {
-  refreshToken();
-  return !!localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return false;
+  }
+
+  if (isTokenExpired(token)) {
+    clearAuthCache();
+    return false;
+  }
+
+  return true;
 };
 
 export const refreshToken = async () => {
@@ -39,8 +78,7 @@ export const refreshToken = async () => {
     return true;
   } catch (error) {
     console.error("Error on refresh token:", error);
-    localStorage.removeItem("token");
-    localStorage.removeItem("refresh_token");
+    clearAuthCache();
     return false;
   }
 };
