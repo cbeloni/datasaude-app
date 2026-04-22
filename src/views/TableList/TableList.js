@@ -16,6 +16,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import styles from "layouts/Styles/commom.js";
 import PoluentesHelper from "views/TableList/PoluentesHelper";
 import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
+import DataTableMaxacaliComponent from "components/Table/Datatable-Maxacali";
 
 const useStyles = makeStyles(styles);
 const poluentesHelper = PoluentesHelper();
@@ -34,6 +35,7 @@ export default function TableList() {
         <TabList onChange={handleChange} aria-label="lab API tabs example">
           <Tab label="Poluente online" value="poluente-online" />
           <Tab label="Paciente" value="paciente" />
+          <Tab label="Maxacali" value="maxacali" />
         </TabList>
       </Box>
       <TabPanel value="poluente-online" className={classes.tabPanelBorder}>
@@ -67,6 +69,23 @@ export default function TableList() {
               </CardHeader>
               <CardBody>
                 <DataTablePacienteComponent></DataTablePacienteComponent>
+              </CardBody>
+            </Card>
+          </GridItem>
+        </GridContainer>
+      </TabPanel>
+      <TabPanel value="maxacali" className={classes.tabPanelBorder}>
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary">
+                <h4 className={classes.cardTitleWhite}>Maxacali</h4>
+                <p className={classes.cardCategoryWhite}>
+                  Tabela baseada no dataset de setores do Maxacali
+                </p>
+              </CardHeader>
+              <CardBody>
+                <DataTableMaxacaliComponent></DataTableMaxacaliComponent>
               </CardBody>
             </Card>
           </GridItem>
