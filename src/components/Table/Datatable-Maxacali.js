@@ -1,13 +1,29 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { maxacaliColumns } from "./MaxacaliHelper";
 
 const PAGE_SIZE_DEFAULT = 10;
+const DEFAULT_SELECTED_COLUMNS = [
+  "id",
+  "cd_setor",
+  "situacao",
+  "cd_sit",
+  "cd_tipo",
+  "area_km2",
+  "cd_regiao",
+  "nm_regiao",
+  "cd_uf",
+  "nm_uf",
+];
 
 function DataTableMaxacaliComponent() {
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedColumns, setSelectedColumns] = useState(
+    DEFAULT_SELECTED_COLUMNS
+  );
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: PAGE_SIZE_DEFAULT,
@@ -17,6 +33,23 @@ function DataTableMaxacaliComponent() {
     () => `${process.env.REACT_APP_API_URL}/api/v1/maxacali/listar`,
     []
   );
+  const columnVisibilityModel = useMemo(
+    () =>
+      maxacaliColumns.reduce((acc, column) => {
+        acc[column.field] = selectedColumns.includes(column.field);
+        return acc;
+      }, {}),
+    [selectedColumns]
+  );
+
+  const handleColumnsChange = (event) => {
+    const value = event.target.value;
+    setSelectedColumns(typeof value === "string" ? value.split(",") : value);
+    setPaginationModel((current) => ({
+      ...current,
+      page: 0,
+    }));
+  };
 
   useEffect(() => {
     let active = true;
@@ -28,7 +61,7 @@ function DataTableMaxacaliComponent() {
           take: paginationModel.pageSize,
           prev: null,
           skip: paginationModel.page * paginationModel.pageSize,
-          columns: [],
+          columns: selectedColumns,
         };
 
         const response = await fetch(endpoint, {
@@ -71,13 +104,52 @@ function DataTableMaxacaliComponent() {
     return () => {
       active = false;
     };
-  }, [endpoint, paginationModel.page, paginationModel.pageSize]);
+  }, [
+    endpoint,
+    paginationModel.page,
+    paginationModel.pageSize,
+    selectedColumns,
+  ]);
 
   return (
     <div style={{ width: "100%", height: 650 }}>
+      <Box
+        style={{
+          paddingBottom: "12px",
+          maxWidth: "270px",
+        }}
+      >
+        <FormControl fullWidth size="small">
+          <InputLabel id="maxacali-columns-label">Colunas exibidas</InputLabel>
+          <Select
+            labelId="maxacali-columns-label"
+            id="maxacali-columns"
+            multiple
+            value={selectedColumns}
+            onChange={handleColumnsChange}
+            label="Colunas exibidas"
+            renderValue={(selected) =>
+              selected
+                .map(
+                  (field) =>
+                    maxacaliColumns.find((column) => column.field === field)
+                      ?.headerName || field
+                )
+                .join(", ")
+            }
+          >
+            {maxacaliColumns.map((column) => (
+              <MenuItem key={column.field} value={column.field}>
+                {column.headerName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
       <DataGrid
         rows={rows}
         columns={maxacaliColumns}
+        columnVisibilityModel={columnVisibilityModel}
         rowCount={rowCount}
         loading={loading}
         pagination
