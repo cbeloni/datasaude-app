@@ -1,4 +1,4 @@
-const maxacaliColumns = [
+const maxacaliBaseColumns = [
   { field: "id", headerName: "Id", width: 100 },
   { field: "cd_setor", headerName: "Código Setor", width: 190 },
   { field: "situacao", headerName: "Situação", width: 120 },
@@ -29,6 +29,9 @@ const maxacaliColumns = [
   { field: "nm_rgi", headerName: "RGI", width: 140 },
   { field: "cd_concurb", headerName: "Código Conurbação", width: 180 },
   { field: "nm_concurb", headerName: "Conurbação", width: 180 },
+];
+
+const maxacaliCaracteristicaColumns = [
   { field: "v0001", headerName: "V0001", width: 110 },
   { field: "v0002", headerName: "V0002", width: 110 },
   { field: "v0003", headerName: "V0003", width: 110 },
@@ -36,8 +39,19 @@ const maxacaliColumns = [
   { field: "v0005", headerName: "V0005", width: 110 },
   { field: "v0006", headerName: "V0006", width: 110 },
   { field: "v0007", headerName: "V0007", width: 110 },
+  { field: "v00047", headerName: "V00047", width: 110 },
+  {
+    field: "calculo_um",
+    headerName: "Calculo Um",
+    width: 140,
+  },
+];
+
+const maxacaliColumns = [
+  ...maxacaliBaseColumns,
+  ...maxacaliCaracteristicaColumns,
   { field: "created_at", headerName: "Criado em", width: 170 },
   { field: "updated_at", headerName: "Atualizado em", width: 170 },
 ];
 
-export { maxacaliColumns };
+export { maxacaliBaseColumns, maxacaliCaracteristicaColumns, maxacaliColumns };
