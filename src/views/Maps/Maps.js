@@ -9,6 +9,7 @@ import styles from "layouts/Styles/commom.js";
 import { makeStyles } from "@material-ui/core/styles";
 import ReactMap2 from "components/Map/ReactMap2";
 import ReactMapMaxacali from "components/Map/ReactMapMaxacali";
+import ReactMapBronquiolite from "components/Map/ReactMapBronquiolite";
 
 const useStyles = makeStyles(styles);
 
@@ -24,12 +25,16 @@ const Maps = () => {
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <TabList onChange={handleChange} aria-label="lab API tabs example">
           <Tab label="mapa dinâmico" value="map_dinamic" />
+          <Tab label="bronquiolite" value="map_bronquiolite" />
           <Tab label="mapa estático" value="map_estatic" />
           <Tab label="mapa maxacali" value="map_maxacali" />
         </TabList>
       </Box>
       <TabPanel value="map_dinamic" className={classes.tabPanelBorder}>
         <ReactMap2></ReactMap2>
+      </TabPanel>
+      <TabPanel value="map_bronquiolite" className={classes.tabPanelBorder}>
+        <ReactMapBronquiolite></ReactMapBronquiolite>
       </TabPanel>
       <TabPanel value="map_estatic" className={classes.tabPanelBorder}>
         <IframeMap></IframeMap>
