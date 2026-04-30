@@ -120,7 +120,13 @@ function ReactMapBronquiolite() {
     new Set(todosPacientes.map((paciente) => paciente.objeto.internacao))
   );
 
-  const getMarkerIcon = () => {
+  const CID_COLORS = {
+    "BRONQUIOLITE AGUDA": "#1976d2",
+    "INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA": "#e65100",
+  };
+
+  const getMarkerIcon = (dsCid) => {
+    const markerColor = CID_COLORS[dsCid] || "#2f6db3";
     const markup = renderToStaticMarkup(
       <span
         style={{
@@ -128,7 +134,7 @@ function ReactMapBronquiolite() {
           width: 10,
           height: 10,
           borderRadius: "50%",
-          backgroundColor: "#2f6db3",
+          backgroundColor: markerColor,
           opacity: 0.85,
           border: "1px solid #ffffff",
           boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.2)",
@@ -255,7 +261,7 @@ function ReactMapBronquiolite() {
                     <Marker
                       position={paciente.localidade}
                       key={paciente.objeto.id}
-                      icon={getMarkerIcon()}
+                      icon={getMarkerIcon(paciente.objeto.ds_cid)}
                     >
                       <Popup>
                         Código Atendimento: {paciente.objeto.cd_atendimento}
