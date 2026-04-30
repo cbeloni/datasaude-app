@@ -19,13 +19,17 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Button } from "@material-ui/core";
+import { Box, Button, Typography } from "@material-ui/core";
 import { IMG_DEFAULT } from "./ConstantsMap";
 import { estacoes } from "./ConstantsEstacoes";
 import formatarPacienteMapa from "utils/formatter";
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
 import PropTypes from "prop-types";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
 
 function ResetMapViewButton({ center, zoom }) {
   const map = useMap();
@@ -59,7 +63,10 @@ function ReactMapBronquiolite() {
   const initialPosition = [-23.6226, -46.5489];
   const initialZoom = window.innerWidth >= 768 ? 10 : 9;
 
+  const [todosPacientes, setTodosPacientes] = useState([]);
   const [dadosPacientes, setDadosPacientes] = useState([]);
+  const [selectedCid, setSelectedCid] = useState("TODOS");
+  const [selectedInternacao, setSelectedInternacao] = useState("TODOS");
   const imageBounds = [
     [-24.075632306045406, -47.21016939502355],
     [-23.174450701460348, -45.693560989597614],
@@ -76,8 +83,10 @@ function ReactMapBronquiolite() {
         }
 
         const pacientes = await response.json();
+        const pacientesFormatados = pacientes.map(formatarPacienteMapa);
         if (isMounted) {
-          setDadosPacientes(pacientes.map(formatarPacienteMapa));
+          setTodosPacientes(pacientesFormatados);
+          setDadosPacientes(pacientesFormatados);
         }
       } catch (error) {
         console.log("Erro ao obter pacientes do JSON fixo:", error);
@@ -90,6 +99,26 @@ function ReactMapBronquiolite() {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    const pacientesFiltrados = todosPacientes.filter((paciente) => {
+      const filtroCidAtivo =
+        selectedCid === "TODOS" || paciente.objeto.ds_cid === selectedCid;
+      const filtroInternacaoAtivo =
+        selectedInternacao === "TODOS" ||
+        paciente.objeto.internacao === selectedInternacao;
+      return filtroCidAtivo && filtroInternacaoAtivo;
+    });
+
+    setDadosPacientes(pacientesFiltrados);
+  }, [todosPacientes, selectedCid, selectedInternacao]);
+
+  const cidOptions = Array.from(
+    new Set(todosPacientes.map((paciente) => paciente.objeto.ds_cid))
+  );
+  const internacaoOptions = Array.from(
+    new Set(todosPacientes.map((paciente) => paciente.objeto.internacao))
+  );
 
   const getMarkerIcon = () => {
     const markup = renderToStaticMarkup(
@@ -111,6 +140,76 @@ function ReactMapBronquiolite() {
 
   return (
     <GridContainer>
+      <GridItem xs={12}>
+        <Box
+          p={2}
+          style={{
+            background: "linear-gradient(135deg, #f7fbff 0%, #eef4f9 100%)",
+            border: "1px solid #dbe5ef",
+            borderRadius: 12,
+            marginBottom: 12,
+          }}
+        >
+          <Typography
+            variant="h6"
+            style={{ fontWeight: 700, color: "#1a365d", marginBottom: 6 }}
+          >
+            Filtros de visualização
+          </Typography>
+          <Typography variant="body2" style={{ color: "#4f5d75" }}>
+            Filtre os pacientes por CID e por status de internação.
+          </Typography>
+
+          <GridContainer>
+            <GridItem xs={12} md={6}>
+              <Box mt={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="cid-label">CID</InputLabel>
+                  <Select
+                    labelId="cid-label"
+                    id="select-cid"
+                    value={selectedCid}
+                    onChange={(event) => setSelectedCid(event.target.value)}
+                    label="CID"
+                  >
+                    <MenuItem value="TODOS">Todos</MenuItem>
+                    {cidOptions.map((cid) => (
+                      <MenuItem key={cid} value={cid}>
+                        {cid}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </GridItem>
+
+            <GridItem xs={12} md={6}>
+              <Box mt={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="internacao-label">Internação</InputLabel>
+                  <Select
+                    labelId="internacao-label"
+                    id="select-internacao"
+                    value={selectedInternacao}
+                    onChange={(event) =>
+                      setSelectedInternacao(event.target.value)
+                    }
+                    label="Internação"
+                  >
+                    <MenuItem value="TODOS">Todos</MenuItem>
+                    {internacaoOptions.map((internacao) => (
+                      <MenuItem key={internacao} value={internacao}>
+                        {internacao}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </GridItem>
+          </GridContainer>
+        </Box>
+      </GridItem>
+
       <GridItem xs={12}>
         <Box
           style={{
@@ -162,7 +261,10 @@ function ReactMapBronquiolite() {
                         Código Atendimento: {paciente.objeto.cd_atendimento}
                         <br />
                         Nome: {paciente.objeto.nm_paciente} <br />
-                        Data Atendimento: {paciente.objeto.data} <br />
+                        Data Atendimento: {paciente.objeto.dt_atendimento}{" "}
+                        <br />
+                        CID: {paciente.objeto.ds_cid} <br />
+                        Internação: {paciente.objeto.internacao} <br />
                         Poluente: {paciente.objeto.poluente} <br />
                         Índice interpolado: {paciente.objeto.indice} <br />
                       </Popup>
