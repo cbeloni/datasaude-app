@@ -1,134 +1,114 @@
-import React from "react";
-import classNames from "classnames";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuList from "@material-ui/core/MenuList";
-import Grow from "@material-ui/core/Grow";
-import Paper from "@material-ui/core/Paper";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Hidden from "@material-ui/core/Hidden";
-import Poppers from "@material-ui/core/Popper";
-import Divider from "@material-ui/core/Divider";
-// @material-ui/icons
-import Person from "@material-ui/icons/Person";
-import Search from "@material-ui/icons/Search";
-// core components
-import CustomInput from "components/CustomInput/CustomInput.js";
-import Button from "components/CustomButtons/Button.js";
-
-import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
-import { isAuthenticated } from "auth";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-
-const useStyles = makeStyles(styles);
+import {
+  Avatar,
+  Box,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import LogoutIcon from "@mui/icons-material/LogoutOutlined";
+import PersonIcon from "@mui/icons-material/PersonOutline";
+import SettingsIcon from "@mui/icons-material/SettingsOutlined";
+import NotificationsIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import { isAuthenticated } from "auth";
 
 export default function AdminNavbarLinks() {
   const history = useHistory();
-  const classes = useStyles();
-  const [openProfile, setOpenProfile] = React.useState(null);
-  const handleClickProfile = (event) => {
-    if (openProfile && openProfile.contains(event.target)) {
-      setOpenProfile(null);
-    } else {
-      setOpenProfile(event.currentTarget);
-    }
-  };
-  const handleCloseProfile = () => {
-    setOpenProfile(null);
-  };
+  const theme = useTheme();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh_token");
-    // window.location.reload();
+    handleClose();
     history.push("/admin/login");
   };
+
   return (
-    <div>
-      <div className={classes.searchWrapper}>
-        <CustomInput
-          formControlProps={{
-            className: classes.margin + " " + classes.search,
-          }}
-          inputProps={{
-            placeholder: "Search",
-            inputProps: {
-              "aria-label": "Search",
-            },
-          }}
-        />
-        <Button color="white" aria-label="edit" justIcon round>
-          <Search />
-        </Button>
-      </div>
-      <div className={classes.manager}>
-        <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-owns={openProfile ? "profile-menu-list-grow" : null}
-          aria-haspopup="true"
-          onClick={handleClickProfile}
-          className={classes.buttonLink}
-        >
-          <Person className={classes.icons} />
-          <Hidden mdUp implementation="css">
-            <p className={classes.linkText}>Profile</p>
-          </Hidden>
-        </Button>
-        <Poppers
-          open={Boolean(openProfile)}
-          anchorEl={openProfile}
-          transition
-          disablePortal
-          className={
-            classNames({ [classes.popperClose]: !openProfile }) +
-            " " +
-            classes.popperNav
-          }
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              id="profile-menu-list-grow"
-              style={{
-                transformOrigin:
-                  placement === "bottom" ? "center top" : "center bottom",
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleCloseProfile}>
-                  <MenuList role="menu">
-                    <MenuItem
-                      onClick={handleCloseProfile}
-                      className={classes.dropdownItem}
-                    >
-                      Profile
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseProfile}
-                      className={classes.dropdownItem}
-                    >
-                      Settings
-                    </MenuItem>
-                    <Divider light />
-                    <>
-                      {isAuthenticated() && (
-                        <MenuItem
-                          onClick={handleLogout}
-                          className={classes.dropdownItem}
-                        >
-                          Logout
-                        </MenuItem>
-                      )}
-                    </>
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Poppers>
-      </div>
-    </div>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+      <Tooltip title="Notificações">
+        <IconButton size="medium" sx={{ color: "text.secondary" }}>
+          <NotificationsIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip title="Conta">
+        <IconButton onClick={handleOpen} size="small" sx={{ ml: 0.5 }}>
+          <Avatar
+            sx={{
+              width: 32,
+              height: 32,
+              bgcolor: theme.palette.primary.main,
+              color: "#fff",
+              fontSize: "0.8125rem",
+              fontWeight: 600,
+            }}
+          >
+            DS
+          </Avatar>
+        </IconButton>
+      </Tooltip>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        slotProps={{
+          paper: {
+            sx: { mt: 1, minWidth: 200 },
+          },
+        }}
+      >
+        <Box sx={{ px: 2, py: 1.25 }}>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 600, color: "text.primary" }}
+          >
+            Sua conta
+          </Typography>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
+            DataSaúde
+          </Typography>
+        </Box>
+        <Divider sx={{ my: 0.5 }} />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <PersonIcon fontSize="small" />
+          </ListItemIcon>
+          Perfil
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          Configurações
+        </MenuItem>
+        {isAuthenticated() && [
+          <Divider key="divider" sx={{ my: 0.5 }} />,
+          <MenuItem
+            key="logout"
+            onClick={handleLogout}
+            sx={{ color: "error.main" }}
+          >
+            <ListItemIcon>
+              <LogoutIcon fontSize="small" sx={{ color: "error.main" }} />
+            </ListItemIcon>
+            Sair
+          </MenuItem>,
+        ]}
+      </Menu>
+    </Box>
   );
 }

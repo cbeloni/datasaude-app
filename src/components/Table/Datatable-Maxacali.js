@@ -1,6 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+} from "@mui/material";
 import { maxacaliColumns } from "./MaxacaliHelper";
 
 const PAGE_SIZE_DEFAULT = 10;
@@ -142,13 +149,8 @@ function DataTableMaxacaliComponent() {
   ]);
 
   return (
-    <div style={{ width: "100%", height: 650 }}>
-      <Box
-        style={{
-          paddingBottom: "12px",
-          maxWidth: "270px",
-        }}
-      >
+    <Stack spacing={2} sx={{ width: "100%" }}>
+      <Box sx={{ maxWidth: 320 }}>
         <FormControl fullWidth size="small">
           <InputLabel id="maxacali-columns-label">Colunas exibidas</InputLabel>
           <Select
@@ -159,6 +161,7 @@ function DataTableMaxacaliComponent() {
             onChange={handleColumnsChange}
             label="Colunas exibidas"
             displayEmpty
+            MenuProps={{ PaperProps: { sx: { maxHeight: 360 } } }}
             renderValue={(selected) =>
               selected.length === 0
                 ? "Nenhuma coluna"
@@ -179,20 +182,32 @@ function DataTableMaxacaliComponent() {
           </Select>
         </FormControl>
       </Box>
-      <DataGrid
-        rows={rows}
-        columns={maxacaliColumns}
-        columnVisibilityModel={columnVisibilityModel}
-        rowCount={rowCount}
-        loading={loading}
-        pagination
-        paginationMode="server"
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={[10, 25, 50, 100]}
-        disableRowSelectionOnClick
-      />
-    </div>
+      <Box sx={{ height: 600, width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          columns={maxacaliColumns}
+          columnVisibilityModel={columnVisibilityModel}
+          rowCount={rowCount}
+          loading={loading}
+          pagination
+          paginationMode="server"
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          pageSizeOptions={[10, 25, 50, 100]}
+          disableRowSelectionOnClick
+          density="compact"
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "background.default",
+              borderBottom: 1,
+              borderColor: "divider",
+            },
+            "& .MuiDataGrid-cell": { fontSize: "0.8125rem" },
+          }}
+        />
+      </Box>
+    </Stack>
   );
 }
 

@@ -1,62 +1,87 @@
 import React from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Hidden from "@material-ui/core/Hidden";
-// @material-ui/icons
-import Menu from "@material-ui/icons/Menu";
-// core components
+import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import MenuIcon from "@mui/icons-material/Menu";
 import AdminNavbarLinks from "./AdminNavbarLinks.js";
-import RTLNavbarLinks from "./RTLNavbarLinks.js";
-import Button from "components/CustomButtons/Button.js";
-
-//hooks
 import { useRouteName } from "hooks";
+import Sidebar from "components/Sidebar/Sidebar.js";
 
-import styles from "assets/jss/material-dashboard-react/components/headerStyle.js";
+const SIDEBAR_WIDTH = Sidebar.drawerWidth || 248;
 
-const useStyles = makeStyles(styles);
-
-export default function Header(props) {
-  const classes = useStyles();
+export default function Header({ handleDrawerToggle }) {
+  const theme = useTheme();
   const routeName = useRouteName();
-  const { color } = props;
-  const appBarClasses = classNames({
-    [" " + classes[color]]: color,
-  });
+
   return (
-    <AppBar className={classes.appBar + appBarClasses}>
-      <Toolbar className={classes.container}>
-        <div className={classes.flex}>
-          {/* Here we create navbar brand, based on route name */}
-          <Button color="transparent" href="#" className={classes.title}>
-            {routeName}
-          </Button>
-        </div>
-        <Hidden smDown implementation="css">
-          {props.rtlActive ? <RTLNavbarLinks /> : <AdminNavbarLinks />}
-        </Hidden>
-        <Hidden mdUp implementation="css">
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={props.handleDrawerToggle}
+    <AppBar
+      position="fixed"
+      sx={{
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        boxShadow: "none",
+        zIndex: theme.zIndex.drawer - 1,
+        width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
+        ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` },
+      }}
+    >
+      <Toolbar
+        sx={{
+          minHeight: 64,
+          px: { xs: 2, md: 3 },
+          gap: 2,
+        }}
+      >
+        <IconButton
+          edge="start"
+          onClick={handleDrawerToggle}
+          sx={{
+            color: "text.secondary",
+            display: { md: "none" },
+          }}
+          aria-label="abrir menu"
+        >
+          <MenuIcon />
+        </IconButton>
+
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              display: "block",
+              color: "text.secondary",
+              fontSize: "0.6875rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              fontWeight: 500,
+            }}
           >
-            <Menu />
-          </IconButton>
-        </Hidden>
+            Painel
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: theme.tokens.typography.display,
+              fontSize: "1.25rem",
+              fontWeight: 500,
+              letterSpacing: "-0.015em",
+              lineHeight: 1.2,
+              color: "text.primary",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {routeName || "DataSaúde"}
+          </Typography>
+        </Box>
+
+        <AdminNavbarLinks />
       </Toolbar>
     </AppBar>
   );
 }
 
 Header.propTypes = {
-  color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"]),
-  rtlActive: PropTypes.bool,
   handleDrawerToggle: PropTypes.func,
-  routes: PropTypes.arrayOf(PropTypes.object),
 };

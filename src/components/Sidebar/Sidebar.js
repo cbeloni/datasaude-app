@@ -1,164 +1,239 @@
-/*eslint-disable*/
 import React from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import { NavLink, useLocation } from "react-router-dom";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Icon from "@material-ui/core/Icon";
-// core components
-import AdminNavbarLinks from "components/Navbars/AdminNavbarLinks.js";
-import RTLNavbarLinks from "components/Navbars/RTLNavbarLinks.js";
+import {
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
-import styles from "assets/jss/material-dashboard-react/components/sidebarStyle.js";
+const DRAWER_WIDTH = 248;
 
-const useStyles = makeStyles(styles);
+const NavItem = ({ route }) => {
+  const location = useLocation();
+  const theme = useTheme();
+  const to = route.layout + route.path;
+  const active = location.pathname === to;
+  const Icon = route.icon;
 
-export default function Sidebar(props) {
-  const classes = useStyles();
-  let location = useLocation();
-  // verifies if routeName is the one active (in browser input)
-  function activeRoute(routeName) {
-    return location.pathname === routeName;
-  }
-  const { color, logo, image, logoText, routes } = props;
-  var links = (
-    <List className={classes.list}>
-      {routes.map((prop, key) => {
-        var activePro = " ";
-        var listItemClasses;
-        if (prop.path === "/upgrade-to-pro") {
-          activePro = classes.activePro + " ";
-          listItemClasses = classNames({
-            [" " + classes[color]]: true,
-          });
-        } else {
-          listItemClasses = classNames({
-            [" " + classes[color]]: activeRoute(prop.layout + prop.path),
-          });
-        }
-        const whiteFontClasses = classNames({
-          [" " + classes.whiteFont]: activeRoute(prop.layout + prop.path),
-        });
-        
-        return (
-          <NavLink
-            to={prop.layout + prop.path}
-            className={activePro + classes.item}
-            activeClassName="active"
-            key={key}
-          >
-            <ListItem button className={classes.itemLink + listItemClasses}>
-              {typeof prop.icon === "string" ? (
-                <Icon
-                  className={classNames(classes.itemIcon, whiteFontClasses, {
-                    [classes.itemIconRTL]: props.rtlActive,
-                  })}
-                >
-                  {prop.icon}
-                </Icon>
-              ) : (
-                <prop.icon
-                  className={classNames(classes.itemIcon, whiteFontClasses, {
-                    [classes.itemIconRTL]: props.rtlActive,
-                  })}
-                />
-              )}
-              <ListItemText
-                primary={props.rtlActive ? prop.rtlName : prop.name}
-                className={classNames(classes.itemText, whiteFontClasses, {
-                  [classes.itemTextRTL]: props.rtlActive,
-                })}
-                disableTypography={true}
-              />
-            </ListItem>
-          </NavLink>
-        );
-      })}
-    </List>
-  );
-  var brand = (
-    <div className={classes.logo}>
-      <a
-        href="https://datasaude-app.beloni.dev.br"
-        className={classNames(classes.logoLink, {
-          [classes.logoLinkRTL]: props.rtlActive,
-        })}
-        target="_blank"
-      >
-        <div className={classes.logoImage}>
-          <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Logo" />
-        </div>
-      </a>
-    </div>
-  );
   return (
-    <div>
-      <Hidden mdUp implementation="css">
-        <Drawer
-          variant="temporary"
-          anchor={props.rtlActive ? "left" : "right"}
-          open={props.open}
-          classes={{
-            paper: classNames(classes.drawerPaper, {
-              [classes.drawerPaperRTL]: props.rtlActive,
-            }),
+    <ListItem disablePadding sx={{ display: "block", px: 1.5, my: 0.25 }}>
+      <ListItemButton
+        component={NavLink}
+        to={to}
+        disableRipple
+        sx={{
+          position: "relative",
+          borderRadius: 1.5,
+          px: 1.5,
+          py: 1,
+          color: active
+            ? theme.palette.primary.dark
+            : theme.palette.text.secondary,
+          backgroundColor: active ? theme.palette.primary.light : "transparent",
+          transition: theme.transitions.create(["background-color", "color"], {
+            duration: 180,
+          }),
+          "&:hover": {
+            backgroundColor: active
+              ? theme.palette.primary.light
+              : theme.palette.action.hover,
+            color: active
+              ? theme.palette.primary.dark
+              : theme.palette.text.primary,
+          },
+          "&::before": active
+            ? {
+                content: '""',
+                position: "absolute",
+                left: -6,
+                top: 8,
+                bottom: 8,
+                width: 3,
+                borderRadius: 2,
+                backgroundColor: theme.palette.primary.main,
+              }
+            : {},
+        }}
+      >
+        {Icon && (
+          <ListItemIcon
+            sx={{
+              minWidth: 32,
+              color: "inherit",
+              "& svg": { fontSize: 20 },
+            }}
+          >
+            {typeof Icon === "string" ? null : <Icon />}
+          </ListItemIcon>
+        )}
+        <ListItemText
+          primary={route.name}
+          primaryTypographyProps={{
+            fontSize: "0.875rem",
+            fontWeight: active ? 600 : 500,
+            letterSpacing: "0.01em",
           }}
-          onClose={props.handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+        />
+      </ListItemButton>
+    </ListItem>
+  );
+};
+
+NavItem.propTypes = {
+  route: PropTypes.shape({
+    layout: PropTypes.string,
+    path: PropTypes.string,
+    icon: PropTypes.elementType,
+    name: PropTypes.string,
+  }).isRequired,
+};
+
+const Brand = () => {
+  const theme = useTheme();
+  return (
+    <Box
+      sx={{
+        px: 3,
+        pt: 3,
+        pb: 2,
+        display: "flex",
+        alignItems: "center",
+        gap: 1.25,
+      }}
+    >
+      <Box
+        sx={{
+          width: 36,
+          height: 36,
+          borderRadius: 2,
+          background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+          display: "grid",
+          placeItems: "center",
+          color: "#fff",
+          fontFamily: theme.tokens.typography.display,
+          fontWeight: 600,
+          fontSize: "1.05rem",
+          letterSpacing: "-0.02em",
+          boxShadow: "0 6px 14px -4px rgba(15, 118, 110, 0.45)",
+        }}
+      >
+        ds
+      </Box>
+      <Box>
+        <Typography
+          sx={{
+            fontFamily: theme.tokens.typography.display,
+            fontSize: "1.125rem",
+            fontWeight: 600,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.1,
+            color: theme.palette.text.primary,
           }}
         >
-          {brand}
-          <div className={classes.sidebarWrapper}>
-            {props.rtlActive ? <RTLNavbarLinks /> : <AdminNavbarLinks />}
-            {links}
-          </div>
-          {image !== undefined ? (
-            <div
-              className={classes.background}
-              style={{ backgroundImage: "url(" + image + ")" }}
-            />
-          ) : null}
-        </Drawer>
-      </Hidden>
-      <Hidden smDown implementation="css">
-        <Drawer
-          anchor={props.rtlActive ? "right" : "left"}
-          variant="permanent"
-          open
-          classes={{
-            paper: classNames(classes.drawerPaper, {
-              [classes.drawerPaperRTL]: props.rtlActive,
-            }),
+          DataSaúde
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            display: "block",
+            color: theme.palette.text.secondary,
+            fontSize: "0.6875rem",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            fontWeight: 500,
           }}
         >
-          {brand}
-          <div className={classes.sidebarWrapper}>{links}</div>
-          {image !== undefined ? (
-            <div
-              className={classes.background}
-              style={{ backgroundImage: "url(" + image + ")" }}
-            />
-          ) : null}
-        </Drawer>
-      </Hidden>
-    </div>
+          Vigilância · BR
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+const Content = ({ routes }) => (
+  <Stack sx={{ height: "100%" }}>
+    <Brand />
+    <Box sx={{ px: 3, pb: 1, pt: 1 }}>
+      <Typography
+        variant="overline"
+        sx={{
+          color: "text.secondary",
+          fontSize: "0.625rem",
+          letterSpacing: "0.14em",
+        }}
+      >
+        Navegação
+      </Typography>
+    </Box>
+    <List sx={{ flex: 1, py: 0 }} component="nav">
+      {routes.map((route) => (
+        <NavItem key={route.path} route={route} />
+      ))}
+    </List>
+  </Stack>
+);
+
+Content.propTypes = {
+  routes: PropTypes.array.isRequired,
+};
+
+export default function Sidebar({ routes, open, handleDrawerToggle }) {
+  const theme = useTheme();
+
+  const paperSx = {
+    width: DRAWER_WIDTH,
+    backgroundColor: theme.palette.background.paper,
+    borderRight: `1px solid ${theme.palette.divider}`,
+    boxSizing: "border-box",
+  };
+
+  return (
+    <Box
+      component="nav"
+      sx={{
+        width: { md: DRAWER_WIDTH },
+        flexShrink: { md: 0 },
+      }}
+      aria-label="navegação principal"
+    >
+      <Drawer
+        variant="temporary"
+        open={open}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": paperSx,
+        }}
+      >
+        <Content routes={routes} />
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        open
+        sx={{
+          display: { xs: "none", md: "block" },
+          "& .MuiDrawer-paper": paperSx,
+        }}
+      >
+        <Content routes={routes} />
+      </Drawer>
+    </Box>
   );
 }
 
 Sidebar.propTypes = {
-  rtlActive: PropTypes.bool,
-  handleDrawerToggle: PropTypes.func,
-  bgColor: PropTypes.oneOf(["purple", "blue", "green", "orange", "red"]),
-  logo: PropTypes.string,
-  image: PropTypes.string,
-  logoText: PropTypes.string,
-  routes: PropTypes.arrayOf(PropTypes.object),
+  routes: PropTypes.array.isRequired,
   open: PropTypes.bool,
+  handleDrawerToggle: PropTypes.func,
 };
+
+Sidebar.drawerWidth = DRAWER_WIDTH;

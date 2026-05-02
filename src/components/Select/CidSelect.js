@@ -2,9 +2,32 @@ import React from "react";
 import PropTypes from "prop-types";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
+const OPTIONS = [
+  "TODOS",
+  "BRONQUITE AGUDA",
+  "INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA",
+  "NASOFARINGITE AGUDA [RESFRIADO COMUM]",
+  "SINUSITE AGUDA",
+  "BRONQUIOLITE AGUDA",
+  "AMIGDALITE AGUDA",
+  "ASMA",
+  "BRONCOPNEUMONIA NAO ESPECIFICADA",
+  "LARINGITE AGUDA",
+  "INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO",
+];
+
+const MENU_PROPS = {
+  PaperProps: {
+    sx: {
+      maxHeight: 360,
+      mt: 0.5,
+    },
+  },
+};
+
 const CidSelect = ({ cid, handleCidChange }) => {
   return (
-    <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+    <FormControl size="small" fullWidth>
       <InputLabel id="cid-label">CID</InputLabel>
       <Select
         labelId="cid-label"
@@ -12,30 +35,13 @@ const CidSelect = ({ cid, handleCidChange }) => {
         value={cid}
         onChange={handleCidChange}
         label="CID"
+        MenuProps={MENU_PROPS}
       >
-        <MenuItem value="TODOS">
-          <em>TODOS</em>
-        </MenuItem>
-        <MenuItem value={"BRONQUITE AGUDA"}>BRONQUITE AGUDA</MenuItem>
-        <MenuItem
-          value={"INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA"}
-        >
-          INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA
-        </MenuItem>
-        <MenuItem value={"NASOFARINGITE AGUDA [RESFRIADO COMUM]"}>
-          NASOFARINGITE AGUDA [RESFRIADO COMUM]
-        </MenuItem>
-        <MenuItem value={"SINUSITE AGUDA"}>SINUSITE AGUDA</MenuItem>
-        <MenuItem value={"BRONQUIOLITE AGUDA"}>BRONQUIOLITE AGUDA</MenuItem>
-        <MenuItem value={"AMIGDALITE AGUDA"}>AMIGDALITE AGUDA</MenuItem>
-        <MenuItem value={"ASMA"}>ASMA</MenuItem>
-        <MenuItem value={"BRONCOPNEUMONIA NAO ESPECIFICADA"}>
-          BRONCOPNEUMONIA NAO ESPECIFICADA
-        </MenuItem>
-        <MenuItem value={"LARINGITE AGUDA"}>LARINGITE AGUDA</MenuItem>
-        <MenuItem value={"INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO"}>
-          INFLUENZA [GRIPE] DEVIDA A VIRUS NAO IDENTIFICADO
-        </MenuItem>
+        {OPTIONS.map((option) => (
+          <MenuItem key={option} value={option}>
+            {option === "TODOS" ? <em>TODOS</em> : option}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );

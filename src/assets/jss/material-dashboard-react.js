@@ -65,33 +65,34 @@ const container = {
 };
 
 const defaultFont = {
-  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-  fontWeight: "300",
-  lineHeight: "1.5em",
+  fontFamily:
+    '"Inter Tight", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
+  fontWeight: "400",
+  lineHeight: "1.55",
 };
 
-const primaryColor = ["#9c27b0", "#ab47bc", "#8e24aa", "#af2cc5"];
-const warningColor = ["#ff9800", "#ffa726", "#fb8c00", "#ffa21a"];
-const dangerColor = ["#f44336", "#ef5350", "#e53935", "#f55a4e"];
-const successColor = ["#4caf50", "#66bb6a", "#43a047", "#5cb860"];
-const infoColor = ["#00acc1", "#26c6da", "#00acc1", "#00d3ee"];
-const roseColor = ["#e91e63", "#ec407a", "#d81b60", "#eb3573"];
+const primaryColor = ["#0F766E", "#34D399", "#0B5E58", "#6EE7B7"];
+const warningColor = ["#D97706", "#F59E0B", "#B45309", "#FBBF24"];
+const dangerColor = ["#E11D48", "#F43F5E", "#BE123C", "#FB7185"];
+const successColor = ["#059669", "#10B981", "#047857", "#34D399"];
+const infoColor = ["#0891B2", "#22D3EE", "#0E7490", "#67E8F9"];
+const roseColor = ["#881337", "#E11D48", "#6B0F2C", "#F43F5E"];
 const grayColor = [
-  "#999",
-  "#777",
-  "#3C4858",
-  "#AAAAAA",
-  "#D2D2D2",
-  "#DDD",
-  "#b4b4b4",
-  "#555555",
-  "#333",
-  "#a9afbb",
-  "#eee",
-  "#e7e7e7",
+  "#8189A0",
+  "#5A6478",
+  "#1A1F2E",
+  "#A8AEC0",
+  "#D2D6E0",
+  "#E0E2EA",
+  "#A8AEC0",
+  "#3D465B",
+  "#0E1420",
+  "#8189A0",
+  "#E8EAF0",
+  "#EDEEF2",
 ];
-const blackColor = "#000";
-const whiteColor = "#FFF";
+const blackColor = "#0E1420";
+const whiteColor = "#FFFFFF";
 
 const boxShadow = {
   boxShadow:

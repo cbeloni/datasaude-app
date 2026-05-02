@@ -2,22 +2,27 @@ import React from "react";
 import PropTypes from "prop-types";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
+const MENU_PROPS = {
+  PaperProps: { sx: { maxHeight: 320, mt: 0.5 } },
+};
+
 const SexoSelect = ({ sexo, handleSexoChange }) => {
   return (
-    <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+    <FormControl size="small" fullWidth>
       <InputLabel id="sexo-label">Sexo</InputLabel>
       <Select
         labelId="sexo-label"
         id="sexo"
         value={sexo}
         onChange={handleSexoChange}
-        label="sexo"
+        label="Sexo"
+        MenuProps={MENU_PROPS}
       >
         <MenuItem value="TODOS">
-          <em>TODOS</em>
+          <em>Todos</em>
         </MenuItem>
-        <MenuItem value={"M"}>Masculino</MenuItem>
-        <MenuItem value={"F"}>Feminino</MenuItem>
+        <MenuItem value="M">Masculino</MenuItem>
+        <MenuItem value="F">Feminino</MenuItem>
       </Select>
     </FormControl>
   );

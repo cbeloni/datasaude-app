@@ -1,96 +1,80 @@
 import React, { useState } from "react";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-// core components
-import GridItem from "components/Grid/GridItem.js";
-import GridContainer from "components/Grid/GridContainer.js";
-import Card from "components/Card/Card.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CardBody from "components/Card/CardBody.js";
-import DataTableComponent from "components/Table/Datatable";
-import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
+import { Box, Card, Tab } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import styles from "layouts/Styles/commom.js";
-import PoluentesHelper from "views/TableList/PoluentesHelper";
+
+import PageHeader from "components/Card/PageHeader";
+import DataTableComponent from "components/Table/Datatable";
 import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
 import DataTableMaxacaliComponent from "components/Table/Datatable-Maxacali";
+import PoluentesHelper from "views/TableList/PoluentesHelper";
 
-const useStyles = makeStyles(styles);
 const poluentesHelper = PoluentesHelper();
+
+const TABS = [
+  {
+    value: "paciente",
+    label: "Pacientes",
+    description: "Pacientes com dados dos poluentes coletados.",
+    Component: DataTablePacienteComponent,
+  },
+  {
+    value: "poluente-online",
+    label: "Poluente online",
+    description: "Coletas a cada uma hora.",
+    Component: () => <DataTableComponent poluentesHelper={poluentesHelper} />,
+  },
+  {
+    value: "maxacali",
+    label: "Maxacali",
+    description: "Tabela baseada no dataset de setores do Maxacali.",
+    Component: DataTableMaxacaliComponent,
+  },
+];
 
 export default function TableList() {
   const [value, setValue] = useState("paciente");
+  const handleChange = (_, newValue) => setValue(newValue);
+  const active = TABS.find((t) => t.value === value);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const classes = useStyles();
   return (
-    <TabContext value={value}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <TabList onChange={handleChange} aria-label="lab API tabs example">
-          <Tab label="Poluente online" value="poluente-online" />
-          <Tab label="Paciente" value="paciente" />
-          <Tab label="Maxacali" value="maxacali" />
-        </TabList>
-      </Box>
-      <TabPanel value="poluente-online" className={classes.tabPanelBorder}>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={12}>
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Online poluente</h4>
-                <p className={classes.cardCategoryWhite}>
-                  Coletas em cada uma hora
-                </p>
-              </CardHeader>
-              <CardBody>
-                <DataTableComponent
-                  poluentesHelper={poluentesHelper}
-                ></DataTableComponent>
-              </CardBody>
-            </Card>
-          </GridItem>
-        </GridContainer>
-      </TabPanel>
-      <TabPanel value="paciente" className={classes.tabPanelBorder}>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={12}>
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Pacientes</h4>
-                <p className={classes.cardCategoryWhite}>
-                  Pacientes com dados dos poluentes coletados
-                </p>
-              </CardHeader>
-              <CardBody>
-                <DataTablePacienteComponent></DataTablePacienteComponent>
-              </CardBody>
-            </Card>
-          </GridItem>
-        </GridContainer>
-      </TabPanel>
-      <TabPanel value="maxacali" className={classes.tabPanelBorder}>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={12}>
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Maxacali</h4>
-                <p className={classes.cardCategoryWhite}>
-                  Tabela baseada no dataset de setores do Maxacali
-                </p>
-              </CardHeader>
-              <CardBody>
-                <DataTableMaxacaliComponent></DataTableMaxacaliComponent>
-              </CardBody>
-            </Card>
-          </GridItem>
-        </GridContainer>
-      </TabPanel>
-    </TabContext>
+    <Box>
+      <PageHeader
+        eyebrow="Tabelas"
+        title="Conjuntos de dados"
+        description={active?.description}
+      />
+
+      <Card variant="outlined" sx={{ overflow: "hidden" }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
+            <TabList
+              onChange={handleChange}
+              aria-label="seletor de tabela"
+              sx={{
+                minHeight: 48,
+                "& .MuiTab-root": {
+                  textTransform: "none",
+                  fontWeight: 500,
+                  fontSize: "0.875rem",
+                  minHeight: 48,
+                  px: 2,
+                },
+              }}
+            >
+              {TABS.map((t) => (
+                <Tab key={t.value} label={t.label} value={t.value} />
+              ))}
+            </TabList>
+          </Box>
+          {TABS.map(({ value: v, Component }) => (
+            <TabPanel key={v} value={v} sx={{ p: 2.5 }}>
+              <Component />
+            </TabPanel>
+          ))}
+        </TabContext>
+      </Card>
+    </Box>
   );
 }

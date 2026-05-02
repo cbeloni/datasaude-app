@@ -1,92 +1,21 @@
-import {
-  createColumn,
-  ColumnDataType,
-  ColumnSortDirection,
-} from "tubular-common";
-
-const pacienteColumns = [
-  createColumn("id", {
-    dataType: ColumnDataType.Numeric,
-    filterable: false,
-    isKey: true,
-    label: "Id",
-    sortDirection: ColumnSortDirection.Ascending,
-    sortOrder: 1,
-    sortable: false,
-  }),
-  createColumn("CD_ATENDIMENTO", {
-    dataType: ColumnDataType.Numeric,
-    filterable: false,
-    label: "Código Atendimento",
-  }),
-  createColumn("NM_PACIENTE", {
-    dataType: ColumnDataType.String,
-    label: "Nome do Paciente",
-  }),
-  createColumn("DT_NASC", {
-    dataType: ColumnDataType.Date,
-    label: "Data Nascimento",
-  }),
-  createColumn("DT_ATENDIMENTO", {
-    dataType: ColumnDataType.Date,
-    label: "Data Atendimento",
-  }),
-  createColumn("TP_ATENDIMENTO", {
-    dataType: ColumnDataType.String,
-    label: "Tipo Atendimento",
-  }),
-  createColumn("DS_ORI_ATE", {
-    dataType: ColumnDataType.String,
-    label: "Origem Atendimento",
-  }),
-  createColumn("DS_LEITO", {
-    dataType: ColumnDataType.String,
-    label: "Leito",
-  }),
-  createColumn("DT_PREVISTA_ALTA", {
-    dataType: ColumnDataType.Date,
-    label: "Data Prevista Alta",
-  }),
-  createColumn("DT_ALTA", {
-    dataType: ColumnDataType.Date,
-    label: "Data Alta",
-  }),
-  createColumn("CD_SGRU_CID", {
-    dataType: ColumnDataType.String,
-    label: "Código SGRU CID",
-  }),
-  createColumn("CD_CID", {
-    dataType: ColumnDataType.String,
-    label: "Código CID",
-  }),
-  createColumn("DS_CID", {
-    dataType: ColumnDataType.String,
-    label: "Descrição CID",
-  }),
-  createColumn("SN_INTERNADO", {
-    dataType: ColumnDataType.String,
-    label: "Internado",
-  }),
-  createColumn("TP_SEXO", {
-    dataType: ColumnDataType.String,
-    label: "Sexo",
-  }),
-  createColumn("latitude", {
-    dataType: ColumnDataType.String,
-    label: "Latitude",
-  }),
-  createColumn("longitude", {
-    dataType: ColumnDataType.String,
-    label: "Longitude",
-  }),
-  createColumn("poluente", {
-    dataType: ColumnDataType.String,
-    label: "Poluente",
-  }),
-  createColumn("indice_interpolado", {
-    dataType: ColumnDataType.String,
-    label: "Indice Interpolado",
-  }),
+export const pacienteColumns = [
+  { field: "id", headerName: "Id", width: 80 },
+  { field: "CD_ATENDIMENTO", headerName: "Atendimento", width: 130 },
+  { field: "NM_PACIENTE", headerName: "Paciente", width: 220, flex: 1 },
+  { field: "DT_NASC", headerName: "Nascimento", width: 130 },
+  { field: "DT_ATENDIMENTO", headerName: "Data atend.", width: 130 },
+  { field: "TP_ATENDIMENTO", headerName: "Tipo", width: 110 },
+  { field: "DS_ORI_ATE", headerName: "Origem", width: 160 },
+  { field: "DS_LEITO", headerName: "Leito", width: 130 },
+  { field: "DT_PREVISTA_ALTA", headerName: "Prev. alta", width: 130 },
+  { field: "DT_ALTA", headerName: "Alta", width: 130 },
+  { field: "CD_SGRU_CID", headerName: "SGRU CID", width: 110 },
+  { field: "CD_CID", headerName: "CID", width: 90 },
+  { field: "DS_CID", headerName: "Descrição CID", width: 240 },
+  { field: "SN_INTERNADO", headerName: "Internado", width: 110 },
+  { field: "TP_SEXO", headerName: "Sexo", width: 80 },
+  { field: "latitude", headerName: "Latitude", width: 130 },
+  { field: "longitude", headerName: "Longitude", width: 130 },
+  { field: "poluente", headerName: "Poluente", width: 110 },
+  { field: "indice_interpolado", headerName: "Índice", width: 110 },
 ];
-
-export { pacienteColumns };

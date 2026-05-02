@@ -19,23 +19,28 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Button, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Fab,
+} from "@mui/material";
+import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
+import Accessibility from "@mui/icons-material/Accessibility";
 import { IMG_DEFAULT, IMG_BASE } from "./ConstantsMap";
 import { estacoes } from "./ConstantsEstacoes";
 import DateRange from "components/DataPicker/DateRange";
 import RowRadioButtonsGroup from "components/RadioGroup/RadioGroupHorizontal";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 import dayjs from "dayjs";
 import obtemPacientes from "../../services/ApiService";
 import formatarPacienteMapa from "utils/formatter";
-import Fab from "@material-ui/core/Fab";
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
-import Accessibility from "@material-ui/icons/Accessibility";
 import PropTypes from "prop-types";
 
 function ResetMapViewButton({ center, zoom }) {

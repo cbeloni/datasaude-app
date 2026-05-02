@@ -1,55 +1,15 @@
-import {
-  createColumn,
-  ColumnDataType,
-  ColumnSortDirection,
-} from "tubular-common";
+const poluentesColumns = [
+  { field: "id", headerName: "Id", width: 80 },
+  { field: "nome", headerName: "Estação", width: 200, flex: 1 },
+  { field: "situacao_rede", headerName: "Situação rede", width: 140 },
+  { field: "qualidade", headerName: "Qualidade", width: 160 },
+  { field: "indice", headerName: "Índice", width: 100 },
+  { field: "poluente", headerName: "Poluente", width: 110 },
+  { field: "endereco", headerName: "Endereço", width: 260 },
+  { field: "data", headerName: "Data coleta", width: 160 },
+  { field: "data_atual", headerName: "Data sistema", width: 160 },
+];
 
-const PoluentesHelper = () => {
-  const poluentesColumns = [
-    createColumn("id", {
-      dataType: ColumnDataType.Numeric,
-      filterable: false,
-      isKey: true,
-      label: "Id",
-      sortDirection: ColumnSortDirection.Ascending,
-      sortOrder: 1,
-      sortable: false,
-    }),
-    createColumn("nome", {
-      dataType: ColumnDataType.String,
-      label: "Nome",
-    }),
-    createColumn("situacao_rede", {
-      dataType: ColumnDataType.String,
-      label: "Situação Rede",
-    }),
-    createColumn("qualidade", {
-      dataType: ColumnDataType.String,
-      label: "Qualidade do Ar",
-    }),
-    createColumn("indice", {
-      dataType: ColumnDataType.String,
-      label: "Índice Poluente",
-    }),
-    createColumn("poluente", {
-      dataType: ColumnDataType.String,
-      label: "Tipo Poluente",
-    }),
-    createColumn("endereco", {
-      dataType: ColumnDataType.String,
-      label: "Endereço coleta",
-    }),
-    createColumn("data", {
-      dataType: ColumnDataType.String,
-      label: "Data coleta",
-    }),
-    createColumn("data_atual", {
-      dataType: ColumnDataType.String,
-      label: "Data Sistema",
-    }),
-  ];
-
-  return { poluentesColumns };
-};
+const PoluentesHelper = () => ({ poluentesColumns });
 
 export default PoluentesHelper;
