@@ -97,19 +97,16 @@ export default function LoginForm() {
       >
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Box
+            component="img"
+            src={`${process.env.PUBLIC_URL}/logo.png`}
+            alt="DataSaúde"
             sx={{
-              width: 36,
-              height: 36,
-              borderRadius: 2,
-              backgroundColor: "rgba(255,255,255,0.16)",
-              display: "grid",
-              placeItems: "center",
-              fontFamily: theme.tokens.typography.display,
-              fontWeight: 600,
+              width: 40,
+              height: 40,
+              objectFit: "contain",
+              filter: "brightness(0) invert(1)",
             }}
-          >
-            ds
-          </Box>
+          />
           <Typography
             sx={{
               fontFamily: theme.tokens.typography.display,

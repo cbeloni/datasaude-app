@@ -110,24 +110,17 @@ const Brand = () => {
       }}
     >
       <Box
+        component="img"
+        src={`${process.env.PUBLIC_URL}/logo.png`}
+        alt="DataSaúde"
         sx={{
-          width: 36,
-          height: 36,
-          borderRadius: 2,
-          background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-          display: "grid",
-          placeItems: "center",
-          color: "#fff",
-          fontFamily: theme.tokens.typography.display,
-          fontWeight: 600,
-          fontSize: "1.05rem",
-          letterSpacing: "-0.02em",
-          boxShadow: "0 6px 14px -4px rgba(15, 118, 110, 0.45)",
+          width: 40,
+          height: 40,
+          objectFit: "contain",
+          flexShrink: 0,
         }}
-      >
-        ds
-      </Box>
-      <Box>
+      />
+      <Box sx={{ minWidth: 0 }}>
         <Typography
           sx={{
             fontFamily: theme.tokens.typography.display,

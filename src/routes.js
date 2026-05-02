@@ -15,12 +15,12 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-// @material-ui/icons
-import Dashboard from "@material-ui/icons/Dashboard";
-import BarChart from "@material-ui/icons/BarChart";
-import BlurOn from "@material-ui/icons/BlurOn";
-import LocationOn from "@material-ui/icons/LocationOn";
-import Assistant from "@material-ui/icons/Assistant";
+import Dashboard from "@mui/icons-material/SpaceDashboardOutlined";
+import BarChart from "@mui/icons-material/BarChartOutlined";
+import BlurOn from "@mui/icons-material/BlurOnOutlined";
+import LocationOn from "@mui/icons-material/PublicOutlined";
+import Assistant from "@mui/icons-material/AutoAwesomeOutlined";
+import TableIcon from "@mui/icons-material/TableChartOutlined";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import PrevisaoPage from "views/Previsao/Previsao.js";
@@ -69,7 +69,7 @@ const dashboardRoutes = [
   {
     path: "/table",
     name: "Tabelas",
-    icon: "content_paste",
+    icon: TableIcon,
     component: TableList,
     layout: "/admin",
   },
