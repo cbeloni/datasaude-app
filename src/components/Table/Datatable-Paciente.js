@@ -92,21 +92,14 @@ export default function DataTablePacienteComponent() {
           gridTemplateColumns: {
             xs: "1fr",
             sm: "1fr 1fr",
-            lg: "1.4fr 1fr 1.6fr 1fr 1.6fr auto",
+            lg:
+              "minmax(340px, 1.6fr) minmax(120px, 0.8fr) minmax(180px, 1.2fr) minmax(140px, 0.8fr) minmax(220px, 1.4fr) auto",
           },
           gap: 2,
-          alignItems: "end",
+          alignItems: "center",
         }}
       >
-        <Box>
-          <Typography
-            variant="caption"
-            sx={{ color: "text.secondary", display: "block", mb: 0.5 }}
-          >
-            Data de atendimento
-          </Typography>
-          <DatePicker value={dateRange} onChange={setDateRange} />
-        </Box>
+        <DatePicker value={dateRange} onChange={setDateRange} />
 
         <SexoSelect
           sexo={sexo}
@@ -147,7 +140,7 @@ export default function DataTablePacienteComponent() {
         <Button
           variant="contained"
           onClick={() => fetchData(url)}
-          sx={{ height: 40 }}
+          sx={{ height: 40, whiteSpace: "nowrap" }}
         >
           Filtrar
         </Button>

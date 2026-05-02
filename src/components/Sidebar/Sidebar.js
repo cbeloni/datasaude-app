@@ -114,10 +114,11 @@ const Brand = () => {
         src={`${process.env.PUBLIC_URL}/logo.png`}
         alt="DataSaúde"
         sx={{
-          width: 40,
-          height: 40,
+          width: 56,
+          height: 36,
           objectFit: "contain",
           flexShrink: 0,
+          filter: "brightness(0) saturate(100%)",
         }}
       />
       <Box sx={{ minWidth: 0 }}>

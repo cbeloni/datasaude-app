@@ -22,12 +22,14 @@ export default function CustomLineGraph({ xLabels, previsao, historico }) {
             label: "Histórico",
             color: chartSeriesColors.primary,
             curve: "monotoneX",
+            showMark: false,
           },
           {
             data: previsao,
             label: "Previsão",
             color: chartSeriesColors.warning,
             curve: "monotoneX",
+            showMark: false,
           },
         ]}
         xAxis={[{ scaleType: "time", data: xLabels }]}

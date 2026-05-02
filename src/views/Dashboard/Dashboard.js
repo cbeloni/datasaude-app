@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
-import { Box, Chip, Grid, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Grid, Skeleton, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircleOutline";
 import WarningIcon from "@mui/icons-material/WarningAmberOutlined";
@@ -19,56 +20,112 @@ const QUALITY_MAP = {
 
 const FALLBACK = { tone: "neutral", icon: WarningIcon, label: "Indisponível" };
 
-const Legend = () => {
+const LEGEND_ITEMS = [
+  {
+    code: "N1",
+    label: "Boa",
+    quality: "N1 - BOA",
+    gradient: ["#10B981", "#047857"],
+  },
+  {
+    code: "N2",
+    label: "Moderada",
+    quality: "N2 - MODERADA",
+    gradient: ["#F59E0B", "#B45309"],
+  },
+  {
+    code: "N3",
+    label: "Ruim",
+    quality: "N3 - RUIM",
+    gradient: ["#F43F5E", "#BE123C"],
+  },
+  {
+    code: "N4",
+    label: "Muito ruim",
+    quality: "N4 - MUITO RUIM",
+    gradient: ["#E11D48", "#881337"],
+  },
+];
+
+const Legend = ({ cards = [] }) => {
   const theme = useTheme();
-  const items = [
-    { tone: "success", label: "N1 — Boa", color: theme.palette.success.main },
-    {
-      tone: "warning",
-      label: "N2 — Moderada",
-      color: theme.palette.warning.main,
-    },
-    { tone: "error", label: "N3 — Ruim", color: theme.palette.error.main },
-    {
-      tone: "rose",
-      label: "N4 — Muito ruim",
-      color: theme.tokens.palette.rose[500],
-    },
-  ];
+  const counts = cards.reduce((acc, c) => {
+    acc[c.qualidade] = (acc[c.qualidade] || 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <Stack
       direction="row"
-      spacing={1.5}
+      spacing={1.25}
       flexWrap="wrap"
       useFlexGap
       sx={{ rowGap: 1 }}
     >
-      {items.map((item) => (
-        <Chip
-          key={item.label}
-          label={item.label}
-          size="small"
-          variant="outlined"
-          sx={{
-            fontWeight: 500,
-            borderColor: "divider",
-            "& .MuiChip-label": { px: 1.25 },
-            "&::before": {
-              content: '""',
-              display: "inline-block",
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              backgroundColor: item.color,
-              marginInlineStart: 8,
-              marginInlineEnd: -2,
-            },
-          }}
-        />
-      ))}
+      {LEGEND_ITEMS.map((item) => {
+        const [g1, g2] = item.gradient;
+        const count = counts[item.quality] || 0;
+        return (
+          <Stack
+            key={item.code}
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            sx={{
+              pl: 0.5,
+              pr: 1.25,
+              py: 0.5,
+              borderRadius: 999,
+              border: `1px solid ${theme.palette.divider}`,
+              backgroundColor: "background.paper",
+            }}
+          >
+            <Box
+              sx={{
+                px: 0.875,
+                py: 0.25,
+                borderRadius: 999,
+                background: `linear-gradient(135deg, ${g1}, ${g2})`,
+                color: "#fff",
+                fontSize: "0.6875rem",
+                fontWeight: 700,
+                letterSpacing: "0.04em",
+                lineHeight: 1.4,
+                minWidth: 26,
+                textAlign: "center",
+                boxShadow: `0 2px 6px -2px ${g2}66`,
+              }}
+            >
+              {item.code}
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{ fontSize: "0.8125rem", fontWeight: 500 }}
+            >
+              {item.label}
+            </Typography>
+            {count > 0 && (
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.secondary",
+                  fontVariantNumeric: "tabular-nums",
+                  fontWeight: 600,
+                  ml: 0.25,
+                }}
+              >
+                · {count}
+              </Typography>
+            )}
+          </Stack>
+        );
+      })}
     </Stack>
   );
+};
+
+Legend.propTypes = {
+  cards: PropTypes.array,
 };
 
 export default function Dashboard() {
@@ -101,7 +158,7 @@ export default function Dashboard() {
         eyebrow="Qualidade do ar"
         title="Estações CETESB"
         description="Indicadores em tempo real das estações de monitoramento. Cada cartão representa uma estação e seu nível de qualidade do ar."
-        actions={<Legend />}
+        actions={<Legend cards={cards} />}
       />
 
       <Grid container spacing={2.5}>

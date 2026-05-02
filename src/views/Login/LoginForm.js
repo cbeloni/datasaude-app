@@ -101,7 +101,7 @@ export default function LoginForm() {
             src={`${process.env.PUBLIC_URL}/logo.png`}
             alt="DataSaúde"
             sx={{
-              width: 40,
+              width: 64,
               height: 40,
               objectFit: "contain",
               filter: "brightness(0) invert(1)",

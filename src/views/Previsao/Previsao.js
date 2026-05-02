@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, TextField } from "@mui/material";
 import InsertChartIcon from "@mui/icons-material/InsertChartOutlined";
 import UpdateIcon from "@mui/icons-material/Update";
 import { format } from "date-fns";
@@ -125,16 +125,19 @@ export default function Previsao() {
                   gridTemplateColumns: {
                     xs: "1fr",
                     sm: "1fr 1fr",
-                    md: "repeat(5, 1fr) auto",
+                    md: "1fr 1fr",
+                    lg:
+                      "minmax(120px, 0.7fr) minmax(120px, 0.7fr) minmax(140px, 1fr) minmax(160px, 1fr) minmax(340px, 1.6fr) auto",
                   },
                   gap: 1.5,
-                  alignItems: "end",
+                  alignItems: "center",
                 }}
               >
                 <TextField
                   label="Dias de previsão"
                   type="number"
                   size="small"
+                  fullWidth
                   value={previsaoPath}
                   onChange={(e) => setPrevisaoPath(e.target.value)}
                 />
@@ -142,6 +145,7 @@ export default function Previsao() {
                   label="Dias de sazonalidade"
                   type="number"
                   size="small"
+                  fullWidth
                   value={sazonalidade}
                   onChange={(e) => setSazonalidade(e.target.value)}
                 />
@@ -153,19 +157,12 @@ export default function Previsao() {
                   cid={cid}
                   handleCidChange={(e) => setCid(e.target.value)}
                 />
-                <Box>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "text.secondary", display: "block", mb: 0.5 }}
-                  >
-                    Data de atendimento
-                  </Typography>
-                  <DatePicker value={dateRange} onChange={setDateRange} />
-                </Box>
+                <DatePicker value={dateRange} onChange={setDateRange} />
                 <Button
                   variant="contained"
                   size="medium"
                   onClick={handleTreinarClick}
+                  sx={{ height: 40, whiteSpace: "nowrap" }}
                 >
                   Calcular
                 </Button>

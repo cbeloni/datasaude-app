@@ -28,13 +28,11 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-  Fab,
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
 import ArrowBackIos from "@mui/icons-material/ChevronLeft";
 import ArrowForwardIos from "@mui/icons-material/ChevronRight";
-import Accessibility from "@mui/icons-material/Accessibility";
 import { IMG_DEFAULT, IMG_BASE } from "./ConstantsMap";
 import { estacoes } from "./ConstantsEstacoes";
 import DateRange from "components/DataPicker/DateRange";
@@ -194,15 +192,32 @@ function ReactMap2() {
   const getMarkerIcon = (ds_cid) => {
     const color = CID_COLORS[ds_cid] || "#757575";
     const markup = renderToStaticMarkup(
-      <Fab
-        size="small"
-        variant="extended"
-        style={{ backgroundColor: color, color: "#fff" }}
+      <div
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: "50%",
+          backgroundColor: color,
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "2px solid #fff",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+        }}
       >
-        <Accessibility />
-      </Fab>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z" />
+        </svg>
+      </div>
     );
-    return divIcon({ className: "", html: markup });
+    return divIcon({ className: "", html: markup, iconSize: [32, 32] });
   };
 
   return (
