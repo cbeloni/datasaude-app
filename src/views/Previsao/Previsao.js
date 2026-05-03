@@ -1,149 +1,81 @@
 import React, { useEffect, useState } from "react";
-
-import { makeStyles } from "@material-ui/core/styles";
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem";
-
-import { InsertChart, Update } from "@material-ui/icons";
-import { Box, Input, Button, Typography, InputLabel } from "@mui/material";
-import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody";
-import CardFooter from "components/Card/CardFooter";
-import CardHeader from "components/Card/CardHeader.js";
-import CardIcon from "components/Card/CardIcon.js";
+import axios from "axios";
+import { Box, Button, Grid, Stack, TextField } from "@mui/material";
+import InsertChartIcon from "@mui/icons-material/InsertChartOutlined";
+import UpdateIcon from "@mui/icons-material/Update";
 import { format } from "date-fns";
 import moment from "moment";
+
+import PageHeader from "components/Card/PageHeader";
+import ChartCard from "components/Card/ChartCard";
 import isValidDate from "utils/validators";
 import CustomLineGraph from "components/Graph/CustomLineGraph";
-import axios from "axios";
 import LoadingModal from "components/Progress/LoadingModal";
 import CidSelect from "components/Select/CidSelect";
 import TipoSelect from "./TipoSelect";
 import DatePicker from "components/DataPicker/ReactDatePicker";
 
-const useStyles = makeStyles(styles);
-
 const base_url_api_ml = `${process.env.REACT_APP_API_ML_URL}`;
 
-export default function Dashboard() {
-  const classes = useStyles();
-
-  const [cid, setCid] = React.useState("TODOS");
-  const [tipo, setTipo] = React.useState("ATENDIMENTO");
-  const [previsaoPath, setPrevisaoPath] = React.useState("5");
-  const [sazonalidade, setSazonalidade] = React.useState("180");
-  const [xLabels, setXLabels] = React.useState([]);
-  const [previsao, setPrevisao] = React.useState([]);
-  const [historico, setHistorico] = React.useState([]);
-
+export default function Previsao() {
+  const [cid, setCid] = useState("TODOS");
+  const [tipo, setTipo] = useState("ATENDIMENTO");
+  const [previsaoPath, setPrevisaoPath] = useState("5");
+  const [sazonalidade, setSazonalidade] = useState("180");
+  const [xLabels, setXLabels] = useState([]);
+  const [previsao, setPrevisao] = useState([]);
+  const [historico, setHistorico] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const [dateRange, setDateRange] = React.useState([
-    moment("01/01/2023", "DD/MM/YYYY").toDate(),
-    moment("31/12/2024", "DD/MM/YYYY").toDate(),
+  const [dateRange, setDateRange] = useState([
+    moment("01/01/2022", "DD/MM/YYYY").toDate(),
+    moment("31/12/2023", "DD/MM/YYYY").toDate(),
   ]);
 
-  const getDateRangeText = (dataRange) => {
-    if (dataRange && isValidDate(dataRange)) {
-      return `Dados não selacionados`;
-    }
-
-    let [dataInicial, dataFinal] = dataRange;
-    let dataInicialFormatada = format(dataInicial, "dd/MM/yyyy");
-    let dataFinalFormatada = format(dataFinal, "dd/MM/yyyy");
-    console.log(`Dados de ${dataInicialFormatada} até  ${dataFinalFormatada}`);
-    return `Dados de ${dataInicialFormatada} até  ${dataFinalFormatada}`;
+  const getRangeText = () => {
+    if (!dateRange || isValidDate(dateRange)) return "Período não selecionado";
+    const [from, to] = dateRange;
+    return `Dados de ${format(from, "dd/MM/yyyy")} até ${format(
+      to,
+      "dd/MM/yyyy"
+    )}`;
   };
 
-  const treinarModelo = async () => {
-    try {
-      const response = await axios.post(
-        `${base_url_api_ml}/api/temporal/treinar`,
-        {}, //body
-        {
-          params: {
-            qtd_dias_previsao: previsaoPath,
-            qtd_dias_sazonalidade: sazonalidade,
-            cid: cid,
-            tipo_analise: tipo,
-          },
-        }
-      );
-
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao fazer a requisição:", error);
-      throw error;
-    }
-  };
+  const treinarModelo = () =>
+    axios.post(
+      `${base_url_api_ml}/api/temporal/treinar`,
+      {},
+      {
+        params: {
+          qtd_dias_previsao: previsaoPath,
+          qtd_dias_sazonalidade: sazonalidade,
+          cid,
+          tipo_analise: tipo,
+        },
+      }
+    );
 
   const getPrevisoes = async () => {
     try {
-      let [dataInicial, dataFinal] = dateRange;
-      let dataInicialFormatada = format(dataInicial, "yyyy-MM-dd");
-      let dataFinalFormatada = format(dataFinal, "yyyy-MM-dd");
+      const [from, to] = dateRange;
       const response = await axios.get(
         `${base_url_api_ml}/api/temporal/previsao`,
         {
           params: {
-            cid: cid,
+            cid,
             tipo_analise: tipo,
-            dt_previsao_inicial: dataInicialFormatada,
-            dt_previsao_final: dataFinalFormatada,
+            dt_previsao_inicial: format(from, "yyyy-MM-dd"),
+            dt_previsao_final: format(to, "yyyy-MM-dd"),
           },
         }
       );
 
-      const datas = response.data
-        .map((item) => item.data)
-        .map((dateStr) => new Date(dateStr));
-      const valoresHistoricos = response.data.map(
-        (item) => item.valor_historico
-      );
-      const valoresPrevisao = response.data.map((item) => item.valor_previsao);
+      const datas = response.data.map((item) => new Date(item.data));
       setXLabels(datas);
-      setHistorico(valoresHistoricos);
-      setPrevisao(valoresPrevisao);
-
-      console.log("Finalizado get previsoes");
-
-      return response.data;
+      setHistorico(response.data.map((item) => item.valor_historico));
+      setPrevisao(response.data.map((item) => item.valor_previsao));
     } catch (error) {
-      console.error("Erro ao fazer a requisição get api:", error);
-      throw error;
+      console.error("Erro ao buscar previsões:", error);
     }
-  };
-
-  const getCardColor = (qualidade) => {
-    const colorMap = {
-      "N1 - BOA": "success",
-      "N2 - MODERADA": "warning",
-      "N3 - RUIM": "danger",
-      "N4 - MUITO RUIM": "rose",
-    };
-
-    return colorMap[qualidade] || "warning"; // Retorna a cor mapeada ou "rose" se não houver correspondência
-  };
-
-  const handleSazonalidadeChange = (event) => {
-    console.log(event.target.value);
-    setSazonalidade(event.target.value);
-  };
-
-  const handlePrevisaoChange = (event) => {
-    console.log(event.target.value);
-    setPrevisaoPath(event.target.value);
-  };
-
-  const handleCidChange = (event) => {
-    console.log(event.target.value);
-    setCid(event.target.value);
-  };
-
-  const handleTipoChange = (event) => {
-    console.log(event.target.value);
-    setTipo(event.target.value);
   };
 
   const handleTreinarClick = async () => {
@@ -151,7 +83,6 @@ export default function Dashboard() {
       setModalIsOpen(true);
       await treinarModelo();
       await getPrevisoes();
-      console.log("finalizado");
     } catch (error) {
       alert(`Erro: ${error.message}`);
     } finally {
@@ -160,148 +91,97 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    getPrevisoes();
-  }, []);
-
-  useEffect(() => {
     if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
       getPrevisoes();
     }
   }, [tipo, cid, dateRange]);
 
-  const atualizaData = (data) => {
-    setDateRange(data);
-  };
-
   return (
-    <div>
-      <GridContainer>
-        <GridItem xs={12} sm={12} md={12}>
-          <Card>
-            <CardHeader color={getCardColor("N1 - BOA")} stats icon>
-              <CardIcon color={getCardColor("N1 - BOA")}>
-                <InsertChart></InsertChart>
-              </CardIcon>
-              <p className={classes.cardCategory}>
-                Pacientes atendidos x previsto
-              </p>
-            </CardHeader>
-            <CardBody>
-              <div className={classes.CardBody}>
-                <Box
-                  className="estiloHorizontal"
-                  justifyContent="space-between"
+    <Box>
+      <PageHeader
+        eyebrow="Previsão"
+        title="Modelo temporal de demanda"
+        description="Treine o modelo, ajuste sazonalidade e horizonte de previsão e compare valores históricos com os previstos."
+      />
+
+      <Grid container spacing={2.5}>
+        <Grid item xs={12}>
+          <ChartCard
+            icon={InsertChartIcon}
+            title="Pacientes atendidos × previsto"
+            subtitle="Comparação histórico × previsão"
+            footer={
+              <>
+                <UpdateIcon />
+                <span>{getRangeText()}</span>
+              </>
+            }
+            height={360}
+          >
+            <Stack spacing={2}>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "1fr 1fr",
+                    md: "1fr 1fr",
+                    lg:
+                      "minmax(120px, 0.7fr) minmax(120px, 0.7fr) minmax(140px, 1fr) minmax(160px, 1fr) minmax(340px, 1.6fr) auto",
+                  },
+                  gap: 1.5,
+                  alignItems: "center",
+                }}
+              >
+                <TextField
+                  label="Dias de previsão"
+                  type="number"
+                  size="small"
+                  fullWidth
+                  value={previsaoPath}
+                  onChange={(e) => setPrevisaoPath(e.target.value)}
+                />
+                <TextField
+                  label="Dias de sazonalidade"
+                  type="number"
+                  size="small"
+                  fullWidth
+                  value={sazonalidade}
+                  onChange={(e) => setSazonalidade(e.target.value)}
+                />
+                <TipoSelect
+                  tipo={tipo}
+                  handleTipoChange={(e) => setTipo(e.target.value)}
+                />
+                <CidSelect
+                  cid={cid}
+                  handleCidChange={(e) => setCid(e.target.value)}
+                />
+                <DatePicker value={dateRange} onChange={setDateRange} />
+                <Button
+                  variant="contained"
+                  size="medium"
+                  onClick={handleTreinarClick}
+                  sx={{ height: 40, whiteSpace: "nowrap" }}
                 >
-                  <div
-                    style={{
-                      paddingLeft: "100px",
-                      paddingRight: "20px",
-                      paddingTop: "10px",
-                    }}
-                  >
-                    <InputLabel id="previsao-label">Dias previsão:</InputLabel>
-                    <Input
-                      labelId="previsao-label"
-                      type="number"
-                      id="previsao"
-                      name="previsao"
-                      value={previsaoPath}
-                      onChange={handlePrevisaoChange}
-                    ></Input>
-                  </div>
-                  <div
-                    style={{
-                      paddingLeft: "20px",
-                      paddingRight: "20px",
-                      paddingTop: "10px",
-                    }}
-                  >
-                    <InputLabel id="sazonalidade-label">
-                      Dias sazonalidade:
-                    </InputLabel>
-                    <Input
-                      labelId="cid-label"
-                      type="number"
-                      id="sazonalidade"
-                      name="sazonalidade"
-                      value={sazonalidade}
-                      onChange={handleSazonalidadeChange}
-                    ></Input>
-                  </div>
-                  <div
-                    style={{
-                      paddingLeft: "20px",
-                      paddingRight: "20px",
-                      paddingTop: "10px",
-                    }}
-                  >
-                    <TipoSelect
-                      tipo={tipo}
-                      handleTipoChange={handleTipoChange}
-                    ></TipoSelect>
-                  </div>
-                  <div
-                    style={{
-                      paddingLeft: "20px",
-                      paddingRight: "20px",
-                      paddingTop: "10px",
-                    }}
-                  >
-                    <CidSelect
-                      cid={cid}
-                      handleCidChange={handleCidChange}
-                    ></CidSelect>
-                  </div>
-                  <div
-                    style={{
-                      paddingLeft: "20px",
-                      paddingRight: "20px",
-                      paddingTop: "20px",
-                    }}
-                  >
-                    <InputLabel id="data-atendimento-label">
-                      Data Atendimento
-                    </InputLabel>
-                    <DatePicker value={dateRange} onChange={atualizaData} />
-                  </div>
-                  <div
-                    style={{
-                      paddingLeft: "20px",
-                      paddingRight: "300px",
-                      paddingTop: "20px",
-                    }}
-                  >
-                    <Button
-                      color="primary"
-                      onClick={handleTreinarClick}
-                      variant="contained"
-                      size="large"
-                      disableElevation
-                    >
-                      Calcular
-                    </Button>
-                  </div>
-                </Box>
-                <CustomLineGraph
-                  xLabels={xLabels}
-                  previsao={previsao}
-                  historico={historico}
-                ></CustomLineGraph>
-              </div>
-            </CardBody>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <Update />
-                <Typography>{getDateRangeText(dateRange)}</Typography>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-      </GridContainer>
+                  Calcular
+                </Button>
+              </Box>
+
+              <CustomLineGraph
+                xLabels={xLabels}
+                previsao={previsao}
+                historico={historico}
+              />
+            </Stack>
+          </ChartCard>
+        </Grid>
+      </Grid>
+
       <LoadingModal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
       />
-    </div>
+    </Box>
   );
 }

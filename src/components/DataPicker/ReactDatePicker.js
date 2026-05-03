@@ -1,30 +1,52 @@
-import * as React from "react";
-import ReactDatePicker, { registerLocale } from "react-datepicker";
-import { PropTypes } from "prop-types";
-import "react-datepicker/dist/react-datepicker-cssmodules.css";
-import "react-datepicker/dist/react-datepicker.css";
-import ptBr from "date-fns/locale/pt-BR";
+import React from "react";
+import PropTypes from "prop-types";
+import { Stack } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-registerLocale("pt-BR", ptBr);
+const slotProps = {
+  textField: {
+    size: "small",
+    fullWidth: true,
+  },
+  popper: {
+    placement: "bottom-start",
+  },
+};
 
-export default function DatePicker(props) {
-  const [startDate, endDate] = props.value;
+export default function DateRangePicker({ value, onChange }) {
+  const [from, to] = value || [null, null];
+
+  const handleFromChange = (newFrom) => {
+    onChange([newFrom, to]);
+  };
+
+  const handleToChange = (newTo) => {
+    onChange([from, newTo]);
+  };
 
   return (
-    <ReactDatePicker
-      selectsRange={true}
-      startDate={startDate}
-      endDate={endDate}
-      dateFormat="dd/MM/yyyy"
-      onChange={props.onChange}
-      locale="pt-BR"
-      placeholderText="Filtro data atendimento"
-      openToDate={startDate}
-    />
+    <Stack direction="row" spacing={1} alignItems="center">
+      <DatePicker
+        label="De"
+        value={from}
+        onChange={handleFromChange}
+        format="dd/MM/yyyy"
+        maxDate={to || undefined}
+        slotProps={slotProps}
+      />
+      <DatePicker
+        label="Até"
+        value={to}
+        onChange={handleToChange}
+        format="dd/MM/yyyy"
+        minDate={from || undefined}
+        slotProps={slotProps}
+      />
+    </Stack>
   );
 }
 
-DatePicker.propTypes = {
-  value: PropTypes.any,
-  onChange: PropTypes.func,
+DateRangePicker.propTypes = {
+  value: PropTypes.array,
+  onChange: PropTypes.func.isRequired,
 };

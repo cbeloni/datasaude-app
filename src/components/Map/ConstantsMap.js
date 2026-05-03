@@ -1,5 +1,4 @@
 const IMG_DEFAULT =
   "https://br-se-1.magaluobjects.com/v1/AUTH_c090bb3917894ed796de8fda36befc83/maps-pub/1_Krig_media_mp10_2_1.png";
-const IMG_BASE =
-  "https://br-se-1.magaluobjects.com/v1/AUTH_c090bb3917894ed796de8fda36befc83/maps-pub/";
+const IMG_BASE = "https://maps.br-se1.magaluobjects.com/";
 export { IMG_DEFAULT, IMG_BASE };

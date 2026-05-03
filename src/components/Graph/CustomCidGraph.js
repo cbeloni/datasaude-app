@@ -3,9 +3,10 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import axios from "axios";
 import { format } from "date-fns";
-import { Box, Button } from "@material-ui/core";
+import { Box, Button, Stack } from "@mui/material";
 import PropTypes from "prop-types";
 import RadioGroupCid from "components/RadioGroup/RadioGroupCid";
+import { chartPalette, chartSx } from "theme/chartPalette";
 
 const valueFormatter = (value) => `${value} ocorrências`;
 
@@ -17,7 +18,9 @@ const chartSetting = {
   ],
   series: [{ dataKey: "qtd", label: "Qtd CID", valueFormatter }],
   height: 300,
+  colors: chartPalette,
   sx: {
+    ...chartSx,
     [`& .${axisClasses.directionY} .${axisClasses.label}`]: {
       transform: "translateX(-10px)",
     },
@@ -86,22 +89,18 @@ export default function CustomCidGraphBars(props) {
   }, []);
 
   return (
-    <div style={{ width: "100%" }}>
-      <Box className="estiloHorizontal" justifyContent="space-between">
-        <div
-          style={{
-            paddingLeft: "20px",
-            paddingRight: "40px",
-            paddingTop: "10px",
-          }}
-        >
-          <RadioGroupCid
-            value={query}
-            onChange={handleChangeQuery}
-          ></RadioGroupCid>
-        </div>
-        <Button onClick={handleButtonClick}>Atualizar</Button>
-      </Box>
+    <Box sx={{ width: "100%" }}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mb: 1 }}
+      >
+        <RadioGroupCid value={query} onChange={handleChangeQuery} />
+        <Button size="small" variant="outlined" onClick={handleButtonClick}>
+          Atualizar
+        </Button>
+      </Stack>
       <BarChart
         dataset={dados}
         xAxis={[
@@ -114,7 +113,7 @@ export default function CustomCidGraphBars(props) {
         ]}
         {...chartSetting}
       />
-    </div>
+    </Box>
   );
 }
 
