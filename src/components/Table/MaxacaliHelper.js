@@ -41,9 +41,9 @@ const maxacaliCaracteristicaColumns = [
   { field: "v0007", headerName: "V0007", width: 110 },
   { field: "v00047", headerName: "V00047", width: 110 },
   {
-    field: "calculo_um",
-    headerName: "Calculo Um",
-    width: 140,
+    field: "percentual_domicios_ocupados",
+    headerName: "% Domicílios Ocupados",
+    width: 190,
   },
 ];
 
