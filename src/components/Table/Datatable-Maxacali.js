@@ -4,8 +4,7 @@ import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { maxacaliColumns } from "./MaxacaliHelper";
 
 const PAGE_SIZE_DEFAULT = 10;
-const CALCULO_UM_FIELD = "calculo_um";
-const CALCULO_UM_DEPENDENCIES = ["v00047", "v0003"];
+
 const DEFAULT_SELECTED_COLUMNS = [
   "id",
   "cd_setor",
@@ -45,16 +44,7 @@ function DataTableMaxacaliComponent() {
     [selectedColumns]
   );
   const selectedRequestColumns = useMemo(() => {
-    const fields = [...selectedColumns];
-    if (fields.includes(CALCULO_UM_FIELD)) {
-      CALCULO_UM_DEPENDENCIES.forEach((dependency) => {
-        if (!fields.includes(dependency)) {
-          fields.push(dependency);
-        }
-      });
-    }
-
-    return fields;
+    return [...selectedColumns];
   }, [selectedColumns]);
 
   const handleColumnsChange = (event) => {
@@ -98,21 +88,7 @@ function DataTableMaxacaliComponent() {
         }
 
         const payloadRows = data?.payload || [];
-        const rowsWithCalculoUm = payloadRows.map((row) => {
-          const v00047 = Number(row.v00047);
-          const v0003 = Number(row.v0003);
-          const calculoUm =
-            Number.isFinite(v00047) && Number.isFinite(v0003) && v0003 !== 0
-              ? (v00047 / v0003) * 100
-              : null;
-
-          return {
-            ...row,
-            calculo_um: calculoUm,
-          };
-        });
-
-        setRows(rowsWithCalculoUm);
+        setRows(payloadRows);
         setRowCount(data?.totalRecordCount || 0);
       } catch (error) {
         if (!active) {
