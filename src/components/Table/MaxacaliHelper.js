@@ -45,6 +45,11 @@ const maxacaliCaracteristicaColumns = [
     headerName: "% Domicílios Ocupados",
     width: 190,
   },
+  {
+    field: "percentual_pessoas",
+    headerName: "% Pessoas até 14 anos",
+    width: 190,
+  },
 ];
 
 const maxacaliColumns = [

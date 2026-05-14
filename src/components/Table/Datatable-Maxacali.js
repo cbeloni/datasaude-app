@@ -17,6 +17,7 @@ const DEFAULT_SELECTED_COLUMNS = [
   "cd_uf",
   "nm_uf",
   "percentual_domicios_ocupados",
+  "percentual_pessoas",
 ];
 
 function DataTableMaxacaliComponent() {
