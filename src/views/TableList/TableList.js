@@ -16,13 +16,13 @@ import TabPanel from "@mui/lab/TabPanel";
 import styles from "layouts/Styles/commom.js";
 import PoluentesHelper from "views/TableList/PoluentesHelper";
 import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
-import DataTableMaxacaliComponent from "components/Table/Datatable-Maxacali";
+import DataTableIbgeComponent from "components/Table/Datatable-ibge";
 
 const useStyles = makeStyles(styles);
 const poluentesHelper = PoluentesHelper();
 
 export default function TableList() {
-  const [value, setValue] = useState("paciente");
+  const [value, setValue] = useState("ibge");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -35,7 +35,7 @@ export default function TableList() {
         <TabList onChange={handleChange} aria-label="lab API tabs example">
           <Tab label="Poluente online" value="poluente-online" />
           <Tab label="Paciente" value="paciente" />
-          <Tab label="Maxacali" value="maxacali" />
+          <Tab label="IBGE" value="ibge" />
         </TabList>
       </Box>
       <TabPanel value="poluente-online" className={classes.tabPanelBorder}>
@@ -74,18 +74,18 @@ export default function TableList() {
           </GridItem>
         </GridContainer>
       </TabPanel>
-      <TabPanel value="maxacali" className={classes.tabPanelBorder}>
+      <TabPanel value="ibge" className={classes.tabPanelBorder}>
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
               <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Maxacali</h4>
+                <h4 className={classes.cardTitleWhite}>IBGE</h4>
                 <p className={classes.cardCategoryWhite}>
-                  Tabela baseada no dataset de setores do Maxacali
+                  Tabela baseada no dataset de setores do IBGE
                 </p>
               </CardHeader>
               <CardBody>
-                <DataTableMaxacaliComponent></DataTableMaxacaliComponent>
+                <DataTableIbgeComponent></DataTableIbgeComponent>
               </CardBody>
             </Card>
           </GridItem>

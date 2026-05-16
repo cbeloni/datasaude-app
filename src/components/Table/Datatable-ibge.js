@@ -1,9 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import { maxacaliColumns } from "./MaxacaliHelper";
+import { ibgeColumns } from "./ibgeHelper";
 
 const PAGE_SIZE_DEFAULT = 10;
+const FILTER_ALL = "todos";
+const FILTER_SETOR = "maxacali";
+const IBGE_SETOR_FILTER = [
+  "310660620000007",
+  "310660620000011",
+  "310660620000012",
+  "315765805000014",
+  "315765805000015",
+  "315765805000016",
+  "315765805000017",
+  "310660620000013",
+];
 
 const DEFAULT_SELECTED_COLUMNS = [
   "id",
@@ -20,25 +32,26 @@ const DEFAULT_SELECTED_COLUMNS = [
   "percentual_pessoas",
 ];
 
-function DataTableMaxacaliComponent() {
+function DataTableIbgeComponent() {
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [selectedColumns, setSelectedColumns] = useState(
     DEFAULT_SELECTED_COLUMNS
   );
+  const [selectedFilter, setSelectedFilter] = useState(FILTER_ALL);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: PAGE_SIZE_DEFAULT,
   });
 
   const endpoint = useMemo(
-    () => `${process.env.REACT_APP_API_URL}/api/v1/maxacali/listar`,
+    () => `${process.env.REACT_APP_API_URL}/api/v1/ibge/listar`,
     []
   );
   const columnVisibilityModel = useMemo(
     () =>
-      maxacaliColumns.reduce((acc, column) => {
+      ibgeColumns.reduce((acc, column) => {
         acc[column.field] = selectedColumns.includes(column.field);
         return acc;
       }, {}),
@@ -51,6 +64,14 @@ function DataTableMaxacaliComponent() {
   const handleColumnsChange = (event) => {
     const value = event.target.value;
     setSelectedColumns(typeof value === "string" ? value.split(",") : value);
+    setPaginationModel((current) => ({
+      ...current,
+      page: 0,
+    }));
+  };
+
+  const handleFilterChange = (event) => {
+    setSelectedFilter(event.target.value);
     setPaginationModel((current) => ({
       ...current,
       page: 0,
@@ -70,12 +91,24 @@ function DataTableMaxacaliComponent() {
           columns: selectedRequestColumns,
         };
 
+        const requestBody =
+          selectedFilter === FILTER_SETOR
+            ? {
+                payload: {
+                  take: 10,
+                  prev: 0,
+                  skip: 0,
+                },
+                cd_setor: IBGE_SETOR_FILTER,
+              }
+            : payload;
+
         const response = await fetch(endpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -96,7 +129,7 @@ function DataTableMaxacaliComponent() {
           return;
         }
 
-        console.error("Erro ao carregar tabela Maxacali", error);
+        console.error("Erro ao carregar tabela IBGE", error);
         setRows([]);
         setRowCount(0);
       } finally {
@@ -115,6 +148,7 @@ function DataTableMaxacaliComponent() {
     endpoint,
     paginationModel.page,
     paginationModel.pageSize,
+    selectedFilter,
     selectedRequestColumns,
   ]);
 
@@ -123,14 +157,16 @@ function DataTableMaxacaliComponent() {
       <Box
         style={{
           paddingBottom: "12px",
-          maxWidth: "270px",
+          display: "flex",
+          gap: "8px",
+          maxWidth: "700px",
         }}
       >
         <FormControl fullWidth size="small">
-          <InputLabel id="maxacali-columns-label">Colunas exibidas</InputLabel>
+          <InputLabel id="ibge-columns-label">Colunas exibidas</InputLabel>
           <Select
-            labelId="maxacali-columns-label"
-            id="maxacali-columns"
+            labelId="ibge-columns-label"
+            id="ibge-columns"
             multiple
             value={selectedColumns}
             onChange={handleColumnsChange}
@@ -142,23 +178,36 @@ function DataTableMaxacaliComponent() {
                 : selected
                     .map(
                       (field) =>
-                        maxacaliColumns.find((column) => column.field === field)
+                        ibgeColumns.find((column) => column.field === field)
                           ?.headerName || field
                     )
                     .join(", ")
             }
           >
-            {maxacaliColumns.map((column) => (
+            {ibgeColumns.map((column) => (
               <MenuItem key={column.field} value={column.field}>
                 {column.headerName}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
+        <FormControl fullWidth size="small">
+          <InputLabel id="ibge-filter-label">Filtro</InputLabel>
+          <Select
+            labelId="ibge-filter-label"
+            id="ibge-filter"
+            value={selectedFilter}
+            onChange={handleFilterChange}
+            label="Filtro"
+          >
+            <MenuItem value={FILTER_ALL}>Todos</MenuItem>
+            <MenuItem value={FILTER_SETOR}>maxacali</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
       <DataGrid
         rows={rows}
-        columns={maxacaliColumns}
+        columns={ibgeColumns}
         columnVisibilityModel={columnVisibilityModel}
         rowCount={rowCount}
         loading={loading}
@@ -173,4 +222,4 @@ function DataTableMaxacaliComponent() {
   );
 }
 
-export default DataTableMaxacaliComponent;
+export default DataTableIbgeComponent;

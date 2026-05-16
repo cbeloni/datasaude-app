@@ -8,7 +8,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import styles from "layouts/Styles/commom.js";
 import { makeStyles } from "@material-ui/core/styles";
 import ReactMap2 from "components/Map/ReactMap2";
-import ReactMapMaxacali from "components/Map/ReactMapMaxacali";
+import ReactMapIbge from "components/Map/ReactMapibge";
 import ReactMapBronquiolite from "components/Map/ReactMapBronquiolite";
 
 const useStyles = makeStyles(styles);
@@ -27,7 +27,7 @@ const Maps = () => {
           <Tab label="mapa dinâmico" value="map_dinamic" />
           <Tab label="bronquiolite" value="map_bronquiolite" />
           <Tab label="mapa estático" value="map_estatic" />
-          <Tab label="mapa maxacali" value="map_maxacali" />
+          <Tab label="mapa IBGE" value="map_ibge" />
         </TabList>
       </Box>
       <TabPanel value="map_dinamic" className={classes.tabPanelBorder}>
@@ -39,8 +39,8 @@ const Maps = () => {
       <TabPanel value="map_estatic" className={classes.tabPanelBorder}>
         <IframeMap></IframeMap>
       </TabPanel>
-      <TabPanel value="map_maxacali" className={classes.tabPanelBorder}>
-        <ReactMapMaxacali></ReactMapMaxacali>
+      <TabPanel value="map_ibge" className={classes.tabPanelBorder}>
+        <ReactMapIbge></ReactMapIbge>
       </TabPanel>
     </TabContext>
   );

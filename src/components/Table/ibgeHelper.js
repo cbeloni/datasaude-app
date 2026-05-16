@@ -1,4 +1,4 @@
-const maxacaliBaseColumns = [
+const ibgeBaseColumns = [
   { field: "id", headerName: "Id", width: 100 },
   { field: "cd_setor", headerName: "Código Setor", width: 190 },
   { field: "situacao", headerName: "Situação", width: 120 },
@@ -31,7 +31,7 @@ const maxacaliBaseColumns = [
   { field: "nm_concurb", headerName: "Conurbação", width: 180 },
 ];
 
-const maxacaliCaracteristicaColumns = [
+const ibgeCaracteristicaColumns = [
   { field: "v0001", headerName: "V0001", width: 110 },
   { field: "v0002", headerName: "V0002", width: 110 },
   { field: "v0003", headerName: "V0003", width: 110 },
@@ -52,11 +52,11 @@ const maxacaliCaracteristicaColumns = [
   },
 ];
 
-const maxacaliColumns = [
-  ...maxacaliBaseColumns,
-  ...maxacaliCaracteristicaColumns,
+const ibgeColumns = [
+  ...ibgeBaseColumns,
+  ...ibgeCaracteristicaColumns,
   { field: "created_at", headerName: "Criado em", width: 170 },
   { field: "updated_at", headerName: "Atualizado em", width: 170 },
 ];
 
-export { maxacaliBaseColumns, maxacaliCaracteristicaColumns, maxacaliColumns };
+export { ibgeBaseColumns, ibgeCaracteristicaColumns, ibgeColumns };

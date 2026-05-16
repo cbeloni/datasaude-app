@@ -40,7 +40,7 @@ function ResetViewButton({ center, zoom }) {
         zIndex: 1000,
       }}
     >
-      Ajustar para Maxacali
+      Ajustar para IBGE
     </button>
   );
 }
@@ -59,7 +59,7 @@ const SETOR_COLORS = [
   "#6d4c41",
 ];
 
-function ReactMapMaxacali() {
+function ReactMapIbge() {
   const initialPosition = [-16.886, -40.545];
   const initialZoom = window.innerWidth >= 768 ? 12 : 11;
 
@@ -215,4 +215,4 @@ function ReactMapMaxacali() {
   );
 }
 
-export default ReactMapMaxacali;
+export default ReactMapIbge;
