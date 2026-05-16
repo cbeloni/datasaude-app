@@ -192,13 +192,13 @@ function DataTableIbgeComponent() {
           </Select>
         </FormControl>
         <FormControl fullWidth size="small">
-          <InputLabel id="ibge-filter-label">Filtro</InputLabel>
+          <InputLabel id="ibge-filter-label">Setor</InputLabel>
           <Select
             labelId="ibge-filter-label"
             id="ibge-filter"
             value={selectedFilter}
             onChange={handleFilterChange}
-            label="Filtro"
+            label="Setor"
           >
             <MenuItem value={FILTER_ALL}>Todos</MenuItem>
             <MenuItem value={FILTER_SETOR}>maxacali</MenuItem>
