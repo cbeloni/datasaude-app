@@ -42,8 +42,6 @@ const DEFAULT_SELECTED_COLUMNS = [
   "percentual_pessoas",
 ];
 
-const IBGE_FIELDS = new Set(ibgeColumns.map((column) => column.field));
-
 const sanitizeFormula = (formula) => {
   return formula.replace(/\s+/g, "").toLowerCase();
 };
@@ -87,6 +85,7 @@ function DataTableIbgeComponent() {
   const [formulaInput, setFormulaInput] = useState("");
   const [formulaError, setFormulaError] = useState("");
   const [customFields, setCustomFields] = useState([]);
+  const [dynamicApiFields, setDynamicApiFields] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: PAGE_SIZE_DEFAULT,
@@ -96,13 +95,38 @@ function DataTableIbgeComponent() {
     () => `${process.env.REACT_APP_API_URL}/api/v1/ibge/listar`,
     []
   );
+  const allAvailableColumns = useMemo(() => {
+    const staticFields = new Set(ibgeColumns.map((column) => column.field));
+    const staticFieldsNormalized = new Set(
+      ibgeColumns.map((column) => column.field.toLowerCase())
+    );
+    const dynamicColumns = dynamicApiFields
+      .filter((field) => !staticFields.has(field))
+      .filter((field) => !staticFieldsNormalized.has(field.toLowerCase()))
+      .map((field) => ({
+        field,
+        headerName: field.toUpperCase(),
+        width: 170,
+      }));
+
+    return [...ibgeColumns, ...dynamicColumns];
+  }, [dynamicApiFields]);
+  const allAvailableFields = useMemo(() => {
+    return new Set(allAvailableColumns.map((column) => column.field));
+  }, [allAvailableColumns]);
+  const columnLabelByField = useMemo(() => {
+    return allAvailableColumns.reduce((acc, column) => {
+      acc[column.field] = column.headerName;
+      return acc;
+    }, {});
+  }, [allAvailableColumns]);
   const columnVisibilityModel = useMemo(
     () =>
-      ibgeColumns.reduce((acc, column) => {
+      allAvailableColumns.reduce((acc, column) => {
         acc[column.field] = selectedColumns.includes(column.field);
         return acc;
       }, {}),
-    [selectedColumns]
+    [allAvailableColumns, selectedColumns]
   );
   const selectedRequestColumns = useMemo(() => {
     return [...selectedColumns];
@@ -116,11 +140,15 @@ function DataTableIbgeComponent() {
       valueGetter: (params) => calculateFormula(field.formula, params.row),
     }));
 
-    return [...ibgeColumns, ...customColumns];
-  }, [customFields]);
+    return [...allAvailableColumns, ...customColumns];
+  }, [allAvailableColumns, customFields]);
   const formulaFieldOptions = useMemo(() => {
-    return ibgeColumns.map((column) => column.field.toUpperCase());
-  }, []);
+    return Array.from(
+      new Set(
+        Array.from(allAvailableFields).map((field) => field.toUpperCase())
+      )
+    );
+  }, [allAvailableFields]);
   const currentFormulaToken = useMemo(() => {
     const match = formulaInput.match(/[a-zA-Z_][a-zA-Z0-9_]*$/);
     return match ? match[0].toUpperCase() : "";
@@ -167,7 +195,7 @@ function DataTableIbgeComponent() {
 
     const formulaFields = extractFormulaFields(normalizedFormula);
     const unknownFields = formulaFields.filter(
-      (field) => !IBGE_FIELDS.has(field)
+      (field) => !allAvailableFields.has(field)
     );
 
     if (unknownFields.length > 0) {
@@ -255,6 +283,26 @@ function DataTableIbgeComponent() {
         }
 
         const payloadRows = data?.payload || [];
+        const nextDynamicFields = Array.from(
+          payloadRows.reduce(
+            (acc, row) => {
+              Object.keys(row || {}).forEach((field) => {
+                const normalizedField = field.toLowerCase();
+                if (!acc.normalized.has(normalizedField)) {
+                  acc.normalized.add(normalizedField);
+                  acc.fields.add(field);
+                }
+              });
+              return acc;
+            },
+            { normalized: new Set(), fields: new Set() }
+          ).fields
+        );
+
+        setDynamicApiFields((current) => {
+          const merged = new Set([...current, ...nextDynamicFields]);
+          return Array.from(merged);
+        });
         setRows(payloadRows);
         setRowCount(data?.totalRecordCount || 0);
       } catch (error) {
@@ -312,15 +360,11 @@ function DataTableIbgeComponent() {
               selected.length === 0
                 ? "Nenhuma coluna"
                 : selected
-                    .map(
-                      (field) =>
-                        ibgeColumns.find((column) => column.field === field)
-                          ?.headerName || field
-                    )
+                    .map((field) => columnLabelByField[field] || field)
                     .join(", ")
             }
           >
-            {ibgeColumns.map((column) => (
+            {allAvailableColumns.map((column) => (
               <MenuItem key={column.field} value={column.field}>
                 {column.headerName}
               </MenuItem>
