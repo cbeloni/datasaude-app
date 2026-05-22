@@ -297,12 +297,7 @@ function DataTableIbgeComponent() {
           return Array.from(merged);
         });
         setRows(payloadRows);
-        setRowCount(
-          data?.counter ||
-            data?.filteredRecordCount ||
-            data?.totalRecordCount ||
-            0
-        );
+        setRowCount(data?.totalRecordCount || 0);
       } catch (error) {
         if (!active) {
           return;
