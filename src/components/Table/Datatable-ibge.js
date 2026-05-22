@@ -245,24 +245,17 @@ function DataTableIbgeComponent() {
     const fetchRows = async () => {
       setLoading(true);
       try {
-        const payload = {
-          take: paginationModel.pageSize,
-          prev: null,
-          skip: paginationModel.page * paginationModel.pageSize,
-          columns: selectedRequestColumns,
+        const requestBody = {
+          payload: {
+            take: paginationModel.pageSize,
+            prev: 0,
+            skip: paginationModel.page * paginationModel.pageSize,
+            columns: selectedRequestColumns,
+          },
+          ...(selectedFilter === FILTER_SETOR
+            ? { cd_setor: IBGE_SETOR_FILTER }
+            : {}),
         };
-
-        const requestBody =
-          selectedFilter === FILTER_SETOR
-            ? {
-                payload: {
-                  take: 10,
-                  prev: 0,
-                  skip: 0,
-                },
-                cd_setor: IBGE_SETOR_FILTER,
-              }
-            : payload;
 
         const response = await fetch(endpoint, {
           method: "POST",
@@ -304,7 +297,12 @@ function DataTableIbgeComponent() {
           return Array.from(merged);
         });
         setRows(payloadRows);
-        setRowCount(data?.totalRecordCount || 0);
+        setRowCount(
+          data?.counter ||
+            data?.filteredRecordCount ||
+            data?.totalRecordCount ||
+            0
+        );
       } catch (error) {
         if (!active) {
           return;
