@@ -1,13 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from "@mui/material";
+import {
+  GeoJSON,
+  LayersControl,
   MapContainer,
   TileLayer,
   useMap,
-  LayersControl,
-  GeoJSON,
 } from "react-leaflet";
+import L from "leaflet";
 
-const { Overlay, BaseLayer } = LayersControl;
+const { BaseLayer } = LayersControl;
 
 import "leaflet/dist/leaflet.css";
 import "leaflet/dist/images/marker-icon.png";
@@ -16,13 +25,10 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { IMG_BASE } from "./ConstantsMap";
-import dayjs from "dayjs";
-import obtemPacientes from "../../services/ApiService";
-import formatarPacienteMapa from "utils/formatter";
+import { listIbgeFormulas, postIbgeList } from "services/IbgeService";
+import { ibgeCaracteristicaColumns } from "components/Table/ibgeHelper";
 import PropTypes from "prop-types";
 
-// ─── Componente auxiliar ───
 function ResetViewButton({ center, zoom }) {
   const map = useMap();
 
@@ -50,127 +56,309 @@ ResetViewButton.propTypes = {
   zoom: PropTypes.number.isRequired,
 };
 
-const SETOR_COLORS = [
-  "#e53935",
-  "#8e24aa",
-  "#1e88e5",
-  "#00897b",
-  "#f4511e",
-  "#6d4c41",
+const normalizeFieldName = (name) =>
+  name.trim().toLowerCase().replace(/\s+/g, "_");
+
+const defaultSelectableFields = [
+  "v0001",
+  "v0002",
+  "v0003",
+  "v0004",
+  "v0005",
+  "v0006",
+  "v0007",
+  "v00047",
+  "percentual_domicios_ocupados",
+  "percentual_pessoas",
 ];
+
+const interpolateColor = (value, min, max) => {
+  if (
+    !Number.isFinite(value) ||
+    !Number.isFinite(min) ||
+    !Number.isFinite(max)
+  ) {
+    return "#9e9e9e";
+  }
+
+  if (min === max) {
+    return "#fbc02d";
+  }
+
+  const ratio = Math.min(1, Math.max(0, (value - min) / (max - min)));
+  const red = Math.round(251 + ratio * (229 - 251));
+  const green = Math.round(192 + ratio * (57 - 192));
+  const blue = Math.round(45 + ratio * (53 - 45));
+
+  return `rgb(${red}, ${green}, ${blue})`;
+};
+
+function ScaleLegend({ minValue, maxValue, selectedField }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const legend = L.control({ position: "bottomright" });
+
+    legend.onAdd = () => {
+      const div = L.DomUtil.create("div", "info legend");
+      div.style.background = "white";
+      div.style.padding = "8px 10px";
+      div.style.borderRadius = "6px";
+      div.style.boxShadow = "0 1px 4px rgba(0,0,0,0.3)";
+      div.style.fontSize = "12px";
+
+      const minText = Number.isFinite(minValue) ? minValue.toFixed(2) : "—";
+      const maxText = Number.isFinite(maxValue) ? maxValue.toFixed(2) : "—";
+
+      div.innerHTML = `
+        <div><strong>${selectedField || "Campo"}</strong></div>
+        <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+          <span>${minText}</span>
+          <div style="width:120px; height:10px; border-radius:4px; background:linear-gradient(to right, rgb(251,192,45), rgb(229,57,53));"></div>
+          <span>${maxText}</span>
+        </div>
+        <div style="margin-top:4px; color:#555;">Amarelo: menor valor | Vermelho: maior valor</div>
+      `;
+
+      return div;
+    };
+
+    legend.addTo(map);
+    return () => {
+      legend.remove();
+    };
+  }, [map, minValue, maxValue, selectedField]);
+
+  return null;
+}
+
+ScaleLegend.propTypes = {
+  minValue: PropTypes.number,
+  maxValue: PropTypes.number,
+  selectedField: PropTypes.string,
+};
+
+ScaleLegend.defaultProps = {
+  minValue: null,
+  maxValue: null,
+  selectedField: "",
+};
 
 function ReactMapIbge() {
   const initialPosition = [-16.886, -40.545];
   const initialZoom = window.innerWidth >= 768 ? 12 : 11;
 
-  const [selectedDate] = useState(dayjs("2022-01-30"));
-  const [selectedEscala] = useState("movel");
-  const [selectedPoluenteValue] = useState("MP10");
-  const [selectedCidValues] = useState([]);
   const [geoData, setGeoData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingGeo, setLoadingGeo] = useState(true);
+  const [ibgeRows, setIbgeRows] = useState([]);
+  const [formulas, setFormulas] = useState([]);
+  const [selectedField, setSelectedField] = useState(
+    "percentual_domicios_ocupados"
+  );
 
-  // ─── Carrega o GeoJSON via fetch ───
   useEffect(() => {
     const loadGeoJson = async () => {
       try {
         const response = await fetch("/setores.geojson");
-        if (!response.ok) throw new Error("Falha ao carregar GeoJSON");
+        if (!response.ok) {
+          throw new Error("Falha ao carregar GeoJSON");
+        }
         const data = await response.json();
         setGeoData(data);
       } catch (error) {
-        console.error("Erro ao carregar GeoJSON:", error);
+        setGeoData(null);
       } finally {
-        setLoading(false);
+        setLoadingGeo(false);
       }
     };
 
     loadGeoJson();
   }, []);
 
-  // ─── Carrega dados de pacientes com cleanup ───
   useEffect(() => {
-    let isMounted = true;
+    let active = true;
 
-    const fetchDataFromApi = async () => {
+    const loadIbgeData = async () => {
       try {
-        const requestData = {
-          dt_atendimento: selectedDate.format("YYYY-MM-DD"),
-          poluente: selectedPoluenteValue,
-        };
-        if (selectedCidValues.length > 0) {
-          requestData.ds_cid = selectedCidValues.join(", ");
+        const [ibgeResponse, formulaResponse] = await Promise.all([
+          postIbgeList({
+            take: 1000,
+            prev: null,
+            skip: 0,
+            columns: [],
+          }),
+          listIbgeFormulas(),
+        ]);
+
+        if (!active) {
+          return;
         }
 
-        const dadosPacientes = await obtemPacientes(requestData);
-
-        if (isMounted) {
-          dadosPacientes.map(formatarPacienteMapa);
-        }
+        setIbgeRows(ibgeResponse?.payload || []);
+        setFormulas(formulaResponse?.payload || []);
       } catch (error) {
-        console.log("Erro ao obter pacientes:", error);
+        if (!active) {
+          return;
+        }
+        setIbgeRows([]);
+        setFormulas([]);
       }
     };
 
-    fetchDataFromApi();
+    loadIbgeData();
 
     return () => {
-      isMounted = false;
+      active = false;
     };
-  }, [selectedDate, selectedPoluenteValue, selectedCidValues]);
+  }, []);
+
+  const formulaFields = useMemo(
+    () =>
+      formulas.map((formula) => ({
+        value: normalizeFieldName(formula.nome),
+        label: formula.nome,
+      })),
+    [formulas]
+  );
+
+  const selectableFields = useMemo(() => {
+    const tableFields = ibgeCaracteristicaColumns.map((col) => ({
+      value: col.field,
+      label: col.headerName,
+    }));
+
+    const baseFields = [
+      {
+        value: "percentual_domicios_ocupados",
+        label: "Percentual Domicílios Ocupados",
+      },
+      { value: "percentual_pessoas", label: "Percentual Pessoas" },
+    ];
+
+    const merged = [...baseFields, ...tableFields, ...formulaFields];
+    const dedup = [];
+    const seen = new Set();
+
+    merged.forEach((item) => {
+      if (
+        !seen.has(item.value) &&
+        defaultSelectableFields.includes(item.value)
+      ) {
+        seen.add(item.value);
+        dedup.push(item);
+      }
+    });
+
+    formulaFields.forEach((item) => {
+      if (!seen.has(item.value)) {
+        seen.add(item.value);
+        dedup.push(item);
+      }
+    });
+
+    return dedup;
+  }, [formulaFields]);
 
   useEffect(() => {
-    atualizaMapa();
-  }, [selectedDate, selectedEscala, selectedPoluenteValue]);
+    if (!selectableFields.find((item) => item.value === selectedField)) {
+      const fallback =
+        selectableFields[0]?.value || "percentual_domicios_ocupados";
+      setSelectedField(fallback);
+    }
+  }, [selectableFields, selectedField]);
 
-  const atualizaMapa = () => {
-    const currentDate = selectedDate.format("YYYYMMDD");
-    IMG_BASE +
-      "png_" +
-      selectedEscala +
-      "/" +
-      selectedPoluenteValue +
-      "_" +
-      currentDate +
-      ".png";
-  };
-
-  // ─── Mapa de cores por setor (calculado uma vez que geoData carrega) ───
-  const setorColorMap = React.useMemo(() => {
-    if (!geoData) return {};
-    const map = {};
-    geoData.features.forEach((feature, index) => {
-      map[feature.properties.CD_SETOR] =
-        SETOR_COLORS[index % SETOR_COLORS.length];
+  const valuesBySetor = useMemo(() => {
+    const map = new Map();
+    ibgeRows.forEach((row) => {
+      const rawSetor = row.cd_setor;
+      const setor =
+        rawSetor === null || rawSetor === undefined ? "" : String(rawSetor);
+      const value = Number(row[selectedField]);
+      if (setor && Number.isFinite(value)) {
+        map.set(setor, value);
+      }
     });
     return map;
-  }, [geoData]);
+  }, [ibgeRows, selectedField]);
 
-  const getSetorStyle = (feature) => ({
-    fillColor: setorColorMap[feature.properties.CD_SETOR] || "#999",
-    weight: 2,
-    opacity: 1,
-    color: "white",
-    dashArray: "3",
-    fillOpacity: 0.45,
-  });
+  const range = useMemo(() => {
+    const numericValues = Array.from(valuesBySetor.values()).filter((value) =>
+      Number.isFinite(value)
+    );
+    if (numericValues.length === 0) {
+      return { min: null, max: null };
+    }
+
+    return {
+      min: Math.min(...numericValues),
+      max: Math.max(...numericValues),
+    };
+  }, [valuesBySetor]);
+
+  const getSetorStyle = (feature) => {
+    const setor = String(feature?.properties?.CD_SETOR || "");
+    const value = valuesBySetor.get(setor);
+    return {
+      fillColor: interpolateColor(value, range.min, range.max),
+      weight: 1.2,
+      opacity: 1,
+      color: "white",
+      dashArray: "2",
+      fillOpacity: 0.7,
+    };
+  };
 
   const onEachSetor = (feature, layer) => {
     const p = feature.properties;
+    const setor = String(p.CD_SETOR || "");
+    const value = valuesBySetor.get(setor);
+    const valorFormatado = Number.isFinite(value) ? value.toFixed(2) : "—";
+    const nomeCampo =
+      selectableFields.find((item) => item.value === selectedField)?.label ||
+      selectedField;
+
     const nome = p.NM_AGLOM || p.NM_DIST || p.NM_MUN || "Setor";
     layer.bindPopup(
       `<b>${nome}</b><br/>
       <b>Código do Setor:</b> ${p.CD_SETOR}<br/>
-      <b>Município:</b> ${p.NM_MUN}<br/>
+      <b>${nomeCampo}:</b> ${valorFormatado}<br/>
+      <b>Município:</b> ${p.NM_MUN || "—"}<br/>
       <b>Distrito:</b> ${p.NM_DIST || "—"}<br/>
-      <b>Situação:</b> ${p.SITUACAO}<br/>
-      <b>Área (km²):</b> ${Number(p.AREA_KM2).toFixed(4)}`
+      <b>Situação:</b> ${p.SITUACAO || "—"}`
     );
   };
+
+  const selectedFieldLabel =
+    selectableFields.find((field) => field.value === selectedField)?.label ||
+    selectedField;
 
   return (
     <GridContainer>
       <GridItem xs={12}>
+        <Stack spacing={2} sx={{ mb: 1.5 }}>
+          <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+            <FormControl size="small" sx={{ minWidth: 360, maxWidth: 460 }}>
+              <InputLabel id="ibge-field-label">Campo do mapa IBGE</InputLabel>
+              <Select
+                labelId="ibge-field-label"
+                value={selectedField}
+                label="Campo do mapa IBGE"
+                onChange={(event) => setSelectedField(event.target.value)}
+              >
+                {selectableFields.map((field) => (
+                  <MenuItem key={field.value} value={field.value}>
+                    {field.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Stack>
+          <Typography variant="caption" color="text.secondary">
+            A escala de cor vai do verde (menor valor) ao vermelho (maior
+            valor), com base no campo selecionado.
+          </Typography>
+        </Stack>
+
         <MapContainer
           center={initialPosition}
           zoom={initialZoom}
@@ -188,27 +376,22 @@ function ReactMapIbge() {
             <BaseLayer name="Open Street Map">
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             </BaseLayer>
-
-            {!loading &&
-              geoData &&
-              geoData.features.map((feature) => {
-                const p = feature.properties;
-                const nome = p.NM_AGLOM || p.NM_DIST || `Setor ${p.CD_SETOR}`;
-                const singleFeatureCollection = {
-                  type: "FeatureCollection",
-                  features: [feature],
-                };
-                return (
-                  <Overlay checked name={nome} key={p.CD_SETOR}>
-                    <GeoJSON
-                      data={singleFeatureCollection}
-                      style={() => getSetorStyle(feature)}
-                      onEachFeature={onEachSetor}
-                    />
-                  </Overlay>
-                );
-              })}
           </LayersControl>
+
+          {!loadingGeo && geoData && (
+            <GeoJSON
+              key={`geo-${selectedField}-${ibgeRows.length}`}
+              data={geoData}
+              style={getSetorStyle}
+              onEachFeature={onEachSetor}
+            />
+          )}
+
+          <ScaleLegend
+            minValue={range.min}
+            maxValue={range.max}
+            selectedField={selectedFieldLabel}
+          />
         </MapContainer>
       </GridItem>
     </GridContainer>

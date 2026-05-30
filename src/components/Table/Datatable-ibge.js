@@ -1,21 +1,36 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Autocomplete,
+  Alert,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
+  Stack,
   TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
-import { ibgeColumns } from "./ibgeHelper";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { buildFormulaColumns, ibgeColumns } from "./ibgeHelper";
+import {
+  createIbgeFormula,
+  deleteIbgeFormula,
+  listIbgeFormulas,
+  postIbgeList,
+} from "services/IbgeService";
 
 const PAGE_SIZE_DEFAULT = 10;
 const FILTER_ALL = "todos";
 const FILTER_SETOR = "maxacali";
-const CUSTOM_FIELD_PREFIX = "custom_formula_";
 const IBGE_SETOR_FILTER = [
   "310660620000007",
   "310660620000011",
@@ -26,7 +41,6 @@ const IBGE_SETOR_FILTER = [
   "315765805000017",
   "310660620000013",
 ];
-
 const DEFAULT_SELECTED_COLUMNS = [
   "id",
   "cd_setor",
@@ -42,38 +56,6 @@ const DEFAULT_SELECTED_COLUMNS = [
   "percentual_pessoas",
 ];
 
-const sanitizeFormula = (formula) => {
-  return formula.replace(/\s+/g, "").toLowerCase();
-};
-
-const extractFormulaFields = (formula) => {
-  return Array.from(
-    new Set((formula.match(/[a-z_][a-z0-9_]*/g) || []).map((field) => field))
-  );
-};
-
-const calculateFormula = (formula, row) => {
-  const expression = sanitizeFormula(formula).replace(
-    /[a-z_][a-z0-9_]*/g,
-    (field) => {
-      const value = Number(row[field]);
-      return Number.isFinite(value) ? `${value}` : "0";
-    }
-  );
-
-  if (!/^[0-9+\-*/().]+$/.test(expression)) {
-    return null;
-  }
-
-  try {
-    // eslint-disable-next-line no-new-func
-    const result = Function(`"use strict"; return (${expression});`)();
-    return Number.isFinite(result) ? result : null;
-  } catch (error) {
-    return null;
-  }
-};
-
 function DataTableIbgeComponent() {
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
@@ -82,77 +64,67 @@ function DataTableIbgeComponent() {
     DEFAULT_SELECTED_COLUMNS
   );
   const [selectedFilter, setSelectedFilter] = useState(FILTER_ALL);
-  const [formulaInput, setFormulaInput] = useState("");
-  const [formulaError, setFormulaError] = useState("");
-  const [customFields, setCustomFields] = useState([]);
-  const [dynamicApiFields, setDynamicApiFields] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: PAGE_SIZE_DEFAULT,
   });
+  const [formulas, setFormulas] = useState([]);
+  const [formulasLoading, setFormulasLoading] = useState(false);
+  const [formulaDialogOpen, setFormulaDialogOpen] = useState(false);
+  const [formulaNome, setFormulaNome] = useState("");
+  const [formulaExpressao, setFormulaExpressao] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const endpoint = useMemo(
-    () => `${process.env.REACT_APP_API_URL}/api/v1/ibge/listar`,
-    []
-  );
-  const allAvailableColumns = useMemo(() => {
-    const staticFields = new Set(ibgeColumns.map((column) => column.field));
-    const staticFieldsNormalized = new Set(
-      ibgeColumns.map((column) => column.field.toLowerCase())
-    );
-    const dynamicColumns = dynamicApiFields
-      .filter((field) => !staticFields.has(field))
-      .filter((field) => !staticFieldsNormalized.has(field.toLowerCase()))
-      .map((field) => ({
-        field,
-        headerName: field.toUpperCase(),
-        width: 170,
-      }));
+  const formulaColumns = useMemo(() => buildFormulaColumns(formulas), [
+    formulas,
+  ]);
+  const allColumns = useMemo(() => [...ibgeColumns, ...formulaColumns], [
+    formulaColumns,
+  ]);
 
-    return [...ibgeColumns, ...dynamicColumns];
-  }, [dynamicApiFields]);
-  const allAvailableFields = useMemo(() => {
-    return new Set(allAvailableColumns.map((column) => column.field));
-  }, [allAvailableColumns]);
-  const columnLabelByField = useMemo(() => {
-    return allAvailableColumns.reduce((acc, column) => {
-      acc[column.field] = column.headerName;
-      return acc;
-    }, {});
-  }, [allAvailableColumns]);
+  const loadFormulas = useCallback(async () => {
+    setFormulasLoading(true);
+    try {
+      const response = await listIbgeFormulas();
+      setFormulas(response?.payload || []);
+    } catch (error) {
+      setErrorMessage("Erro ao carregar fórmulas customizadas.");
+      setFormulas([]);
+    } finally {
+      setFormulasLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFormulas();
+  }, [loadFormulas]);
+
+  useEffect(() => {
+    setSelectedColumns((current) => {
+      const validFields = new Set(allColumns.map((column) => column.field));
+      return current.filter((field) => validFields.has(field));
+    });
+  }, [allColumns]);
+
   const columnVisibilityModel = useMemo(
     () =>
-      allAvailableColumns.reduce((acc, column) => {
+      allColumns.reduce((acc, column) => {
         acc[column.field] = selectedColumns.includes(column.field);
         return acc;
       }, {}),
-    [allAvailableColumns, selectedColumns]
+    [allColumns, selectedColumns]
   );
-  const selectedRequestColumns = useMemo(() => {
-    return [...selectedColumns];
-  }, [selectedColumns]);
-  const dataGridColumns = useMemo(() => {
-    const customColumns = customFields.map((field) => ({
-      field: field.id,
-      headerName: field.name,
-      width: 170,
-      sortable: false,
-      valueGetter: (params) => calculateFormula(field.formula, params.row),
-    }));
-
-    return [...allAvailableColumns, ...customColumns];
-  }, [allAvailableColumns, customFields]);
-  const formulaFieldOptions = useMemo(() => {
-    return Array.from(
-      new Set(
-        Array.from(allAvailableFields).map((field) => field.toUpperCase())
-      )
-    );
-  }, [allAvailableFields]);
+  const formulaFieldOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(allColumns.map((column) => column.field.toUpperCase()))
+      ),
+    [allColumns]
+  );
   const currentFormulaToken = useMemo(() => {
-    const match = formulaInput.match(/[a-zA-Z_][a-zA-Z0-9_]*$/);
+    const match = formulaExpressao.match(/[a-zA-Z_][a-zA-Z0-9_]*$/);
     return match ? match[0].toUpperCase() : "";
-  }, [formulaInput]);
+  }, [formulaExpressao]);
   const filteredFormulaOptions = useMemo(() => {
     if (!currentFormulaToken) {
       return formulaFieldOptions;
@@ -180,51 +152,12 @@ function DataTableIbgeComponent() {
     }));
   };
 
-  const handleAddCustomField = () => {
-    const normalizedFormula = sanitizeFormula(formulaInput);
-
-    if (!normalizedFormula) {
-      setFormulaError("Informe uma fórmula, ex.: V0001/V00047.");
-      return;
-    }
-
-    if (!/^[a-z0-9_+\-*/().]+$/.test(normalizedFormula)) {
-      setFormulaError("Use apenas campos, números e operadores (+ - * /).");
-      return;
-    }
-
-    const formulaFields = extractFormulaFields(normalizedFormula);
-    const unknownFields = formulaFields.filter(
-      (field) => !allAvailableFields.has(field)
-    );
-
-    if (unknownFields.length > 0) {
-      setFormulaError(`Campos inválidos: ${unknownFields.join(", ")}`);
-      return;
-    }
-
-    const customFieldId = `${CUSTOM_FIELD_PREFIX}${customFields.length + 1}`;
-    const customField = {
-      id: customFieldId,
-      formula: normalizedFormula,
-      name: normalizedFormula.toUpperCase(),
-    };
-
-    setCustomFields((current) => [...current, customField]);
-    setSelectedColumns((current) => {
-      const merged = new Set([...current, ...formulaFields]);
-      return Array.from(merged);
-    });
-    setFormulaInput("");
-    setFormulaError("");
-  };
-
   const handleFormulaSuggestionSelect = (_, selectedField) => {
     if (!selectedField) {
       return;
     }
 
-    setFormulaInput((current) => {
+    setFormulaExpressao((current) => {
       if (/[a-zA-Z_][a-zA-Z0-9_]*$/.test(current)) {
         return current.replace(/[a-zA-Z_][a-zA-Z0-9_]*$/, selectedField);
       }
@@ -235,7 +168,55 @@ function DataTableIbgeComponent() {
 
   const handleFormulaInputChange = (_, value, reason) => {
     if (reason === "input" || reason === "clear") {
-      setFormulaInput(value);
+      setFormulaExpressao(value);
+    }
+  };
+
+  const handleCreateFormula = async () => {
+    setErrorMessage("");
+
+    if (!formulaNome.trim() || !formulaExpressao.trim()) {
+      setErrorMessage("Preencha nome e fórmula.");
+      return;
+    }
+
+    try {
+      const response = await createIbgeFormula({
+        nome: formulaNome.trim(),
+        formula: formulaExpressao.trim(),
+      });
+      setFormulas(response?.payload || []);
+      setFormulaDialogOpen(false);
+      setFormulaNome("");
+      setFormulaExpressao("");
+      setPaginationModel((current) => ({ ...current, page: 0 }));
+    } catch (error) {
+      setErrorMessage("Não foi possível salvar a fórmula.");
+    }
+  };
+
+  const handleDeleteFormula = async (formulaId, formulaName) => {
+    const confirmed = window.confirm(
+      `Remover a fórmula customizada "${formulaName}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await deleteIbgeFormula(formulaId);
+      const updatedFormulas = response?.payload || [];
+      setFormulas(updatedFormulas);
+      const removedField = formulaName
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+      setSelectedColumns((current) =>
+        current.filter((field) => field !== removedField)
+      );
+    } catch (error) {
+      setErrorMessage("Não foi possível remover a fórmula.");
     }
   };
 
@@ -248,64 +229,31 @@ function DataTableIbgeComponent() {
         const requestBody = {
           payload: {
             take: paginationModel.pageSize,
-            prev: 0,
+            prev: null,
             skip: paginationModel.page * paginationModel.pageSize,
-            columns: selectedRequestColumns,
+            columns: selectedColumns,
           },
           ...(selectedFilter === FILTER_SETOR
             ? { cd_setor: IBGE_SETOR_FILTER }
             : {}),
         };
 
-        const response = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Erro HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await postIbgeList(requestBody);
 
         if (!active) {
           return;
         }
 
-        const payloadRows = data?.payload || [];
-        const nextDynamicFields = Array.from(
-          payloadRows.reduce(
-            (acc, row) => {
-              Object.keys(row || {}).forEach((field) => {
-                const normalizedField = field.toLowerCase();
-                if (!acc.normalized.has(normalizedField)) {
-                  acc.normalized.add(normalizedField);
-                  acc.fields.add(field);
-                }
-              });
-              return acc;
-            },
-            { normalized: new Set(), fields: new Set() }
-          ).fields
-        );
-
-        setDynamicApiFields((current) => {
-          const merged = new Set([...current, ...nextDynamicFields]);
-          return Array.from(merged);
-        });
-        setRows(payloadRows);
+        setRows(data?.payload || []);
         setRowCount(data?.totalRecordCount || 0);
       } catch (error) {
         if (!active) {
           return;
         }
 
-        console.error("Erro ao carregar tabela IBGE", error);
         setRows([]);
         setRowCount(0);
+        setErrorMessage("Erro ao carregar tabela IBGE.");
       } finally {
         if (active) {
           setLoading(false);
@@ -319,122 +267,175 @@ function DataTableIbgeComponent() {
       active = false;
     };
   }, [
-    endpoint,
     paginationModel.page,
     paginationModel.pageSize,
+    selectedColumns,
     selectedFilter,
-    selectedRequestColumns,
   ]);
 
   return (
-    <div style={{ width: "100%", height: 650 }}>
-      <Box
-        style={{
-          paddingBottom: "12px",
-          display: "flex",
-          gap: "8px",
-          flexWrap: "wrap",
-        }}
-      >
-        <FormControl
-          size="small"
-          style={{ minWidth: "320px", flex: "1 1 320px" }}
-        >
-          <InputLabel id="ibge-columns-label">Colunas exibidas</InputLabel>
-          <Select
-            labelId="ibge-columns-label"
-            id="ibge-columns"
-            multiple
-            value={selectedColumns}
-            onChange={handleColumnsChange}
-            label="Colunas exibidas"
-            displayEmpty
-            renderValue={(selected) =>
-              selected.length === 0
-                ? "Nenhuma coluna"
-                : selected
-                    .map((field) => columnLabelByField[field] || field)
-                    .join(", ")
-            }
-          >
-            {allAvailableColumns.map((column) => (
-              <MenuItem key={column.field} value={column.field}>
-                {column.headerName}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl
-          size="small"
-          style={{ minWidth: "220px", flex: "1 1 220px" }}
-        >
-          <InputLabel id="ibge-filter-label">Setor</InputLabel>
-          <Select
-            labelId="ibge-filter-label"
-            id="ibge-filter"
-            value={selectedFilter}
-            onChange={handleFilterChange}
-            label="Setor"
-          >
-            <MenuItem value={FILTER_ALL}>Todos</MenuItem>
-            <MenuItem value={FILTER_SETOR}>maxacali</MenuItem>
-          </Select>
-        </FormControl>
-        <Box
-          style={{
-            display: "flex",
-            gap: "8px",
-            flex: "2 1 560px",
-            minWidth: "420px",
-            alignItems: "flex-start",
-            flexWrap: "wrap",
-          }}
-        >
-          <Autocomplete
-            freeSolo
-            size="small"
-            options={filteredFormulaOptions}
-            inputValue={formulaInput}
-            onInputChange={handleFormulaInputChange}
-            onChange={handleFormulaSuggestionSelect}
-            filterOptions={(options) => options}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Fórmula customizada"
-                placeholder="Ex.: V0001/V00047"
-                error={Boolean(formulaError)}
-                helperText={
-                  formulaError ||
-                  "Digite a fórmula e use autocomplete ao escrever o campo."
-                }
-              />
-            )}
-            style={{ minWidth: "320px", flex: "2 1 320px" }}
-          />
+    <Stack spacing={2} sx={{ width: "100%", minHeight: 650 }}>
+      <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+        <Box sx={{ maxWidth: 420, width: "100%" }}>
+          <FormControl fullWidth size="small">
+            <InputLabel id="ibge-columns-label">Colunas exibidas</InputLabel>
+            <Select
+              labelId="ibge-columns-label"
+              id="ibge-columns"
+              multiple
+              value={selectedColumns}
+              onChange={handleColumnsChange}
+              label="Colunas exibidas"
+              displayEmpty
+              MenuProps={{ PaperProps: { sx: { maxHeight: 360 } } }}
+              renderValue={(selected) =>
+                selected.length === 0
+                  ? "Nenhuma coluna"
+                  : selected
+                      .map(
+                        (field) =>
+                          allColumns.find((column) => column.field === field)
+                            ?.headerName || field
+                      )
+                      .join(", ")
+              }
+            >
+              {allColumns.map((column) => (
+                <MenuItem key={column.field} value={column.field}>
+                  {column.headerName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Box sx={{ maxWidth: 220, width: "100%" }}>
+          <FormControl fullWidth size="small">
+            <InputLabel id="ibge-filter-label">Setor</InputLabel>
+            <Select
+              labelId="ibge-filter-label"
+              id="ibge-filter"
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              label="Setor"
+            >
+              <MenuItem value={FILTER_ALL}>Todos</MenuItem>
+              <MenuItem value={FILTER_SETOR}>Maxacali</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Stack direction="row" spacing={1} alignItems="center">
           <Button
             variant="contained"
-            onClick={handleAddCustomField}
-            style={{ minWidth: "160px", height: "40px", whiteSpace: "nowrap" }}
+            onClick={() => setFormulaDialogOpen(true)}
           >
-            Adicionar campo
+            Fórmula customizada
           </Button>
-        </Box>
+        </Stack>
+      </Stack>
+
+      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+
+      <Box sx={{ height: 650, width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          columns={allColumns}
+          columnVisibilityModel={columnVisibilityModel}
+          rowCount={rowCount}
+          loading={loading || formulasLoading}
+          pagination
+          paginationMode="server"
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          pageSizeOptions={[10, 25, 50, 100]}
+          disableRowSelectionOnClick
+        />
       </Box>
-      <DataGrid
-        rows={rows}
-        columns={dataGridColumns}
-        columnVisibilityModel={columnVisibilityModel}
-        rowCount={rowCount}
-        loading={loading}
-        pagination
-        paginationMode="server"
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={[10, 25, 50, 100]}
-        disableRowSelectionOnClick
-      />
-    </div>
+
+      <Dialog
+        open={formulaDialogOpen}
+        onClose={() => setFormulaDialogOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Fórmulas customizadas</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField
+              label="Nome da campo"
+              value={formulaNome}
+              onChange={(event) => setFormulaNome(event.target.value)}
+              fullWidth
+            />
+            <Autocomplete
+              freeSolo
+              options={filteredFormulaOptions}
+              inputValue={formulaExpressao}
+              onInputChange={handleFormulaInputChange}
+              onChange={handleFormulaSuggestionSelect}
+              filterOptions={(options) => options}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Fórmula"
+                  placeholder="Ex: (V00047 / V0003) * 100"
+                  fullWidth
+                />
+              )}
+            />
+            <Typography variant="caption" color="text.secondary">
+              Digite a fórmula e use autocomplete para campos da tabela IBGE.
+            </Typography>
+            <Stack spacing={1}>
+              <Typography variant="subtitle2">Fórmulas cadastradas</Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                {formulas.length === 0 && (
+                  <Typography variant="body2" color="text.secondary">
+                    Nenhuma fórmula cadastrada.
+                  </Typography>
+                )}
+                {formulas.map((formula) => (
+                  <Box
+                    key={formula.id}
+                    sx={{
+                      border: 1,
+                      borderColor: "divider",
+                      borderRadius: 1,
+                      px: 1,
+                      py: 0.5,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <Typography variant="caption">
+                      <b>{formula.nome}:</b> {formula.formula}
+                    </Typography>
+                    <Tooltip title="Remover fórmula">
+                      <IconButton
+                        size="small"
+                        onClick={() =>
+                          handleDeleteFormula(formula.id, formula.nome)
+                        }
+                      >
+                        <DeleteIcon fontSize="inherit" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                ))}
+              </Stack>
+            </Stack>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFormulaDialogOpen(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleCreateFormula}>
+            Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Stack>
   );
 }
 

@@ -59,4 +59,16 @@ const ibgeColumns = [
   { field: "updated_at", headerName: "Atualizado em", width: 170 },
 ];
 
-export { ibgeBaseColumns, ibgeCaracteristicaColumns, ibgeColumns };
+const buildFormulaColumns = (formulas) =>
+  formulas.map((formula) => ({
+    field: formula.nome.trim().toLowerCase().replace(/\s+/g, "_"),
+    headerName: formula.nome,
+    width: 180,
+  }));
+
+export {
+  ibgeBaseColumns,
+  ibgeCaracteristicaColumns,
+  ibgeColumns,
+  buildFormulaColumns,
+};
