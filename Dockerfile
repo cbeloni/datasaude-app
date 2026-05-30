@@ -9,14 +9,22 @@ RUN apk update && apk upgrade && \
     yarn \
     nginx
 
+WORKDIR /app
+
+# Copie apenas arquivos de dependências para aproveitar o cache de camadas do Docker
+COPY package.json yarn.lock ./
+
+# Use cache do BuildKit para o yarn install
+RUN --mount=type=cache,target=/root/.cache/yarn \
+    yarn config set network-timeout 1000000 \
+    && yarn config set network-concurrency 50 \
+    && yarn install --frozen-lockfile
+
+# Copie o restante dos arquivos do projeto
 COPY . .
-# RUN yarn config set strict-ssl false
-RUN yarn config set network-timeout 1000000 \
-    && yarn config set network-concurrency 50
-RUN yarn install    
+
+# Compile a build de produção otimizada
 RUN yarn run build
-# EXPOSE 3000
-# CMD ["yarn", "start"]
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
