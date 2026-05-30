@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 // Componente placeholder para evitar erro de import durante o build.
 // Substitua pelo componente real do Maxacali quando disponível.

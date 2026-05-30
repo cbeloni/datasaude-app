@@ -8,100 +8,83 @@ import PageHeader from "components/Card/PageHeader";
 import DataTableComponent from "components/Table/Datatable";
 import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
 import DataTableIbgeComponent from "components/Table/Datatable-ibge";
+import PoluentesHelper from "./PoluentesHelper";
 
 const poluentesHelper = PoluentesHelper();
 
 const TABS = [
+  {
+    value: "ibge",
+    label: "IBGE",
+    description: "Tabela baseada no dataset de setores do IBGE.",
+    Component: DataTableIbgeComponent,
+  },
+  {
+    value: "poluente-online",
+    label: "Poluente online",
+    description: "Coletas de poluentes a cada uma hora.",
+    Component: () => <DataTableComponent poluentesHelper={poluentesHelper} />,
+  },
   {
     value: "paciente",
     label: "Pacientes",
     description: "Pacientes com dados dos poluentes coletados.",
     Component: DataTablePacienteComponent,
   },
-  {
-    value: "poluente-online",
-    label: "Poluente online",
-    description: "Coletas a cada uma hora.",
-    Component: () => <DataTableComponent poluentesHelper={poluentesHelper} />,
-  },
-  {
-    value: "maxacali",
-    label: "Maxacali",
-    description: "Tabela baseada no dataset de setores do Maxacali.",
-    Component: DataTableMaxacaliComponent,
-  },
 ];
 
 export default function TableList() {
   const [value, setValue] = useState("ibge");
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (_, newValue) => {
     setValue(newValue);
   };
 
-  const classes = useStyles();
+  const active = TABS.find((t) => t.value === value);
+
   return (
-    <TabContext value={value}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <TabList onChange={handleChange} aria-label="lab API tabs example">
-          <Tab label="Poluente online" value="poluente-online" />
-          <Tab label="Paciente" value="paciente" />
-          <Tab label="IBGE" value="ibge" />
-        </TabList>
-      </Box>
-      <TabPanel value="poluente-online" className={classes.tabPanelBorder}>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={12}>
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Online poluente</h4>
-                <p className={classes.cardCategoryWhite}>
-                  Coletas em cada uma hora
-                </p>
-              </CardHeader>
-              <CardBody>
-                <DataTableComponent
-                  poluentesHelper={poluentesHelper}
-                ></DataTableComponent>
-              </CardBody>
-            </Card>
-          </GridItem>
-        </GridContainer>
-      </TabPanel>
-      <TabPanel value="paciente" className={classes.tabPanelBorder}>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={12}>
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Pacientes</h4>
-                <p className={classes.cardCategoryWhite}>
-                  Pacientes com dados dos poluentes coletados
-                </p>
-              </CardHeader>
-              <CardBody>
-                <DataTablePacienteComponent></DataTablePacienteComponent>
-              </CardBody>
-            </Card>
-          </GridItem>
-        </GridContainer>
-      </TabPanel>
-      <TabPanel value="ibge" className={classes.tabPanelBorder}>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={12}>
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>IBGE</h4>
-                <p className={classes.cardCategoryWhite}>
-                  Tabela baseada no dataset de setores do IBGE
-                </p>
-              </CardHeader>
-              <CardBody>
-                <DataTableIbgeComponent></DataTableIbgeComponent>
-              </CardBody>
-            </Card>
-          </GridItem>
-        </GridContainer>
-      </TabPanel>
-    </TabContext>
+    <Box>
+      <PageHeader
+        eyebrow="Dados tabulares"
+        title="Tabelas de dados"
+        description={active?.description}
+      />
+
+      <Card variant="outlined" sx={{ overflow: "hidden" }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
+            <TabList
+              onChange={handleChange}
+              aria-label="seletor de tabelas"
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                minHeight: 48,
+                "& .MuiTab-root": {
+                  textTransform: "none",
+                  fontWeight: 500,
+                  fontSize: "0.875rem",
+                  minHeight: 48,
+                  px: 2,
+                },
+              }}
+            >
+              {TABS.map((t) => (
+                <Tab key={t.value} label={t.label} value={t.value} />
+              ))}
+            </TabList>
+          </Box>
+          {TABS.map(({ value: v, Component }) => (
+            <TabPanel
+              key={v}
+              value={v}
+              sx={{ p: { xs: 1.5, md: 2.5 }, minHeight: 480 }}
+            >
+              <Component />
+            </TabPanel>
+          ))}
+        </TabContext>
+      </Card>
+    </Box>
   );
 }
