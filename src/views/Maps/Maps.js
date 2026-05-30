@@ -7,7 +7,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import PageHeader from "components/Card/PageHeader";
 import IframeMap from "components/Map/IframeMap";
 import ReactMap2 from "components/Map/ReactMap2";
-import ReactMapMaxacali from "components/Map/ReactMapMaxacali";
+import ReactMapIbge from "components/Map/ReactMapibge";
 import ReactMapBronquiolite from "components/Map/ReactMapBronquiolite";
 
 const TABS = [
@@ -30,10 +30,10 @@ const TABS = [
     Component: IframeMap,
   },
   {
-    value: "map_maxacali",
-    label: "Maxacali",
-    description: "Setores e indicadores do Maxacali.",
-    Component: ReactMapMaxacali,
+    value: "map_ibge",
+    label: "IBGE",
+    description: "Setores e indicadores do IBGE.",
+    Component: ReactMapIbge,
   },
 ];
 
