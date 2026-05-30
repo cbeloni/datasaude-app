@@ -1,4 +1,4 @@
-const maxacaliBaseColumns = [
+const ibgeBaseColumns = [
   { field: "id", headerName: "Id", width: 100 },
   { field: "cd_setor", headerName: "Código Setor", width: 190 },
   { field: "situacao", headerName: "Situação", width: 120 },
@@ -31,7 +31,7 @@ const maxacaliBaseColumns = [
   { field: "nm_concurb", headerName: "Conurbação", width: 180 },
 ];
 
-const maxacaliCaracteristicaColumns = [
+const ibgeCaracteristicaColumns = [
   { field: "v0001", headerName: "V0001", width: 110 },
   { field: "v0002", headerName: "V0002", width: 110 },
   { field: "v0003", headerName: "V0003", width: 110 },
@@ -41,17 +41,34 @@ const maxacaliCaracteristicaColumns = [
   { field: "v0007", headerName: "V0007", width: 110 },
   { field: "v00047", headerName: "V00047", width: 110 },
   {
-    field: "calculo_um",
-    headerName: "Calculo Um",
-    width: 140,
+    field: "percentual_domicios_ocupados",
+    headerName: "% Domicílios Ocupados",
+    width: 190,
+  },
+  {
+    field: "percentual_pessoas",
+    headerName: "% Pessoas até 14 anos",
+    width: 190,
   },
 ];
 
-const maxacaliColumns = [
-  ...maxacaliBaseColumns,
-  ...maxacaliCaracteristicaColumns,
+const ibgeColumns = [
+  ...ibgeBaseColumns,
+  ...ibgeCaracteristicaColumns,
   { field: "created_at", headerName: "Criado em", width: 170 },
   { field: "updated_at", headerName: "Atualizado em", width: 170 },
 ];
 
-export { maxacaliBaseColumns, maxacaliCaracteristicaColumns, maxacaliColumns };
+const buildFormulaColumns = (formulas) =>
+  formulas.map((formula) => ({
+    field: formula.nome.trim().toLowerCase().replace(/\s+/g, "_"),
+    headerName: formula.nome,
+    width: 180,
+  }));
+
+export {
+  ibgeBaseColumns,
+  ibgeCaracteristicaColumns,
+  ibgeColumns,
+  buildFormulaColumns,
+};

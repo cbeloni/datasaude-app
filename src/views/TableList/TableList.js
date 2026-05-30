@@ -7,7 +7,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import PageHeader from "components/Card/PageHeader";
 import DataTableComponent from "components/Table/Datatable";
 import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
-import DataTableMaxacaliComponent from "components/Table/Datatable-Maxacali";
+import DataTableIbgeComponent from "components/Table/Datatable-ibge";
 import PoluentesHelper from "views/TableList/PoluentesHelper";
 
 const poluentesHelper = PoluentesHelper();
@@ -26,15 +26,15 @@ const TABS = [
     Component: () => <DataTableComponent poluentesHelper={poluentesHelper} />,
   },
   {
-    value: "maxacali",
-    label: "Maxacali",
-    description: "Tabela baseada no dataset de setores do Maxacali.",
-    Component: DataTableMaxacaliComponent,
+    value: "ibge",
+    label: "IBGE",
+    description: "Tabela baseada no dataset de setores do IBGE.",
+    Component: DataTableIbgeComponent,
   },
 ];
 
 export default function TableList() {
-  const [value, setValue] = useState("paciente");
+  const [value, setValue] = useState("ibge");
   const handleChange = (_, newValue) => setValue(newValue);
   const active = TABS.find((t) => t.value === value);
 

@@ -10,7 +10,7 @@ import CidSelect from "components/Select/CidSelect";
 import SexoSelect from "components/Select/SexoSelect";
 import { pacienteColumns } from "./PacienteHelper";
 
-const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar?`;
+const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar`;
 
 export default function DataTablePacienteComponent() {
   const [selectedPeriod, setSelectedPeriod] = useState("anos");
@@ -30,34 +30,43 @@ export default function DataTablePacienteComponent() {
 
   const url = useMemo(() => {
     const [from, to] = dateRange;
-    const params = [];
+    const params = new URLSearchParams();
     if (from && to) {
-      params.push(`dt_atendimento_inicial=${format(from, "yyyy/MM/dd")}`);
-      params.push(`dt_atendimento_final=${format(to, "yyyy/MM/dd")}`);
+      params.set("dt_atendimento_inicial", format(from, "yyyy/MM/dd"));
+      params.set("dt_atendimento_final", format(to, "yyyy/MM/dd"));
     }
     if (selectedPeriod === "anos" && idadeSliderChanged) {
-      params.push(
-        `idade_anos_ini=${idadeSlider[0]}&idade_anos_fim=${idadeSlider[1]}`
-      );
+      params.set("idade_anos_ini", `${idadeSlider[0]}`);
+      params.set("idade_anos_fim", `${idadeSlider[1]}`);
     }
     if (selectedPeriod === "meses" && idadeSliderChanged) {
-      params.push(
-        `idade_meses_ini=${idadeSlider[0]}&idade_meses_fim=${idadeSlider[1]}`
-      );
+      params.set("idade_meses_ini", `${idadeSlider[0]}`);
+      params.set("idade_meses_fim", `${idadeSlider[1]}`);
     }
-    if (cid && cid !== "TODOS") params.push(`cid=${encodeURIComponent(cid)}`);
-    if (sexo && sexo !== "TODOS") params.push(`sexo=${sexo}`);
-    return `${URL_BASE}${params.join("&")}`;
+    if (cid && cid !== "TODOS") params.set("cid", cid);
+    if (sexo && sexo !== "TODOS") params.set("sexo", sexo);
+    const qs = params.toString();
+    return qs ? `${URL_BASE}?${qs}` : URL_BASE;
     // eslint-disable-next-line
   }, [dateRange, idadeSlider, idadeSliderChanged, selectedPeriod, cid, sexo]);
 
   const fetchData = async (targetUrl) => {
     try {
       setLoading(true);
-      const response = await axios.get(targetUrl);
-      const data = Array.isArray(response.data)
-        ? response.data
-        : response.data?.Payload || response.data?.data || [];
+      const payload = {
+        take: 1000,
+        prev: null,
+        skip: 0,
+        columns: pacienteColumns.map((column) => column.field),
+      };
+      const response = await axios.post(targetUrl, payload);
+
+      const data =
+        response.data?.payload ||
+        response.data?.Payload ||
+        response.data?.data ||
+        (Array.isArray(response.data) ? response.data : []);
+
       const withIds = data.map((row, idx) => ({ id: row.id ?? idx, ...row }));
       setRows(withIds);
     } catch (err) {
