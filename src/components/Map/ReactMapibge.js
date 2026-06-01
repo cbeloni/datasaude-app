@@ -5,7 +5,6 @@ import {
   MenuItem,
   Select,
   Stack,
-  Typography,
 } from "@mui/material";
 import {
   GeoJSON,
@@ -16,7 +15,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 
-const { BaseLayer } = LayersControl;
+const { BaseLayer, Overlay } = LayersControl;
 
 import "leaflet/dist/leaflet.css";
 import "leaflet/dist/images/marker-icon.png";
@@ -27,6 +26,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { listIbgeFormulas, postIbgeList } from "services/IbgeService";
 import { ibgeCaracteristicaColumns } from "components/Table/ibgeHelper";
+import { buildJenksBreaks, DEFAULT_JENKS_CLASSES } from "utils/map/jenks";
 import PropTypes from "prop-types";
 
 function ResetViewButton({ center, zoom }) {
@@ -72,28 +72,23 @@ const defaultSelectableFields = [
   "percentual_pessoas",
 ];
 
-const interpolateColor = (value, min, max) => {
-  if (
-    !Number.isFinite(value) ||
-    !Number.isFinite(min) ||
-    !Number.isFinite(max)
-  ) {
+const BLUE_SCALE = ["#deebf7", "#9ecae1", "#6baed6", "#3182bd", "#08519c"];
+
+const getColorByBreaks = (value, breaks) => {
+  if (!Number.isFinite(value) || !Array.isArray(breaks) || breaks.length < 2) {
     return "#9e9e9e";
   }
 
-  if (min === max) {
-    return "#fbc02d";
+  for (let i = 1; i < breaks.length; i += 1) {
+    if (value <= breaks[i]) {
+      return BLUE_SCALE[Math.min(i - 1, BLUE_SCALE.length - 1)];
+    }
   }
 
-  const ratio = Math.min(1, Math.max(0, (value - min) / (max - min)));
-  const red = Math.round(251 + ratio * (229 - 251));
-  const green = Math.round(192 + ratio * (57 - 192));
-  const blue = Math.round(45 + ratio * (53 - 45));
-
-  return `rgb(${red}, ${green}, ${blue})`;
+  return BLUE_SCALE[BLUE_SCALE.length - 1];
 };
 
-function ScaleLegend({ minValue, maxValue, selectedField }) {
+function ScaleLegend({ breaks, selectedField }) {
   const map = useMap();
 
   useEffect(() => {
@@ -102,22 +97,39 @@ function ScaleLegend({ minValue, maxValue, selectedField }) {
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "info legend");
       div.style.background = "white";
-      div.style.padding = "8px 10px";
+      div.style.padding = "12px 14px";
       div.style.borderRadius = "6px";
       div.style.boxShadow = "0 1px 4px rgba(0,0,0,0.3)";
-      div.style.fontSize = "12px";
+      div.style.fontSize = "14px";
+      div.style.minWidth = "220px";
+      div.style.marginRight = "28px";
+      div.style.marginBottom = "26px";
 
-      const minText = Number.isFinite(minValue) ? minValue.toFixed(2) : "—";
-      const maxText = Number.isFinite(maxValue) ? maxValue.toFixed(2) : "—";
+      const classes = [];
+      for (let i = 1; i < breaks.length; i += 1) {
+        classes.push({
+          color: BLUE_SCALE[Math.min(i - 1, BLUE_SCALE.length - 1)],
+          min: breaks[i - 1],
+          max: breaks[i],
+        });
+      }
+
+      const classesHtml = classes
+        .map(
+          (item) =>
+            `<div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+              <span style="width:14px; height:14px; display:inline-block; border-radius:2px; background:${
+                item.color
+              }; border:1px solid #cfd8dc;"></span>
+              <span>${item.min.toFixed(2)} - ${item.max.toFixed(2)}</span>
+            </div>`
+        )
+        .join("");
 
       div.innerHTML = `
         <div><strong>${selectedField || "Campo"}</strong></div>
-        <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
-          <span>${minText}</span>
-          <div style="width:120px; height:10px; border-radius:4px; background:linear-gradient(to right, rgb(251,192,45), rgb(229,57,53));"></div>
-          <span>${maxText}</span>
-        </div>
-        <div style="margin-top:4px; color:#555;">Amarelo: menor valor | Vermelho: maior valor</div>
+        ${classesHtml || '<div style="margin-top:6px;">Sem dados</div>'}
+        <div style="margin-top:6px; color:#555;">5 classes (Jenks Natural Breaks)</div>
       `;
 
       return div;
@@ -127,26 +139,24 @@ function ScaleLegend({ minValue, maxValue, selectedField }) {
     return () => {
       legend.remove();
     };
-  }, [map, minValue, maxValue, selectedField]);
+  }, [map, breaks, selectedField]);
 
   return null;
 }
 
 ScaleLegend.propTypes = {
-  minValue: PropTypes.number,
-  maxValue: PropTypes.number,
+  breaks: PropTypes.arrayOf(PropTypes.number),
   selectedField: PropTypes.string,
 };
 
 ScaleLegend.defaultProps = {
-  minValue: null,
-  maxValue: null,
+  breaks: [],
   selectedField: "",
 };
 
 function ReactMapIbge() {
   const initialPosition = [-16.886, -40.545];
-  const initialZoom = window.innerWidth >= 768 ? 12 : 11;
+  const initialZoom = window.innerWidth >= 768 ? 13 : 12;
 
   const [geoData, setGeoData] = useState(null);
   const [loadingGeo, setLoadingGeo] = useState(true);
@@ -281,25 +291,18 @@ function ReactMapIbge() {
     return map;
   }, [ibgeRows, selectedField]);
 
-  const range = useMemo(() => {
+  const jenksBreaks = useMemo(() => {
     const numericValues = Array.from(valuesBySetor.values()).filter((value) =>
       Number.isFinite(value)
     );
-    if (numericValues.length === 0) {
-      return { min: null, max: null };
-    }
-
-    return {
-      min: Math.min(...numericValues),
-      max: Math.max(...numericValues),
-    };
+    return buildJenksBreaks(numericValues, DEFAULT_JENKS_CLASSES);
   }, [valuesBySetor]);
 
   const getSetorStyle = (feature) => {
     const setor = String(feature?.properties?.CD_SETOR || "");
     const value = valuesBySetor.get(setor);
     return {
-      fillColor: interpolateColor(value, range.min, range.max),
+      fillColor: getColorByBreaks(value, jenksBreaks),
       weight: 1.2,
       opacity: 1,
       color: "white",
@@ -353,10 +356,6 @@ function ReactMapIbge() {
               </Select>
             </FormControl>
           </Stack>
-          <Typography variant="caption" color="text.secondary">
-            A escala de cor vai do verde (menor valor) ao vermelho (maior
-            valor), com base no campo selecionado.
-          </Typography>
         </Stack>
 
         <MapContainer
@@ -376,20 +375,31 @@ function ReactMapIbge() {
             <BaseLayer name="Open Street Map">
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             </BaseLayer>
+
+            {!loadingGeo &&
+              geoData &&
+              geoData.features.map((feature) => {
+                const p = feature.properties;
+                const nome = p.NM_AGLOM || p.NM_DIST || `Setor ${p.CD_SETOR}`;
+                const singleFeatureCollection = {
+                  type: "FeatureCollection",
+                  features: [feature],
+                };
+
+                return (
+                  <Overlay checked name={nome} key={p.CD_SETOR}>
+                    <GeoJSON
+                      data={singleFeatureCollection}
+                      style={() => getSetorStyle(feature)}
+                      onEachFeature={onEachSetor}
+                    />
+                  </Overlay>
+                );
+              })}
           </LayersControl>
 
-          {!loadingGeo && geoData && (
-            <GeoJSON
-              key={`geo-${selectedField}-${ibgeRows.length}`}
-              data={geoData}
-              style={getSetorStyle}
-              onEachFeature={onEachSetor}
-            />
-          )}
-
           <ScaleLegend
-            minValue={range.min}
-            maxValue={range.max}
+            breaks={jenksBreaks}
             selectedField={selectedFieldLabel}
           />
         </MapContainer>
