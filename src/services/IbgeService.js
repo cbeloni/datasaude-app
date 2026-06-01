@@ -1,13 +1,20 @@
 const API_BASE = `${process.env.REACT_APP_API_URL}/api/v1/ibge`;
 
 const postIbgeList = async (payload) => {
-  const response = await fetch(`${API_BASE}/listar`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  const doRequest = async (body) =>
+    fetch(`${API_BASE}/listar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+  let response = await doRequest(payload);
+
+  if (!response.ok) {
+    response = await doRequest({ payload });
+  }
 
   if (!response.ok) {
     throw new Error(`Erro HTTP ${response.status}`);

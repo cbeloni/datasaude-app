@@ -2,27 +2,45 @@ import React from "react";
 import PropTypes from "prop-types";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-const CidSelect = ({ tipo, handleTipoChange }) => {
+const OPTIONS = [
+  { value: "ATENDIMENTO", label: "Atendimento" },
+  { value: "INTERNACAO", label: "Internação" },
+];
+
+const MENU_PROPS = {
+  PaperProps: {
+    sx: {
+      maxHeight: 320,
+      mt: 0.5,
+    },
+  },
+};
+
+const TipoSelect = ({ tipo, handleTipoChange }) => {
   return (
-    <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-      <InputLabel id="tipo-label">Tipo de Análise</InputLabel>
+    <FormControl size="small" fullWidth>
+      <InputLabel id="tipo-label">Tipo de análise</InputLabel>
       <Select
         labelId="tipo-label"
         id="tipo"
         value={tipo}
         onChange={handleTipoChange}
-        label="Tipo Análise"
+        label="Tipo de análise"
+        MenuProps={MENU_PROPS}
       >
-        <MenuItem value={"ATENDIMENTO"}>Atendimento</MenuItem>
-        <MenuItem value={"INTERNACAO"}>Internação</MenuItem>
+        {OPTIONS.map((opt) => (
+          <MenuItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );
 };
 
-CidSelect.propTypes = {
+TipoSelect.propTypes = {
   tipo: PropTypes.string.isRequired,
   handleTipoChange: PropTypes.func.isRequired,
 };
 
-export default CidSelect;
+export default TipoSelect;

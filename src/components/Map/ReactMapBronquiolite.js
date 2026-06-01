@@ -19,18 +19,21 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { Box, Button, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import { IMG_DEFAULT } from "./ConstantsMap";
 import { estacoes } from "./ConstantsEstacoes";
 import formatarPacienteMapa from "utils/formatter";
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
 import PropTypes from "prop-types";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-
 function ResetMapViewButton({ center, zoom }) {
   const map = useMap();
 

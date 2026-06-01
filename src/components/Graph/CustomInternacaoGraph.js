@@ -5,6 +5,7 @@ import axios from "axios";
 import { format } from "date-fns";
 import PropTypes from "prop-types";
 import { Stack, Typography } from "@mui/material";
+import { chartSeriesColors, chartSx } from "theme/chartPalette";
 
 const valueFormatter = (value) => `${value} pacientes`;
 
@@ -15,11 +16,22 @@ const chartSetting = {
     },
   ],
   series: [
-    { dataKey: "qtd_internacao", label: "Qtd Internação", valueFormatter },
-    { dataKey: "qtd_alta", label: "Qtd Alta", valueFormatter },
+    {
+      dataKey: "qtd_internacao",
+      label: "Qtd Internação",
+      valueFormatter,
+      color: chartSeriesColors.warning,
+    },
+    {
+      dataKey: "qtd_alta",
+      label: "Qtd Alta",
+      valueFormatter,
+      color: chartSeriesColors.success,
+    },
   ],
   height: 300,
   sx: {
+    ...chartSx,
     [`& .${axisClasses.directionY} .${axisClasses.label}`]: {
       transform: "translateX(-10px)",
     },

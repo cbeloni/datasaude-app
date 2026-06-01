@@ -227,12 +227,10 @@ function DataTableIbgeComponent() {
       setLoading(true);
       try {
         const requestBody = {
-          payload: {
-            take: paginationModel.pageSize,
-            prev: null,
-            skip: paginationModel.page * paginationModel.pageSize,
-            columns: selectedColumns,
-          },
+          take: paginationModel.pageSize,
+          prev: null,
+          skip: paginationModel.page * paginationModel.pageSize,
+          columns: selectedColumns,
           ...(selectedFilter === FILTER_SETOR
             ? { cd_setor: IBGE_SETOR_FILTER }
             : {}),
@@ -244,8 +242,14 @@ function DataTableIbgeComponent() {
           return;
         }
 
-        setRows(data?.payload || []);
-        setRowCount(data?.totalRecordCount || 0);
+        const payloadRows = data?.payload || data?.Payload || data?.data || [];
+        const totalRecords =
+          data?.totalRecordCount ||
+          data?.TotalRecordCount ||
+          (Array.isArray(payloadRows) ? payloadRows.length : 0);
+
+        setRows(Array.isArray(payloadRows) ? payloadRows : []);
+        setRowCount(totalRecords);
       } catch (error) {
         if (!active) {
           return;

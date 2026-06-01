@@ -1,42 +1,90 @@
-import React, { useState } from "react";
-import { DataGrid, ToolbarOptions } from "tubular-react";
-import { LocalStorage } from "tubular-common";
-import DatePicker from "components/DataPicker/ReactDatePicker";
-import Slider from "@mui/material/Slider";
-import { Box, Button, Typography } from "@material-ui/core";
-import RowRadioButtonsPeriodo from "components/RadioGroup/RadioGroupPeriodo";
-import { pacienteColumns } from "./PacienteHelper";
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { format } from "date-fns";
-import "./styles.css";
+import { Box, Button, Slider, Stack, Typography } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+
+import DatePicker from "components/DataPicker/ReactDatePicker";
+import RowRadioButtonsPeriodo from "components/RadioGroup/RadioGroupPeriodo";
 import CidSelect from "components/Select/CidSelect";
 import SexoSelect from "components/Select/SexoSelect";
+import { pacienteColumns } from "./PacienteHelper";
 
-function DataTablePacienteComponent() {
+const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar`;
+
+export default function DataTablePacienteComponent() {
   const [selectedPeriod, setSelectedPeriod] = useState("anos");
   const [dateRange, setDateRange] = useState([null, null]);
-  const URL_BASE = `${process.env.REACT_APP_API_URL}/api/v1/paciente/listar?`;
-  const [url, setUrl] = useState(URL_BASE);
   const [cid, setCid] = useState("TODOS");
   const [sexo, setSexo] = useState("TODOS");
-  const [idadeSlider, setIdadeSlider] = React.useState([0, 18]);
-  const [idadeSliderChanged, setIdadeSliderChanged] = React.useState(false);
-  const [maxRangeSlider, setMaxRangeSlider] = React.useState(18);
-  const [gridKey, setGridKey] = useState(Date.now());
+  const [idadeSlider, setIdadeSlider] = useState([0, 18]);
+  const [idadeSliderChanged, setIdadeSliderChanged] = useState(false);
+  const [maxRangeSlider, setMaxRangeSlider] = useState(18);
 
-  const handleChangeSlider = (event, newValue) => {
-    setIdadeSlider(newValue);
-    setIdadeSliderChanged(true);
-    console.log("Anos: ", newValue);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 25,
+  });
+
+  const url = useMemo(() => {
+    const [from, to] = dateRange;
+    const params = new URLSearchParams();
+    if (from && to) {
+      params.set("dt_atendimento_inicial", format(from, "yyyy/MM/dd"));
+      params.set("dt_atendimento_final", format(to, "yyyy/MM/dd"));
+    }
+    if (selectedPeriod === "anos" && idadeSliderChanged) {
+      params.set("idade_anos_ini", `${idadeSlider[0]}`);
+      params.set("idade_anos_fim", `${idadeSlider[1]}`);
+    }
+    if (selectedPeriod === "meses" && idadeSliderChanged) {
+      params.set("idade_meses_ini", `${idadeSlider[0]}`);
+      params.set("idade_meses_fim", `${idadeSlider[1]}`);
+    }
+    if (cid && cid !== "TODOS") params.set("cid", cid);
+    if (sexo && sexo !== "TODOS") params.set("sexo", sexo);
+    const qs = params.toString();
+    return qs ? `${URL_BASE}?${qs}` : URL_BASE;
+    // eslint-disable-next-line
+  }, [dateRange, idadeSlider, idadeSliderChanged, selectedPeriod, cid, sexo]);
+
+  const fetchData = async (targetUrl) => {
+    try {
+      setLoading(true);
+      const payload = {
+        take: 1000,
+        prev: null,
+        skip: 0,
+        columns: pacienteColumns.map((column) => column.field),
+      };
+      const response = await axios.post(targetUrl, payload);
+
+      const data =
+        response.data?.payload ||
+        response.data?.Payload ||
+        response.data?.data ||
+        (Array.isArray(response.data) ? response.data : []);
+
+      const withIds = data.map((row, idx) => ({ id: row.id ?? idx, ...row }));
+      setRows(withIds);
+    } catch (err) {
+      console.error("Erro ao carregar pacientes:", err);
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
   };
-  const handleCidChange = (event) => {
-    setCid(event.target.value);
-  };
-  const handleSexoChange = (event) => {
-    setSexo(event.target.value);
-  };
+
+  useEffect(() => {
+    fetchData(url);
+  }, [url]);
+
   const handleChangePeriodo = (event) => {
-    setSelectedPeriod(event.target.value);
-    if (event.target.value === "anos") {
+    const v = event.target.value;
+    setSelectedPeriod(v);
+    if (v === "anos") {
       setMaxRangeSlider(18);
       setIdadeSlider([0, 18]);
     } else {
@@ -45,126 +93,92 @@ function DataTablePacienteComponent() {
     }
   };
 
-  const handleButtonClick = () => {
-    const [dataInicial, dataFinal] = dateRange;
-    let filtros = "";
-    if (dataInicial && dataFinal) {
-      let dataInicialFormatada = format(dataInicial, "yyyy/MM/dd");
-      let dataFinalFormatada = format(dataFinal, "yyyy/MM/dd");
-      console.log("dataInicial", dataInicialFormatada);
-      console.log("dataFinal", dataFinalFormatada);
-      filtros += `dt_atendimento_inicial=${dataInicialFormatada}&dt_atendimento_final=${dataFinalFormatada}`;
-    }
-    if (selectedPeriod === "anos" && idadeSliderChanged) {
-      filtros += `&idade_anos_ini=${idadeSlider[0]}&idade_anos_fim=${idadeSlider[1]}`;
-    }
-    if (selectedPeriod === "meses" && idadeSliderChanged) {
-      filtros += `&idade_meses_ini=${idadeSlider[0]}&idade_meses_fim=${idadeSlider[1]}`;
-    }
-    if (cid && cid != "TODOS") {
-      filtros += `&cid=${cid}`;
-    }
-    if (sexo && sexo != "TODOS") {
-      filtros += `&sexo=${sexo}`;
-    }
-
-    let urlChanged = `${URL_BASE}${filtros}`;
-    console.log("Resultado url alterada ", urlChanged);
-    setUrl(urlChanged);
-    setGridKey(Date.now());
-  };
-
-  const atualizaData = (data) => {
-    setDateRange(data);
-    console.log(data);
-  };
-
-  const toolbarOptions = new ToolbarOptions({
-    searchText: false,
-    exportButton: true,
-    printButton: false,
-    customItems: (
-      <div>
-        <Box className="estiloHorizontal" justifyContent="space-between">
-          <div style={{ padding: "10px", paddingLeft: "40px" }}>
-            <Typography>Data Atendimento:</Typography>
-            <DatePicker value={dateRange} onChange={atualizaData}></DatePicker>
-          </div>
-          <div style={{ paddingLeft: "40px" }}>
-            <SexoSelect
-              sexo={sexo}
-              handleSexoChange={handleSexoChange}
-            ></SexoSelect>
-          </div>
-          <div style={{ paddingLeft: "40px" }}>
-            <CidSelect cid={cid} handleCidChange={handleCidChange}></CidSelect>
-          </div>
-          <div
-            style={{
-              paddingLeft: "60px",
-              paddingTop: "10px",
-              maxWidth: "100px",
-            }}
-          >
-            <RowRadioButtonsPeriodo
-              value={selectedPeriod}
-              onChange={handleChangePeriodo}
-            ></RowRadioButtonsPeriodo>
-          </div>
-          <div style={{ paddingTop: "20px", paddingRight: "20px" }}>
-            <Box
-              sx={{
-                width: {
-                  xs: 200,
-                  md: 300,
-                },
-              }}
-            >
-              <Typography id="non-linear-slider" gutterBottom>
-                Selecionado de {idadeSlider[0]} até {idadeSlider[1]}
-                &nbsp;{selectedPeriod}:
-              </Typography>
-              <Slider
-                getAriaLabel={() => "Temperature range"}
-                value={idadeSlider}
-                onChange={handleChangeSlider}
-                valueLabelDisplay="auto"
-                step={1}
-                min={0}
-                max={maxRangeSlider}
-              />
-            </Box>
-          </div>
-          <div style={{ padding: "20px", paddingTop: "40px" }}>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleButtonClick}
-            >
-              Filtrar
-            </Button>
-          </div>
-        </Box>
-      </div>
-    ),
-  });
-
   return (
-    <div className="grid-container">
-      <DataGrid
-        key={gridKey}
-        dataSource={url}
-        gridName="Tubular-React"
-        columns={pacienteColumns}
-        storage={new LocalStorage()}
-        onPageChange={(params) => {
-          console.log("===params===", params);
-          setGridKey(Date.now());
+    <Stack spacing={2}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "1fr 1fr",
+            lg:
+              "minmax(340px, 1.6fr) minmax(120px, 0.8fr) minmax(180px, 1.2fr) minmax(140px, 0.8fr) minmax(220px, 1.4fr) auto",
+          },
+          gap: 2,
+          alignItems: "center",
         }}
-        toolbarOptions={toolbarOptions}
-      />
-    </div>
+      >
+        <DatePicker value={dateRange} onChange={setDateRange} />
+
+        <SexoSelect
+          sexo={sexo}
+          handleSexoChange={(e) => setSexo(e.target.value)}
+        />
+        <CidSelect cid={cid} handleCidChange={(e) => setCid(e.target.value)} />
+
+        <Box>
+          <Typography
+            variant="caption"
+            sx={{ color: "text.secondary", display: "block", mb: 0.5 }}
+          >
+            Unidade da idade
+          </Typography>
+          <RowRadioButtonsPeriodo
+            value={selectedPeriod}
+            onChange={handleChangePeriodo}
+          />
+        </Box>
+
+        <Box>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
+            Idade: {idadeSlider[0]} – {idadeSlider[1]} {selectedPeriod}
+          </Typography>
+          <Slider
+            value={idadeSlider}
+            onChange={(_, v) => {
+              setIdadeSlider(v);
+              setIdadeSliderChanged(true);
+            }}
+            valueLabelDisplay="auto"
+            min={0}
+            max={maxRangeSlider}
+            sx={{ mt: 1 }}
+          />
+        </Box>
+
+        <Button
+          variant="contained"
+          onClick={() => fetchData(url)}
+          sx={{ height: 40, whiteSpace: "nowrap" }}
+        >
+          Filtrar
+        </Button>
+      </Box>
+
+      <Box sx={{ width: "100%" }}>
+        <DataGrid
+          autoHeight
+          rows={rows}
+          columns={pacienteColumns}
+          loading={loading}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          pageSizeOptions={[10, 25, 50, 100]}
+          density="compact"
+          disableRowSelectionOnClick
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "background.default",
+              borderBottom: 1,
+              borderColor: "divider",
+            },
+            "& .MuiDataGrid-cell": {
+              fontSize: "0.8125rem",
+            },
+          }}
+        />
+      </Box>
+    </Stack>
   );
 }
-
-export default DataTablePacienteComponent;

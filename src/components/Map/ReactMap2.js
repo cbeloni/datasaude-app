@@ -17,25 +17,30 @@ import "leaflet/dist/images/marker-icon.png";
 import "leaflet/dist/images/marker-shadow.png";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import { Box, Button, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Card,
+  IconButton,
+  Stack,
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import ArrowBackIos from "@mui/icons-material/ChevronLeft";
+import ArrowForwardIos from "@mui/icons-material/ChevronRight";
 import { IMG_DEFAULT, IMG_BASE } from "./ConstantsMap";
 import { estacoes } from "./ConstantsEstacoes";
 import DateRange from "components/DataPicker/DateRange";
-import RowRadioButtonsGroup from "components/RadioGroup/RadioGroupHorizontal";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 import dayjs from "dayjs";
 import obtemPacientes from "../../services/ApiService";
 import formatarPacienteMapa from "utils/formatter";
-import Fab from "@material-ui/core/Fab";
 import { renderToStaticMarkup } from "react-dom/server";
 import { divIcon } from "leaflet";
-import Accessibility from "@material-ui/icons/Accessibility";
 import PropTypes from "prop-types";
 
 function ResetMapViewButton({ center, zoom }) {
@@ -187,162 +192,189 @@ function ReactMap2() {
   const getMarkerIcon = (ds_cid) => {
     const color = CID_COLORS[ds_cid] || "#757575";
     const markup = renderToStaticMarkup(
-      <Fab
-        size="small"
-        variant="extended"
-        style={{ backgroundColor: color, color: "#fff" }}
+      <div
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: "50%",
+          backgroundColor: color,
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "2px solid #fff",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+        }}
       >
-        <Accessibility />
-      </Fab>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z" />
+        </svg>
+      </div>
     );
-    return divIcon({ className: "", html: markup });
+    return divIcon({ className: "", html: markup, iconSize: [32, 32] });
   };
 
   return (
-    <GridContainer>
-      <GridItem xs={12}>
-        <Box
-          p={2}
-          style={{
-            background: "linear-gradient(135deg, #f7fbff 0%, #eef4f9 100%)",
-            border: "1px solid #dbe5ef",
-            borderRadius: 12,
-            marginBottom: 12,
-          }}
-        >
+    <Stack spacing={2}>
+      <Card variant="outlined" sx={{ p: 2.5 }}>
+        <Stack spacing={0.25} sx={{ mb: 2 }}>
           <Typography
-            variant="h6"
-            style={{ fontWeight: 700, color: "#1a365d", marginBottom: 6 }}
+            variant="overline"
+            sx={{
+              color: "primary.main",
+              fontSize: "0.6875rem",
+              letterSpacing: "0.14em",
+              fontWeight: 600,
+            }}
           >
             Filtros de visualização
           </Typography>
-          <Typography variant="body2" style={{ color: "#4f5d75" }}>
-            Ajuste data, escala, poluente e CID para atualizar mapa e dados de
-            pacientes.
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            Ajuste data, escala, poluente e CID para atualizar mapa e pacientes.
           </Typography>
+        </Stack>
 
-          <GridContainer>
-            <GridItem xs={12} md={4}>
-              <Box
-                mt={2}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  flexWrap: "nowrap",
-                }}
-              >
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<ArrowBackIos />}
-                  onClick={dataAnterior}
-                  style={{ whiteSpace: "nowrap" }}
-                >
-                  Anterior
-                </Button>
-
-                <Box style={{ flex: 1, minWidth: 0 }}>
-                  <DateRange
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                  ></DateRange>
-                </Box>
-
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  endIcon={<ArrowForwardIos />}
-                  onClick={dataPosterior}
-                  style={{ whiteSpace: "nowrap" }}
-                >
-                  Próximo
-                </Button>
-              </Box>
-            </GridItem>
-
-            <GridItem xs={12} md={3}>
-              <Box mt={2}>
-                <RowRadioButtonsGroup
-                  value={selectedEscala}
-                  onChange={handleRadioChange}
-                ></RowRadioButtonsGroup>
-              </Box>
-            </GridItem>
-
-            <GridItem xs={12} md={2}>
-              <Box mt={2}>
-                <FormControl fullWidth size="small">
-                  <InputLabel id="select-label">Poluente</InputLabel>
-                  <Select
-                    labelId="select-label"
-                    id="select"
-                    value={selectedPoluenteValue}
-                    label="Poluente"
-                    onChange={handlePoluenteChange}
-                  >
-                    <MenuItem value="MP10">MP10</MenuItem>
-                    <MenuItem value="NO">NO</MenuItem>
-                    <MenuItem value="NO2">NO2</MenuItem>
-                    <MenuItem value="O3">O3</MenuItem>
-                    <MenuItem value="TEMP">TEMP</MenuItem>
-                    <MenuItem value="UR">UR</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-            </GridItem>
-
-            <GridItem xs={12} md={3}>
-              <Box mt={2}>
-                <FormControl fullWidth size="small">
-                  <InputLabel id="cid-label">CID</InputLabel>
-                  <Select
-                    labelId="cid-label"
-                    id="select-cid"
-                    multiple
-                    open={cidSelectOpen}
-                    onOpen={() => setCidSelectOpen(true)}
-                    onClose={() => setCidSelectOpen(false)}
-                    value={selectedCidValues}
-                    onChange={handleCidChange}
-                    label="CID"
-                    renderValue={(selected) =>
-                      selected.length === 0 || selected.includes(CID_ALL)
-                        ? "Todos"
-                        : selected
-                            .map((v) =>
-                              v === "BRONQUIOLITE AGUDA"
-                                ? "Bronquiolite Aguda"
-                                : "Infecção Vias Aéreas"
-                            )
-                            .join(", ")
-                    }
-                    displayEmpty
-                  >
-                    <MenuItem value={CID_ALL}>Todos</MenuItem>
-                    <MenuItem value="BRONQUIOLITE AGUDA">
-                      Bronquiolite Aguda
-                    </MenuItem>
-                    <MenuItem value="INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA">
-                      Infec&ccedil;&atilde;o Aguda Vias A&eacute;reas Superiores
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-            </GridItem>
-          </GridContainer>
-        </Box>
-      </GridItem>
-
-      <GridItem xs={12}>
         <Box
-          style={{
-            borderRadius: 12,
-            overflow: "hidden",
-            border: "1px solid #dbe5ef",
-            boxShadow: "0 6px 18px rgba(0, 0, 0, 0.08)",
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: "auto minmax(180px, 1fr) auto auto auto auto",
+            },
+            gap: 1.5,
+            alignItems: "center",
           }}
         >
+          <IconButton
+            onClick={dataAnterior}
+            size="small"
+            sx={{
+              border: 1,
+              borderColor: "divider",
+              borderRadius: 1.5,
+              width: 40,
+              height: 40,
+              color: "text.secondary",
+              "&:hover": { borderColor: "primary.main", color: "primary.main" },
+            }}
+            aria-label="dia anterior"
+          >
+            <ArrowBackIos />
+          </IconButton>
+
+          <DateRange
+            value={selectedDate}
+            onChange={handleDateChange}
+            label="Data"
+          />
+
+          <IconButton
+            onClick={dataPosterior}
+            size="small"
+            sx={{
+              border: 1,
+              borderColor: "divider",
+              borderRadius: 1.5,
+              width: 40,
+              height: 40,
+              color: "text.secondary",
+              "&:hover": { borderColor: "primary.main", color: "primary.main" },
+            }}
+            aria-label="próximo dia"
+          >
+            <ArrowForwardIos />
+          </IconButton>
+
+          <ToggleButtonGroup
+            value={selectedEscala}
+            exclusive
+            onChange={(_, v) =>
+              v && handleRadioChange({ target: { value: v } })
+            }
+            size="small"
+            sx={{
+              height: 40,
+              "& .MuiToggleButton-root": {
+                px: 2,
+                textTransform: "none",
+                fontWeight: 500,
+                fontSize: "0.8125rem",
+                color: "text.secondary",
+                "&.Mui-selected": {
+                  backgroundColor: "primary.50",
+                  color: "primary.dark",
+                  "&:hover": { backgroundColor: "primary.100" },
+                },
+              },
+            }}
+          >
+            <ToggleButton value="movel">Móvel</ToggleButton>
+            <ToggleButton value="fixa">Fixa</ToggleButton>
+          </ToggleButtonGroup>
+
+          <FormControl size="small" sx={{ minWidth: 130 }}>
+            <InputLabel id="select-label">Poluente</InputLabel>
+            <Select
+              labelId="select-label"
+              id="select"
+              value={selectedPoluenteValue}
+              label="Poluente"
+              onChange={handlePoluenteChange}
+              MenuProps={{ PaperProps: { sx: { maxHeight: 320, mt: 0.5 } } }}
+            >
+              <MenuItem value="MP10">MP10</MenuItem>
+              <MenuItem value="NO">NO</MenuItem>
+              <MenuItem value="NO2">NO2</MenuItem>
+              <MenuItem value="O3">O3</MenuItem>
+              <MenuItem value="TEMP">TEMP</MenuItem>
+              <MenuItem value="UR">UR</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel id="cid-label">CID</InputLabel>
+            <Select
+              labelId="cid-label"
+              id="select-cid"
+              multiple
+              open={cidSelectOpen}
+              onOpen={() => setCidSelectOpen(true)}
+              onClose={() => setCidSelectOpen(false)}
+              value={selectedCidValues}
+              onChange={handleCidChange}
+              label="CID"
+              MenuProps={{ PaperProps: { sx: { maxHeight: 360, mt: 0.5 } } }}
+              renderValue={(selected) =>
+                selected.length === 0 || selected.includes(CID_ALL)
+                  ? "Todos"
+                  : selected
+                      .map((v) =>
+                        v === "BRONQUIOLITE AGUDA"
+                          ? "Bronquiolite"
+                          : "Infecção VAS"
+                      )
+                      .join(", ")
+              }
+              displayEmpty
+            >
+              <MenuItem value={CID_ALL}>Todos</MenuItem>
+              <MenuItem value="BRONQUIOLITE AGUDA">Bronquiolite Aguda</MenuItem>
+              <MenuItem value="INFECCAO AGUDA DAS VIAS AEREAS SUPERIORES NAO ESPECIFICADA">
+                Infecção Aguda Vias Aéreas
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      </Card>
+
+      <Card variant="outlined" sx={{ overflow: "hidden", borderRadius: 2 }}>
+        <Box>
           <MapContainer
             center={initialPosition}
             zoom={initialZoom}
@@ -398,8 +430,8 @@ function ReactMap2() {
             <ResetMapViewButton center={initialPosition} zoom={initialZoom} />
           </MapContainer>
         </Box>
-      </GridItem>
-    </GridContainer>
+      </Card>
+    </Stack>
   );
 }
 

@@ -4,8 +4,9 @@ import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import axios from "axios";
 import { format } from "date-fns";
 import RadioGroupMesAno from "components/RadioGroup/RadioGroupMesAno";
-import { Box, Button } from "@material-ui/core";
+import { Box, Button, Stack } from "@mui/material";
 import PropTypes from "prop-types";
+import { chartPalette, chartSx } from "theme/chartPalette";
 
 const valueFormatter = (value) => `${value} pacientes`;
 
@@ -17,7 +18,9 @@ const chartSetting = {
   ],
   series: [{ dataKey: "qtd", label: "Qtd atendimentos", valueFormatter }],
   height: 300,
+  colors: chartPalette,
   sx: {
+    ...chartSx,
     [`& .${axisClasses.directionY} .${axisClasses.label}`]: {
       transform: "translateX(-10px)",
     },
@@ -89,22 +92,21 @@ export default function CustomGraphBars(props) {
   }, []);
 
   return (
-    <div style={{ width: "100%" }}>
-      <Box className="estiloHorizontal" justifyContent="space-between">
-        <div
-          style={{
-            paddingLeft: "20px",
-            paddingRight: "40px",
-            paddingTop: "10px",
-          }}
-        >
-          <RadioGroupMesAno
-            value={selectedPeriod}
-            onChange={handleChangePeriodo}
-          ></RadioGroupMesAno>
-        </div>
-        <Button onClick={handleButtonClick}>Atualizar</Button>
-      </Box>
+    <Box sx={{ width: "100%" }}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mb: 1 }}
+      >
+        <RadioGroupMesAno
+          value={selectedPeriod}
+          onChange={handleChangePeriodo}
+        />
+        <Button size="small" variant="outlined" onClick={handleButtonClick}>
+          Atualizar
+        </Button>
+      </Stack>
       <BarChart
         dataset={dados}
         xAxis={[
@@ -117,7 +119,7 @@ export default function CustomGraphBars(props) {
         ]}
         {...chartSetting}
       />
-    </div>
+    </Box>
   );
 }
 
