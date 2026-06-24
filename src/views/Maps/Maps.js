@@ -9,6 +9,7 @@ import IframeMap from "components/Map/IframeMap";
 import ReactMap2 from "components/Map/ReactMap2";
 import ReactMapIbge from "components/Map/ReactMapibge";
 import ReactMapBronquiolite from "components/Map/ReactMapBronquiolite";
+import ReactMapBronquioliteVsr from "components/Map/ReactMapBronquioliteVsr";
 
 const TABS = [
   {
@@ -34,6 +35,12 @@ const TABS = [
     label: "Mapa IBGE",
     description: "Setores e indicadores do IBGE.",
     Component: ReactMapIbge,
+  },
+  {
+    value: "map_bronquiolite_vsr",
+    label: "Bronquiolite VSR",
+    description: "Atendimentos de bronquiolite com indicadores de UTI e VSR.",
+    Component: ReactMapBronquioliteVsr,
   },
 ];
 
