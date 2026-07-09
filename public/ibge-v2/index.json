@@ -1,0 +1,72 @@
+[
+  {
+    "value": "setores_basico_br_20250417",
+    "label": "setores_basico_br_20250417",
+    "file": "/ibge-v2/collections/setores_basico_br_20250417.json"
+  },
+  {
+    "value": "setores_pessoas_quilombolas_br",
+    "label": "setores_pessoas_quilombolas_br",
+    "file": "/ibge-v2/collections/setores_pessoas_quilombolas_br.json"
+  },
+  {
+    "value": "setores_domicilios_indigenas_br",
+    "label": "setores_domicilios_indigenas_br",
+    "file": "/ibge-v2/collections/setores_domicilios_indigenas_br.json"
+  },
+  {
+    "value": "setores_parentesco_br",
+    "label": "setores_parentesco_br",
+    "file": "/ibge-v2/collections/setores_parentesco_br.json"
+  },
+  {
+    "value": "setores_demografia_br",
+    "label": "setores_demografia_br",
+    "file": "/ibge-v2/collections/setores_demografia_br.json"
+  },
+  {
+    "value": "setores_obitos_br",
+    "label": "setores_obitos_br",
+    "file": "/ibge-v2/collections/setores_obitos_br.json"
+  },
+  {
+    "value": "setores_domicilios_quilombolas_br",
+    "label": "setores_domicilios_quilombolas_br",
+    "file": "/ibge-v2/collections/setores_domicilios_quilombolas_br.json"
+  },
+  {
+    "value": "setores_alfabetizacao_br",
+    "label": "setores_alfabetizacao_br",
+    "file": "/ibge-v2/collections/setores_alfabetizacao_br.json"
+  },
+  {
+    "value": "ibge",
+    "label": "ibge",
+    "file": "/ibge-v2/collections/ibge.json"
+  },
+  {
+    "value": "setores_caracteristicas_domicilio2_br_20250417",
+    "label": "setores_caracteristicas_domicilio2_br_20250417",
+    "file": "/ibge-v2/collections/setores_caracteristicas_domicilio2_br_20250417.json"
+  },
+  {
+    "value": "setores_cor_ou_raca_br",
+    "label": "setores_cor_ou_raca_br",
+    "file": "/ibge-v2/collections/setores_cor_ou_raca_br.json"
+  },
+  {
+    "value": "setores_pessoas_indigenas_br",
+    "label": "setores_pessoas_indigenas_br",
+    "file": "/ibge-v2/collections/setores_pessoas_indigenas_br.json"
+  },
+  {
+    "value": "setores_caracteristicas_domicilio1_br",
+    "label": "setores_caracteristicas_domicilio1_br",
+    "file": "/ibge-v2/collections/setores_caracteristicas_domicilio1_br.json"
+  },
+  {
+    "value": "setores_caracteristicas_domicilio3_br_20250417",
+    "label": "setores_caracteristicas_domicilio3_br_20250417",
+    "file": "/ibge-v2/collections/setores_caracteristicas_domicilio3_br_20250417.json"
+  }
+]
