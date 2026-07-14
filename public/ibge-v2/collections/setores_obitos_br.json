@@ -1,5 +1,7 @@
 [
   "cd_setor",
   "v01226_sexo_da_pessoa_falecida_e_masculino",
-  "v01227_sexo_da_pessoa_falecida_e_feminino"
+  "v01227_sexo_da_pessoa_falecida_e_feminino",
+  "situacao",
+  "cd_sit"
 ]

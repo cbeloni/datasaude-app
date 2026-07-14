@@ -1,3 +1,7 @@
 [
-  "cd_setor"
+  "cd_setor",
+  "situacao",
+  "cd_sit",
+  "cd_tipo",
+  "area_km2"
 ]
