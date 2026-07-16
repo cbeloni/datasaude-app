@@ -38,8 +38,12 @@ const getDefaultSelectedColumns = (fields) => {
     fields.includes(field)
   );
 
-  if (defaults.length > 0) {
+  if (defaults.length > 1) {
     return defaults;
+  }
+
+  if (defaults.length === 1 && defaults[0] === "cd_setor") {
+    return fields.slice(0, Math.min(fields.length, 5));
   }
 
   return fields.slice(0, Math.min(fields.length, 10));
