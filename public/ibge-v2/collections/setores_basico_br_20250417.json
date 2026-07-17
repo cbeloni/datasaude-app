@@ -32,5 +32,7 @@
   "v0002_total_de_domicilios_dppo_dppv_dppuo_dpio_dccm_dcsm",
   "v0003_total_de_domicilios_particulares_dppo_dppv_dppuo_dpio",
   "v0004_total_de_domicilios_coletivos_dccm_dcsm",
+  "v0005_media_de_moradores_em_domicilios_particulares_ocupados_total_pessoas_em_domicilios_particulares_ocupados_dppo_dpio",
+  "v0006_percentual_de_domicilios_particulares_ocupados_imputados_total_dpo_imputados_total_dpo",
   "v0007_total_de_domicilios_particulares_ocupados_dppo_dpio"
 ]

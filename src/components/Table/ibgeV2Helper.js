@@ -1,18 +1,3 @@
-const DEFAULT_PRIORITY_COLUMNS = [
-  "cd_setor",
-  "situacao",
-  "cd_sit",
-  "cd_tipo",
-  "area_km2",
-  "cd_regiao",
-  "nm_regiao",
-  "cd_uf",
-  "nm_uf",
-  "nm_mun",
-  "percentual_domicios_ocupados",
-  "percentual_pessoas",
-];
-
 const formatColumnLabel = (field) =>
   field
     .replace(/_/g, " ")
@@ -34,23 +19,11 @@ const buildFormulaColumns = (formulas) =>
   }));
 
 const getDefaultSelectedColumns = (fields) => {
-  const defaults = DEFAULT_PRIORITY_COLUMNS.filter((field) =>
-    fields.includes(field)
-  );
-
-  if (defaults.length > 1) {
-    return defaults;
-  }
-
-  if (defaults.length === 1 && defaults[0] === "cd_setor") {
-    return fields.slice(0, Math.min(fields.length, 5));
-  }
-
-  return fields.slice(0, Math.min(fields.length, 10));
+  // Sempre mostrar as 5 primeiras colunas como padrão
+  return fields.slice(0, Math.min(fields.length, 5));
 };
 
 export {
-  DEFAULT_PRIORITY_COLUMNS,
   formatColumnLabel,
   buildDynamicColumns,
   buildFormulaColumns,

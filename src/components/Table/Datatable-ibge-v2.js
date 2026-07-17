@@ -189,17 +189,8 @@ function DataTableIbgeV2Component() {
   }, [selectedCollectionFile]);
 
   useEffect(() => {
-    setSelectedColumns((current) => {
-      const validFields = new Set(allColumns.map((column) => column.field));
-      const preserved = current.filter((field) => validFields.has(field));
-
-      if (preserved.length > 0) {
-        return preserved;
-      }
-
-      return getDefaultSelectedColumns(collectionColumns);
-    });
-  }, [allColumns, collectionColumns]);
+    setSelectedColumns(getDefaultSelectedColumns(collectionColumns));
+  }, [selectedCollection, collectionColumns]);
 
   const columnVisibilityModel = useMemo(
     () =>
