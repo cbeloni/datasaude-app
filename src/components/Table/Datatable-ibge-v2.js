@@ -57,9 +57,20 @@ function DataTableIbgeV2Component() {
   const [formulaExpressao, setFormulaExpressao] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const formulaColumns = useMemo(() => buildFormulaColumns(formulas), [
-    formulas,
-  ]);
+  const currentCollectionFormulas = useMemo(
+    () =>
+      formulas.filter(
+        (formula) =>
+          !formula.collection_name ||
+          formula.collection_name === selectedCollection
+      ),
+    [formulas, selectedCollection]
+  );
+
+  const formulaColumns = useMemo(
+    () => buildFormulaColumns(currentCollectionFormulas),
+    [currentCollectionFormulas]
+  );
   const collectionColumnDefs = useMemo(
     () => buildDynamicColumns(collectionColumns),
     [collectionColumns]
@@ -361,16 +372,6 @@ function DataTableIbgeV2Component() {
     cdSetorFilter,
     formulas,
   ]);
-
-  const currentCollectionFormulas = useMemo(
-    () =>
-      formulas.filter(
-        (formula) =>
-          !formula.collection_name ||
-          formula.collection_name === selectedCollection
-      ),
-    [formulas, selectedCollection]
-  );
 
   return (
     <Stack spacing={2} sx={{ width: "100%", minHeight: 650 }}>
