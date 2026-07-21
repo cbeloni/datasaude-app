@@ -40,11 +40,6 @@
     "file": "/ibge-v2/collections/setores_alfabetizacao_br.json"
   },
   {
-    "value": "ibge",
-    "label": "ibge",
-    "file": "/ibge-v2/collections/ibge.json"
-  },
-  {
     "value": "setores_caracteristicas_domicilio2_br_20250417",
     "label": "setores_caracteristicas_domicilio2_br_20250417",
     "file": "/ibge-v2/collections/setores_caracteristicas_domicilio2_br_20250417.json"
