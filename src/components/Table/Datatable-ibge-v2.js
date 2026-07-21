@@ -273,6 +273,7 @@ function DataTableIbgeV2Component() {
       const response = await createIbgeFormula({
         nome: formulaNome.trim(),
         formula: formulaExpressao.trim(),
+        collection_name: selectedCollection,
       });
       setFormulas(response?.payload || []);
       setFormulaDialogOpen(false);
@@ -360,6 +361,16 @@ function DataTableIbgeV2Component() {
     cdSetorFilter,
     formulas,
   ]);
+
+  const currentCollectionFormulas = useMemo(
+    () =>
+      formulas.filter(
+        (formula) =>
+          !formula.collection_name ||
+          formula.collection_name === selectedCollection
+      ),
+    [formulas, selectedCollection]
+  );
 
   return (
     <Stack spacing={2} sx={{ width: "100%", minHeight: 650 }}>
@@ -504,12 +515,12 @@ function DataTableIbgeV2Component() {
             <Stack spacing={1}>
               <Typography variant="subtitle2">Fórmulas cadastradas</Typography>
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                {formulas.length === 0 && (
+                {currentCollectionFormulas.length === 0 && (
                   <Typography variant="body2" color="text.secondary">
-                    Nenhuma fórmula cadastrada.
+                    Nenhuma fórmula cadastrada para esta collection.
                   </Typography>
                 )}
-                {formulas.map((formula) => (
+                {currentCollectionFormulas.map((formula) => (
                   <Box
                     key={formula.id}
                     sx={{

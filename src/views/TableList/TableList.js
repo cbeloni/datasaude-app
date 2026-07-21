@@ -26,22 +26,23 @@ const TABS = [
     description: "Coletas a cada uma hora.",
     Component: () => <DataTableComponent poluentesHelper={poluentesHelper} />,
   },
-  {
-    value: "ibge",
-    label: "IBGE",
-    description: "Tabela baseada no dataset de setores do IBGE.",
-    Component: DataTableIbgeComponent,
-  },
+  // IBGE v1 oculto, mantido apenas para compatibilidade
+  // {
+  //   value: "ibge",
+  //   label: "IBGE",
+  //   description: "Tabela baseada no dataset de setores do IBGE.",
+  //   Component: DataTableIbgeComponent,
+  // },
   {
     value: "ibge-v2",
-    label: "IBGE V2",
+    label: "IBGE",
     description: "Tabela IBGE com collections MongoDB e colunas dinâmicas.",
     Component: DataTableIbgeV2Component,
   },
 ];
 
 export default function TableList() {
-  const [value, setValue] = useState("ibge");
+  const [value, setValue] = useState("ibge-v2");
   const handleChange = (_, newValue) => setValue(newValue);
   const active = TABS.find((t) => t.value === value);
 
