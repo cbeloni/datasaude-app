@@ -7,7 +7,6 @@ import TabPanel from "@mui/lab/TabPanel";
 import PageHeader from "components/Card/PageHeader";
 import DataTableComponent from "components/Table/Datatable";
 import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
-import DataTableIbgeComponent from "components/Table/Datatable-ibge";
 import DataTableIbgeV2Component from "components/Table/Datatable-ibge-v2";
 import PoluentesHelper from "views/TableList/PoluentesHelper";
 
