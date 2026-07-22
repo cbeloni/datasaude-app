@@ -5,6 +5,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -49,7 +50,8 @@ function DataTableIbgeV2Component() {
     page: 0,
     pageSize: PAGE_SIZE_DEFAULT,
   });
-  const [cdSetorFilter, setCdSetorFilter] = useState("");
+  const [cdSetorFilter, setCdSetorFilter] = useState([]);
+  const [cdSetorInputValue, setCdSetorInputValue] = useState("");
   const [formulas, setFormulas] = useState([]);
   const [formulasLoading, setFormulasLoading] = useState(false);
   const [formulaDialogOpen, setFormulaDialogOpen] = useState(false);
@@ -252,6 +254,29 @@ function DataTableIbgeV2Component() {
     }));
   };
 
+  const handleCdSetorInputChange = (event, newInputValue) => {
+    setCdSetorInputValue(newInputValue);
+  };
+
+  const handleCdSetorChange = (event, newValue) => {
+    setCdSetorFilter(newValue);
+    setPaginationModel((current) => ({
+      ...current,
+      page: 0,
+    }));
+  };
+
+  const handleCdSetorKeyDown = (event) => {
+    if (event.key === "Enter" && cdSetorInputValue.trim()) {
+      event.preventDefault();
+      const newValue = cdSetorInputValue.trim();
+      if (!cdSetorFilter.includes(newValue)) {
+        setCdSetorFilter((current) => [...current, newValue]);
+      }
+      setCdSetorInputValue("");
+    }
+  };
+
   const handleFormulaSuggestionSelect = (_, selectedField) => {
     if (!selectedField) {
       return;
@@ -332,7 +357,7 @@ function DataTableIbgeV2Component() {
           columns: selectedColumns,
           page: paginationModel.page + 1,
           limit: paginationModel.pageSize,
-          ...(cdSetorFilter.trim() ? { cd_setor: cdSetorFilter.trim() } : {}),
+          ...(cdSetorFilter.length > 0 ? { cd_setor: cdSetorFilter } : {}),
         };
 
         const data = await postIbgeMongoList(requestBody);
@@ -428,20 +453,33 @@ function DataTableIbgeV2Component() {
           </FormControl>
         </Box>
 
-        <Box sx={{ maxWidth: 260, width: "100%" }}>
-          <TextField
-            label="cd_setor"
+        <Box sx={{ maxWidth: 360, width: "100%" }}>
+          <Autocomplete
+            multiple
+            freeSolo
+            options={[]}
             value={cdSetorFilter}
-            onChange={(event) => {
-              setCdSetorFilter(event.target.value);
-              setPaginationModel((current) => ({
-                ...current,
-                page: 0,
-              }));
-            }}
-            fullWidth
-            size="small"
-            placeholder="Opcional"
+            inputValue={cdSetorInputValue}
+            onInputChange={handleCdSetorInputChange}
+            onChange={handleCdSetorChange}
+            onKeyDown={handleCdSetorKeyDown}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => {
+                const { key, ...tagProps } = getTagProps({ index });
+                return (
+                  <Chip key={key} label={option} size="small" {...tagProps} />
+                );
+              })
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="cd_setor"
+                placeholder="Digite e pressione Enter"
+                fullWidth
+                size="small"
+              />
+            )}
           />
         </Box>
 
@@ -475,6 +513,14 @@ function DataTableIbgeV2Component() {
           onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
+          sx={{
+            "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
+              outline: "none",
+            },
+            "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
+              outline: "none",
+            },
+          }}
         />
       </Box>
 
