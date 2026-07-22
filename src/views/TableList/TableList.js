@@ -7,6 +7,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import PageHeader from "components/Card/PageHeader";
 import DataTableComponent from "components/Table/Datatable";
 import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
+import DataTableIbgeComponent from "components/Table/Datatable-ibge";
 import DataTableIbgeV2Component from "components/Table/Datatable-ibge-v2";
 import PoluentesHelper from "views/TableList/PoluentesHelper";
 
@@ -25,13 +26,12 @@ const TABS = [
     description: "Coletas a cada uma hora.",
     Component: () => <DataTableComponent poluentesHelper={poluentesHelper} />,
   },
-  // IBGE v1 oculto, mantido apenas para compatibilidade
-  // {
-  //   value: "ibge",
-  //   label: "IBGE",
-  //   description: "Tabela baseada no dataset de setores do IBGE.",
-  //   Component: DataTableIbgeComponent,
-  // },
+  {
+    value: "ibge-v1",
+    label: "IBGE v1",
+    description: "Tabela baseada no dataset de setores do IBGE.",
+    Component: DataTableIbgeComponent,
+  },
   {
     value: "ibge-v2",
     label: "IBGE",
