@@ -59,6 +59,20 @@ function DataTableIbgeV2Component() {
   const [formulaExpressao, setFormulaExpressao] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    if (!errorMessage) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setErrorMessage("");
+    }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [errorMessage]);
+
   const currentCollectionFormulas = useMemo(
     () =>
       formulas.filter(
