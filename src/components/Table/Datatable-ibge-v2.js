@@ -35,8 +35,21 @@ import {
 
 const PAGE_SIZE_DEFAULT = 10;
 const DEFAULT_COLLECTION_MANIFEST_PATH = "/ibge-v2/index.json";
+const FILTER_ALL = "todos";
+const FILTER_SETOR = "maxacali";
+const IBGE_SETOR_FILTER = [
+  "310660620000007",
+  "310660620000011",
+  "310660620000012",
+  "315765805000014",
+  "315765805000015",
+  "315765805000016",
+  "315765805000017",
+  "310660620000013",
+];
 
 function DataTableIbgeV2Component() {
+  const [setorFilter, setSetorFilter] = useState(FILTER_ALL);
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [collectionColumns, setCollectionColumns] = useState([]);
@@ -51,6 +64,7 @@ function DataTableIbgeV2Component() {
   });
   const [cdSetorFilter, setCdSetorFilter] = useState([]);
   const [cdSetorInputValue, setCdSetorInputValue] = useState("");
+  const [setorCdSetores, setSetorCdSetores] = useState([]);
   const [formulas, setFormulas] = useState([]);
   const [formulasLoading, setFormulasLoading] = useState(false);
   const [formulaDialogOpen, setFormulaDialogOpen] = useState(false);
@@ -279,6 +293,16 @@ function DataTableIbgeV2Component() {
     }));
   };
 
+  const handleSetorFilterChange = (event) => {
+    const value = event.target.value;
+    setSetorFilter(value);
+    setSetorCdSetores(value === FILTER_SETOR ? IBGE_SETOR_FILTER : []);
+    setPaginationModel((current) => ({
+      ...current,
+      page: 0,
+    }));
+  };
+
   const handleCdSetorKeyDown = (event) => {
     if (event.key === "Enter" && cdSetorInputValue.trim()) {
       event.preventDefault();
@@ -370,7 +394,11 @@ function DataTableIbgeV2Component() {
           columns: selectedColumns,
           page: paginationModel.page + 1,
           limit: paginationModel.pageSize,
-          ...(cdSetorFilter.length > 0 ? { cd_setor: cdSetorFilter } : {}),
+          ...(cdSetorFilter.length > 0
+            ? { cd_setor: cdSetorFilter }
+            : setorCdSetores.length > 0
+            ? { cd_setor: setorCdSetores }
+            : {}),
         };
 
         const data = await postIbgeMongoList(requestBody);
@@ -406,6 +434,7 @@ function DataTableIbgeV2Component() {
     paginationModel.page,
     paginationModel.pageSize,
     cdSetorFilter,
+    setorCdSetores,
     formulas,
   ]);
 
@@ -469,6 +498,22 @@ function DataTableIbgeV2Component() {
                   {column.headerName}
                 </MenuItem>
               ))}
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Box sx={{ maxWidth: 140, width: "100%" }}>
+          <FormControl fullWidth size="small">
+            <InputLabel id="ibge-v2-setor-label">Setor</InputLabel>
+            <Select
+              labelId="ibge-v2-setor-label"
+              id="ibge-v2-setor"
+              value={setorFilter}
+              onChange={handleSetorFilterChange}
+              label="Setor"
+            >
+              <MenuItem value={FILTER_ALL}>Todos</MenuItem>
+              <MenuItem value={FILTER_SETOR}>Maxacali</MenuItem>
             </Select>
           </FormControl>
         </Box>
