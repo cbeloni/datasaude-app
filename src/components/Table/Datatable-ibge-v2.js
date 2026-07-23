@@ -41,7 +41,6 @@ function DataTableIbgeV2Component() {
   const [selectedCollection, setSelectedCollection] = useState("");
   const [collectionColumns, setCollectionColumns] = useState([]);
   const [rows, setRows] = useState([]);
-  const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [collectionsLoading, setCollectionsLoading] = useState(false);
   const [columnsLoading, setColumnsLoading] = useState(false);
@@ -381,14 +380,12 @@ function DataTableIbgeV2Component() {
         }
 
         setRows(Array.isArray(data?.payload) ? data.payload : []);
-        setRowCount(data?.total_records || 0);
       } catch (error) {
         if (!active) {
           return;
         }
 
         setRows([]);
-        setRowCount(0);
         setErrorMessage("Erro ao carregar tabela IBGE V2.");
       } finally {
         if (active) {
@@ -411,6 +408,15 @@ function DataTableIbgeV2Component() {
     cdSetorFilter,
     formulas,
   ]);
+
+  const rowCount = useMemo(() => {
+    if (rows.length === 0 && paginationModel.page === 0) {
+      return 0;
+    }
+    const hasMore = rows.length === paginationModel.pageSize;
+    const currentMax = (paginationModel.page + 1) * paginationModel.pageSize;
+    return currentMax + (hasMore ? 1 : 0);
+  }, [rows, paginationModel.page, paginationModel.pageSize]);
 
   return (
     <Stack spacing={2} sx={{ width: "100%", minHeight: 650 }}>
@@ -519,20 +525,28 @@ function DataTableIbgeV2Component() {
           rows={rows}
           columns={allColumns}
           columnVisibilityModel={columnVisibilityModel}
-          rowCount={rowCount}
           loading={loading || formulasLoading}
           pagination
           paginationMode="server"
+          rowCount={rowCount}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
+          hideFooterRowCount
+          hideFooterSelectedRowCount
           sx={{
             "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
               outline: "none",
             },
             "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
               outline: "none",
+            },
+            "& .MuiTablePagination-toolbar .MuiTablePagination-displayedRows": {
+              display: "none",
+            },
+            "& .MuiTablePagination-spacer": {
+              display: "none",
             },
           }}
         />
