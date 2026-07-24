@@ -241,6 +241,72 @@ function DataTableIbgeV2Component() {
     [allColumns, selectedColumns]
   );
 
+  // Mapeia cada campo de fórmula para o conjunto de campos-fonte usados na
+  // sua expressão (ex.: "MEU_INDICE" -> {"V00047", "V0003"}).
+  const formulaDependenciesByField = useMemo(() => {
+    const map = new Map();
+    const fieldByNome = new Map(
+      allColumns.map((column) => [column.field.toLowerCase(), column.field])
+    );
+
+    currentCollectionFormulas.forEach((formula) => {
+      if (!formula?.formula) {
+        return;
+      }
+
+      const formulaField = fieldByNome.get((formula.nome || "").toLowerCase());
+      if (!formulaField) {
+        return;
+      }
+
+      const tokens = formula.formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || [];
+      const deps = new Set();
+
+      tokens.forEach((token) => {
+        const field = fieldByNome.get(token.toLowerCase());
+        if (field && field !== formulaField) {
+          deps.add(field);
+        }
+      });
+
+      if (deps.size > 0) {
+        map.set(formulaField, deps);
+      }
+    });
+
+    return map;
+  }, [currentCollectionFormulas, allColumns]);
+
+  const handleColumnsChange = (event) => {
+    const value =
+      typeof event.target.value === "string"
+        ? event.target.value.split(",")
+        : event.target.value;
+
+    // Ao selecionar um campo de fórmula, inclui automaticamente os campos
+    // que compõem a expressão dela (com fixed-point, cobrindo fórmulas que
+    // referenciam outras fórmulas).
+    const expanded = new Set(value);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      expanded.forEach((field) => {
+        formulaDependenciesByField.get(field)?.forEach((dep) => {
+          if (!expanded.has(dep)) {
+            expanded.add(dep);
+            changed = true;
+          }
+        });
+      });
+    }
+
+    setSelectedColumns(Array.from(expanded));
+    setPaginationModel((current) => ({
+      ...current,
+      page: 0,
+    }));
+  };
+
   const formulaFieldOptions = useMemo(
     () =>
       Array.from(
@@ -266,15 +332,6 @@ function DataTableIbgeV2Component() {
 
   const handleCollectionChange = (event) => {
     setSelectedCollection(event.target.value);
-    setPaginationModel((current) => ({
-      ...current,
-      page: 0,
-    }));
-  };
-
-  const handleColumnsChange = (event) => {
-    const value = event.target.value;
-    setSelectedColumns(typeof value === "string" ? value.split(",") : value);
     setPaginationModel((current) => ({
       ...current,
       page: 0,
