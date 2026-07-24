@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   FormControl,
   InputLabel,
@@ -182,6 +182,9 @@ const getDefaultField = (fields) =>
 function ReactMapIbgeV2() {
   const initialPosition = [-16.886, -40.545];
   const initialZoom = window.innerWidth >= 768 ? 13 : 12;
+  const selectedFieldRef = useRef("");
+  const selectedCollectionRef = useRef("");
+  const valuesBySetorRef = useRef(new Map());
   const [geoData, setGeoData] = useState(null);
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
@@ -289,6 +292,14 @@ function ReactMapIbgeV2() {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    selectedFieldRef.current = selectedField;
+  }, [selectedField]);
+
+  useEffect(() => {
+    selectedCollectionRef.current = selectedCollection;
+  }, [selectedCollection]);
 
   useEffect(() => {
     let active = true;
@@ -433,6 +444,7 @@ function ReactMapIbgeV2() {
         values.set(setor, value);
       }
     });
+    valuesBySetorRef.current = values;
     return values;
   }, [ibgeRows, selectedField]);
 
@@ -461,23 +473,26 @@ function ReactMapIbgeV2() {
 
   const onEachSetor = (feature, layer) => {
     const properties = feature.properties;
-    const setor = String(properties.CD_SETOR || "");
-    const value = valuesBySetor.get(setor);
-    const formattedValue = Number.isFinite(value) ? value.toFixed(2) : "—";
     const name =
       properties.NM_AGLOM || properties.NM_DIST || properties.NM_MUN || "Setor";
 
-    layer.bindPopup(
-      `<b>${name}</b><br/>
-      <b>Código do Setor:</b> ${properties.CD_SETOR}<br/>
-      <b>Collection:</b> ${selectedCollection || "—"}<br/>
-      <b>${
-        formatColumnLabel(selectedField) || "Campo"
-      }:</b> ${formattedValue}<br/>
-      <b>Município:</b> ${properties.NM_MUN || "—"}<br/>
-      <b>Distrito:</b> ${properties.NM_DIST || "—"}<br/>
-      <b>Situação:</b> ${properties.SITUACAO || "—"}`
-    );
+    const fieldRef = selectedFieldRef;
+    const collectionRef = selectedCollectionRef;
+
+    layer.bindPopup(() => {
+      const setor = String(properties.CD_SETOR || "");
+      const value = valuesBySetorRef.current.get(setor);
+      const formattedValue = Number.isFinite(value) ? value.toFixed(2) : "—";
+      return `<b>${name}</b><br/>
+        <b>Código do Setor:</b> ${properties.CD_SETOR}<br/>
+        <b>Collection:</b> ${collectionRef.current || "—"}<br/>
+        <b>${
+          formatColumnLabel(fieldRef.current) || "Campo"
+        }:</b> ${formattedValue}<br/>
+        <b>Município:</b> ${properties.NM_MUN || "—"}<br/>
+        <b>Distrito:</b> ${properties.NM_DIST || "—"}<br/>
+        <b>Situação:</b> ${properties.SITUACAO || "—"}`;
+    });
   };
 
   return (
