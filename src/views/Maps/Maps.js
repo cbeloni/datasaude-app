@@ -8,6 +8,7 @@ import PageHeader from "components/Card/PageHeader";
 import IframeMap from "components/Map/IframeMap";
 import ReactMap2 from "components/Map/ReactMap2";
 import ReactMapIbge from "components/Map/ReactMapibge";
+import ReactMapIbgeV2 from "components/Map/ReactMapIbgeV2";
 import ReactMapBronquiolite from "components/Map/ReactMapBronquiolite";
 import ReactMapBronquioliteVsr from "components/Map/ReactMapBronquioliteVsr";
 
@@ -35,6 +36,12 @@ const TABS = [
     label: "Mapa IBGE",
     description: "Setores e indicadores do IBGE.",
     Component: ReactMapIbge,
+  },
+  {
+    value: "map_ibge_v2",
+    label: "Mapa IBGE V2",
+    description: "Setores IBGE com collection e campo dinâmicos.",
+    Component: ReactMapIbgeV2,
   },
   {
     value: "map_bronquiolite_vsr",
