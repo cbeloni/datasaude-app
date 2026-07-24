@@ -49,7 +49,7 @@ const IBGE_SETOR_FILTER = [
 ];
 
 function DataTableIbgeV2Component() {
-  const [setorFilter, setSetorFilter] = useState(FILTER_ALL);
+  const [setorFilter, setSetorFilter] = useState(FILTER_SETOR);
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [collectionColumns, setCollectionColumns] = useState([]);
@@ -64,7 +64,7 @@ function DataTableIbgeV2Component() {
   });
   const [cdSetorFilter, setCdSetorFilter] = useState([]);
   const [cdSetorInputValue, setCdSetorInputValue] = useState("");
-  const [setorCdSetores, setSetorCdSetores] = useState([]);
+  const [setorCdSetores, setSetorCdSetores] = useState(IBGE_SETOR_FILTER);
   const [formulas, setFormulas] = useState([]);
   const [formulasLoading, setFormulasLoading] = useState(false);
   const [formulaDialogOpen, setFormulaDialogOpen] = useState(false);

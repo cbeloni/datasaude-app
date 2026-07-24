@@ -23,7 +23,7 @@ import "leaflet-defaulticon-compatibility";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { formatColumnLabel } from "components/Table/ibgeV2Helper";
-import { postIbgeMongoList } from "services/IbgeV2Service";
+import { listIbgeFormulas, postIbgeMongoList } from "services/IbgeV2Service";
 import { buildJenksBreaks, DEFAULT_JENKS_CLASSES } from "utils/map/jenks";
 import PropTypes from "prop-types";
 
@@ -192,6 +192,7 @@ function ReactMapIbgeV2() {
     {}
   );
   const [schemaStatus, setSchemaStatus] = useState("loading");
+  const [formulas, setFormulas] = useState([]);
   const [mapMessage, setMapMessage] = useState("");
 
   const selectedCollectionFile = useMemo(
@@ -209,10 +210,12 @@ function ReactMapIbgeV2() {
           geoResult,
           collectionsResult,
           schemaResult,
+          formulasResult,
         ] = await Promise.allSettled([
           fetch("/setores.geojson"),
           fetch(DEFAULT_COLLECTION_MANIFEST_PATH),
           fetch("/ibge-v2/schema.json"),
+          listIbgeFormulas(),
         ]);
         if (!active) {
           return;
@@ -248,6 +251,17 @@ function ReactMapIbgeV2() {
           setMapMessage(
             "Não foi possível carregar o schema numérico do Mapa IBGE V2."
           );
+        }
+
+        if (formulasResult.status === "fulfilled") {
+          const formulaResponse = formulasResult.value;
+          const formulaList =
+            formulaResponse?.payload && Array.isArray(formulaResponse.payload)
+              ? formulaResponse.payload
+              : [];
+          setFormulas(formulaList);
+        } else {
+          setFormulas([]);
         }
 
         setCollections(normalizedCollections);
@@ -299,10 +313,20 @@ function ReactMapIbgeV2() {
 
         const numericFields =
           numericFieldsByCollection[selectedCollection] || [];
-        const selectableFields = (Array.isArray(fields)
+        const formulaFields = formulas
+          .filter(
+            (f) =>
+              !f.collection_name || f.collection_name === selectedCollection
+          )
+          .map((f) => f.nome.trim().toLowerCase().replace(/\s+/g, "_"));
+        const baseFields = (Array.isArray(fields)
           ? fields
           : []
         ).filter((field) => numericFields.includes(field));
+        const selectableFields = [
+          ...baseFields,
+          ...formulaFields.filter((f) => !baseFields.includes(f)),
+        ];
         setCollectionFields(selectableFields);
         setSelectedField(getDefaultField(selectableFields));
         setMapMessage(
@@ -333,6 +357,7 @@ function ReactMapIbgeV2() {
     schemaStatus,
     selectedCollection,
     selectedCollectionFile,
+    formulas,
   ]);
 
   const geoSetores = useMemo(
@@ -347,28 +372,33 @@ function ReactMapIbgeV2() {
     let active = true;
 
     const loadIbgeData = async () => {
-      if (!selectedCollection || !selectedField || geoSetores.length === 0) {
+      if (
+        !selectedCollection ||
+        collectionFields.length === 0 ||
+        geoSetores.length === 0
+      ) {
         setIbgeRows([]);
         return;
       }
 
       try {
+        const allColumns = ["cd_setor", ...collectionFields];
         const response = await postIbgeMongoList({
           collection_name: selectedCollection,
-          columns: ["cd_setor", selectedField],
+          columns: allColumns,
           cd_setor: geoSetores,
           page: 1,
           limit: geoSetores.length,
         });
         if (active) {
           const rows = Array.isArray(response?.payload) ? response.payload : [];
+          setIbgeRows(rows);
           const hasNumericValue = rows.some((row) => {
             if (row[selectedField] === null || row[selectedField] === "") {
               return false;
             }
             return Number.isFinite(Number(row[selectedField]));
           });
-          setIbgeRows(rows);
           setMapMessage(
             hasNumericValue
               ? ""
@@ -390,7 +420,7 @@ function ReactMapIbgeV2() {
     return () => {
       active = false;
     };
-  }, [selectedCollection, selectedField, geoSetores]);
+  }, [selectedCollection, collectionFields, geoSetores]);
 
   const valuesBySetor = useMemo(() => {
     const values = new Map();
