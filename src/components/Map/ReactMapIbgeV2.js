@@ -402,19 +402,7 @@ function ReactMapIbgeV2() {
           limit: geoSetores.length,
         });
         if (active) {
-          const rows = Array.isArray(response?.payload) ? response.payload : [];
-          setIbgeRows(rows);
-          const hasNumericValue = rows.some((row) => {
-            if (row[selectedField] === null || row[selectedField] === "") {
-              return false;
-            }
-            return Number.isFinite(Number(row[selectedField]));
-          });
-          setMapMessage(
-            hasNumericValue
-              ? ""
-              : "O mapa não suporta apresentar o campo selecionado porque não há valores numéricos disponíveis."
-          );
+          setIbgeRows(Array.isArray(response?.payload) ? response.payload : []);
         }
       } catch (error) {
         if (active) {
@@ -432,6 +420,21 @@ function ReactMapIbgeV2() {
       active = false;
     };
   }, [selectedCollection, collectionFields, geoSetores]);
+
+  useEffect(() => {
+    if (ibgeRows.length === 0 || !selectedField) {
+      return;
+    }
+    const hasNumericValue = ibgeRows.some((row) => {
+      const v = row[selectedField];
+      return v !== null && v !== "" && Number.isFinite(Number(v));
+    });
+    setMapMessage(
+      hasNumericValue
+        ? ""
+        : "O mapa não suporta apresentar o campo selecionado porque não há valores numéricos disponíveis."
+    );
+  }, [ibgeRows, selectedField]);
 
   const valuesBySetor = useMemo(() => {
     const values = new Map();
