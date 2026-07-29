@@ -28,6 +28,12 @@ import IndicadoresPage from "views/Indicadores/Indicadores.js";
 import TableList from "views/TableList/TableList.js";
 import Maps from "views/Maps/Maps.js";
 import ChatiaPage from "views/Chat-ia/ChatiaPage.js";
+import People from "@mui/icons-material/PeopleOutlined";
+import UsersPage from "views/UserManagement/UsersPage.js";
+import {
+  MAP_TAB_PERMISSIONS,
+  TABLE_TAB_PERMISSIONS,
+} from "config/tabPermissions";
 
 const dashboardRoutes = [
   {
@@ -36,6 +42,7 @@ const dashboardRoutes = [
     icon: Dashboard,
     component: DashboardPage,
     layout: "/admin",
+    permission: "dashboard.view",
   },
   {
     path: "/previsao",
@@ -43,6 +50,7 @@ const dashboardRoutes = [
     icon: BlurOn,
     component: PrevisaoPage,
     layout: "/admin",
+    permission: "previsao.view",
   },
   {
     path: "/chat-ia",
@@ -50,6 +58,7 @@ const dashboardRoutes = [
     icon: Assistant,
     component: ChatiaPage,
     layout: "/admin",
+    permission: "chat_ia.view",
   },
   {
     path: "/indicadores",
@@ -57,6 +66,7 @@ const dashboardRoutes = [
     icon: BarChart,
     component: IndicadoresPage,
     layout: "/admin",
+    permission: "indicadores.view",
   },
   // {
   //   path: "/user",
@@ -72,6 +82,8 @@ const dashboardRoutes = [
     icon: TableIcon,
     component: TableList,
     layout: "/admin",
+    permission: "table.view",
+    tabPermissions: TABLE_TAB_PERMISSIONS.map((tab) => tab.code),
   },
   {
     path: "/maps",
@@ -79,6 +91,16 @@ const dashboardRoutes = [
     icon: LocationOn,
     component: Maps,
     layout: "/admin",
+    permission: "maps.view",
+    tabPermissions: MAP_TAB_PERMISSIONS.map((tab) => tab.code),
+  },
+  {
+    path: "/users",
+    name: "Usuários",
+    icon: People,
+    component: UsersPage,
+    layout: "/admin",
+    permissions: ["users.manage", "roles.manage"],
   },
 ];
 

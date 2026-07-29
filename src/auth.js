@@ -82,3 +82,18 @@ export const refreshToken = async () => {
     return false;
   }
 };
+
+export const getCurrentUser = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const response = await axios.get(apiURL + "/api/v1/users/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) clearAuthCache();
+    throw error;
+  }
+};

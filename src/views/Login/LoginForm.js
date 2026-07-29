@@ -142,7 +142,7 @@ export default function LoginForm() {
             }}
           >
             Acompanhe atendimentos, internações, leitos e qualidade do ar em
-            tempo real. Decisões baseadas em dados, não em achismos.
+            tempo real. Decisões baseadas em dados.
           </Typography>
         </Box>
 
