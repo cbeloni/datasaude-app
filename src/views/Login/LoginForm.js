@@ -95,28 +95,17 @@ export default function LoginForm() {
           },
         }}
       >
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        <Stack alignItems="center" sx={{ width: "100%" }}>
           <Box
             component="img"
-            src={`${process.env.PUBLIC_URL}/logo.png`}
-            alt="DataSaúde"
+            src={`${process.env.PUBLIC_URL}/logo_texto.png`}
+            alt="Pensi Analytics"
             sx={{
-              width: 64,
-              height: 40,
+              width: 220,
+              height: 132,
               objectFit: "contain",
-              filter: "brightness(0) invert(1)",
             }}
           />
-          <Typography
-            sx={{
-              fontFamily: theme.tokens.typography.display,
-              fontWeight: 600,
-              fontSize: "1.125rem",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            DataSaúde
-          </Typography>
         </Stack>
 
         <Box sx={{ position: "relative", zIndex: 1, maxWidth: 480 }}>
@@ -147,8 +136,8 @@ export default function LoginForm() {
         </Box>
 
         <Typography variant="caption" sx={{ opacity: 0.65 }}>
-          © {new Date().getFullYear()} DataSaúde · Saúde pública orientada a
-          dados
+          © {new Date().getFullYear()} Pensi Analytics · Saúde pública orientada
+          a dados
         </Typography>
       </Box>
 

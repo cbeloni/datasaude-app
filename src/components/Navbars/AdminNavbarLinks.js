@@ -79,7 +79,7 @@ export default function AdminNavbarLinks() {
             Sua conta
           </Typography>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            DataSaúde
+            Pensi Analytics
           </Typography>
         </Box>
         <Divider sx={{ my: 0.5 }} />

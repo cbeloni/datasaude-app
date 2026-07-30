@@ -97,7 +97,6 @@ NavItem.propTypes = {
 };
 
 const Brand = () => {
-  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -106,48 +105,21 @@ const Brand = () => {
         pb: 2,
         display: "flex",
         alignItems: "center",
-        gap: 1.25,
+        justifyContent: "center",
       }}
     >
       <Box
         component="img"
-        src={`${process.env.PUBLIC_URL}/logo.png`}
-        alt="DataSaúde"
+        src={`${process.env.PUBLIC_URL}/logo_texto.png`}
+        alt="Pensi Analytics"
         sx={{
-          width: 56,
-          height: 36,
+          width: 130,
+          height: 78,
           objectFit: "contain",
           flexShrink: 0,
           filter: "brightness(0) saturate(100%)",
         }}
       />
-      <Box sx={{ minWidth: 0 }}>
-        <Typography
-          sx={{
-            fontFamily: theme.tokens.typography.display,
-            fontSize: "1.125rem",
-            fontWeight: 600,
-            letterSpacing: "-0.02em",
-            lineHeight: 1.1,
-            color: theme.palette.text.primary,
-          }}
-        >
-          DataSaúde
-        </Typography>
-        <Typography
-          variant="caption"
-          sx={{
-            display: "block",
-            color: theme.palette.text.secondary,
-            fontSize: "0.6875rem",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            fontWeight: 500,
-          }}
-        >
-          Vigilância · BR
-        </Typography>
-      </Box>
     </Box>
   );
 };

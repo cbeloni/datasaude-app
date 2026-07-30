@@ -37,7 +37,7 @@ const groupedPermissionCodes = new Set(
   ])
 );
 
-export default function RolesPage({ showHeader = true }) {
+export default function RolesPage({ showHeader = true, createRequest = 0 }) {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [role, setRole] = useState(emptyRole);
@@ -74,6 +74,12 @@ export default function RolesPage({ showHeader = true }) {
     setEditingRoleId(null);
     setOpen(true);
   };
+
+  useEffect(() => {
+    if (createRequest > 0) {
+      openCreateDialog();
+    }
+  }, [createRequest]);
 
   const openEditDialog = (item) => {
     setRole({
@@ -180,13 +186,6 @@ export default function RolesPage({ showHeader = true }) {
             Novo perfil
           </Button>
         </Stack>
-      )}
-      {!showHeader && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button variant="contained" onClick={openCreateDialog}>
-            Novo perfil
-          </Button>
-        </Box>
       )}
       {feedback && (
         <Alert onClose={() => setFeedback(null)} severity={feedback.severity}>
@@ -327,4 +326,5 @@ export default function RolesPage({ showHeader = true }) {
 
 RolesPage.propTypes = {
   showHeader: PropTypes.bool,
+  createRequest: PropTypes.number,
 };

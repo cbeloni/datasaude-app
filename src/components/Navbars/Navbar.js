@@ -72,7 +72,7 @@ export default function Header({ handleDrawerToggle }) {
               textOverflow: "ellipsis",
             }}
           >
-            {routeName || "DataSaúde"}
+            {routeName || "Pensi Analytics"}
           </Typography>
         </Box>
 

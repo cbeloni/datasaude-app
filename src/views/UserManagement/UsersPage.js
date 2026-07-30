@@ -28,6 +28,7 @@ import {
   listRoles,
   listUsers,
   setUserActive,
+  updateUser,
 } from "services/AdminUserService";
 import RolesPage from "views/UserManagement/RolesPage";
 
@@ -43,6 +44,8 @@ export default function UsersPage() {
   const [feedback, setFeedback] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [permissions, setPermissions] = useState([]);
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [createRoleRequest, setCreateRoleRequest] = useState(0);
 
   const load = async (userPermissions = permissions) => {
     setLoading(true);
@@ -90,23 +93,53 @@ export default function UsersPage() {
   const updateForm = (field) => (event) =>
     setForm((current) => ({ ...current, [field]: event.target.value }));
 
-  const handleCreate = async (event) => {
+  const openCreateDialog = () => {
+    setForm(initialForm);
+    setEditingUserId(null);
+    setOpen(true);
+  };
+
+  const openEditDialog = (user) => {
+    setForm({
+      email: user.email,
+      nickname: user.nickname,
+      password: "",
+      role_id: user.role_id ? String(user.role_id) : "",
+    });
+    setEditingUserId(user.id);
+    setOpen(true);
+  };
+
+  const handleSave = async (event) => {
     event.preventDefault();
     setSaving(true);
     try {
-      await createUser({
+      const data = {
         ...form,
         role_id: form.role_id ? Number(form.role_id) : null,
-      });
+      };
+      if (editingUserId && !data.password) delete data.password;
+      if (editingUserId) {
+        await updateUser(editingUserId, data);
+      } else {
+        await createUser(data);
+      }
       setOpen(false);
       setForm(initialForm);
+      setEditingUserId(null);
       await load();
-      setFeedback({ severity: "success", message: "Usuário criado." });
+      setFeedback({
+        severity: "success",
+        message: editingUserId ? "Usuário atualizado." : "Usuário criado.",
+      });
     } catch (error) {
       setFeedback({
         severity: "error",
         message:
-          error.response?.data?.detail || "Não foi possível criar o usuário.",
+          error.response?.data?.detail ||
+          `Não foi possível ${
+            editingUserId ? "atualizar" : "criar"
+          } o usuário.`,
       });
     } finally {
       setSaving(false);
@@ -142,8 +175,16 @@ export default function UsersPage() {
           </Typography>
         </Box>
         {activeTab === 0 && canManageUsers && (
-          <Button variant="contained" onClick={() => setOpen(true)}>
+          <Button variant="contained" onClick={openCreateDialog}>
             Novo usuário
+          </Button>
+        )}
+        {activeTab === 1 && canManageRoles && (
+          <Button
+            variant="contained"
+            onClick={() => setCreateRoleRequest((current) => current + 1)}
+          >
+            Novo perfil
           </Button>
         )}
       </Stack>
@@ -152,7 +193,7 @@ export default function UsersPage() {
         <Tab label="Perfis" disabled={!canManageRoles} />
       </Tabs>
       {activeTab === 1 && canManageRoles ? (
-        <RolesPage showHeader={false} />
+        <RolesPage showHeader={false} createRequest={createRoleRequest} />
       ) : (
         <>
           {feedback && (
@@ -194,6 +235,12 @@ export default function UsersPage() {
                         />
                       </TableCell>
                       <TableCell align="right">
+                        <Button
+                          size="small"
+                          onClick={() => openEditDialog(user)}
+                        >
+                          Editar
+                        </Button>
                         <Button size="small" onClick={() => toggleActive(user)}>
                           {user.is_active ? "Desativar" : "Ativar"}
                         </Button>
@@ -210,8 +257,10 @@ export default function UsersPage() {
             fullWidth
             maxWidth="sm"
           >
-            <Box component="form" onSubmit={handleCreate}>
-              <DialogTitle>Novo usuário</DialogTitle>
+            <Box component="form" onSubmit={handleSave}>
+              <DialogTitle>
+                {editingUserId ? "Editar usuário" : "Novo usuário"}
+              </DialogTitle>
               <DialogContent>
                 <Stack spacing={2} sx={{ pt: 1 }}>
                   <TextField
@@ -228,9 +277,9 @@ export default function UsersPage() {
                     onChange={updateForm("email")}
                   />
                   <TextField
-                    label="Senha"
+                    label={editingUserId ? "Nova senha" : "Senha"}
                     type="password"
-                    required
+                    required={!editingUserId}
                     inputProps={{ minLength: 8 }}
                     value={form.password}
                     onChange={updateForm("password")}
@@ -255,7 +304,7 @@ export default function UsersPage() {
               <DialogActions>
                 <Button onClick={() => setOpen(false)}>Cancelar</Button>
                 <Button type="submit" variant="contained" disabled={saving}>
-                  {saving ? "Salvando..." : "Criar"}
+                  {saving ? "Salvando..." : editingUserId ? "Salvar" : "Criar"}
                 </Button>
               </DialogActions>
             </Box>

@@ -24,7 +24,7 @@ export default function Footer() {
         alignItems={{ xs: "flex-start", sm: "center" }}
       >
         <Typography variant="caption" sx={{ color: "text.secondary" }}>
-          © {year} DataSaúde · Plataforma de vigilância em saúde pública
+          © {year} Pensi Analytics · Plataforma de vigilância em saúde pública
         </Typography>
         <Stack direction="row" spacing={2}>
           <Link
