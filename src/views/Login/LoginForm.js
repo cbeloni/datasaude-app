@@ -66,6 +66,8 @@ export default function LoginForm() {
     }
   };
 
+  const gradientBg = `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 60%, ${theme.tokens.palette.accent[600]} 100%)`;
+
   return (
     <Box
       sx={{
@@ -75,16 +77,17 @@ export default function LoginForm() {
         backgroundColor: "background.default",
       }}
     >
+      {/* Painel gradiente - visível em todos os tamanhos */}
       <Box
         sx={{
-          display: { xs: "none", md: "flex" },
+          display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          p: 6,
+          p: { xs: 2, md: 6 },
           color: "common.white",
-          background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 60%, ${theme.tokens.palette.accent[600]} 100%)`,
+          background: gradientBg,
           position: "relative",
           overflow: "hidden",
+          minHeight: { xs: 140, md: "100vh" },
           "&::before": {
             content: '""',
             position: "absolute",
@@ -95,55 +98,85 @@ export default function LoginForm() {
           },
         }}
       >
-        <Stack alignItems="center" sx={{ width: "100%" }}>
+        {/* Logo sempre no topo */}
+        <Stack
+          alignItems="center"
+          sx={{ width: "100%", position: "relative", zIndex: 1, flexShrink: 0 }}
+        >
           <Box
             component="img"
             src={`${process.env.PUBLIC_URL}/logo_texto.png`}
             alt="Pensi Analytics"
             sx={{
-              width: 220,
-              height: 132,
+              width: { xs: 100, md: 220 },
+              height: { xs: 60, md: 132 },
               objectFit: "contain",
             }}
           />
         </Stack>
 
-        <Box sx={{ position: "relative", zIndex: 1, maxWidth: 480 }}>
-          <Typography
-            sx={{
-              fontFamily: theme.tokens.typography.display,
-              fontSize: "2.5rem",
-              fontWeight: 500,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.1,
-            }}
-          >
-            Vigilância em saúde,
-            <br />
-            com clareza.
-          </Typography>
-          <Typography
-            sx={{
-              mt: 2,
-              fontSize: "1rem",
-              color: "rgba(255,255,255,0.85)",
-              maxWidth: 420,
-            }}
-          >
-            Acompanhe atendimentos, internações, leitos e qualidade do ar em
-            tempo real. Decisões baseadas em dados.
-          </Typography>
+        {/* Conteúdo centralizado no espaço restante */}
+        <Box
+          sx={{
+            flex: 1,
+            display: { xs: "none", md: "flex" },
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            zIndex: 1,
+            mt: 4,
+          }}
+        >
+          <Box sx={{ maxWidth: 600, mx: "auto", textAlign: "center" }}>
+            <Typography
+              sx={{
+                fontFamily: theme.tokens.typography.display,
+                fontSize: "2.5rem",
+                fontWeight: 500,
+                letterSpacing: "-0.02em",
+                lineHeight: 1.1,
+                textAlign: "center",
+              }}
+            >
+              Vigilância em saúde,
+              <br />
+              com clareza.
+            </Typography>
+            <Typography
+              sx={{
+                mt: 2,
+                fontSize: "1rem",
+                color: "rgba(255,255,255,0.85)",
+                maxWidth: 420,
+                mx: "auto",
+                textAlign: "center",
+              }}
+            >
+              Acompanhe atendimentos, internações, leitos e qualidade do ar em
+              tempo real. Decisões baseadas em dados.
+            </Typography>
+          </Box>
         </Box>
 
-        <Typography variant="caption" sx={{ opacity: 0.65 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            opacity: 0.65,
+            display: { xs: "none", md: "block" },
+            flexShrink: 0,
+          }}
+        >
           © {new Date().getFullYear()} Pensi Analytics · Saúde pública orientada
           a dados
         </Typography>
       </Box>
 
+      {/* Formulário */}
       <Box
         sx={{
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           p: { xs: 3, sm: 6 },
