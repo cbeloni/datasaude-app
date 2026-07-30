@@ -82,12 +82,12 @@ export default function LoginForm() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          p: { xs: 2, md: 6 },
+          p: { xs: 1.5, md: 6 },
           color: "common.white",
           background: gradientBg,
           position: "relative",
           overflow: "hidden",
-          minHeight: { xs: 140, md: "100vh" },
+          minHeight: { xs: 100, md: "100vh" },
           "&::before": {
             content: '""',
             position: "absolute",
