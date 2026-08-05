@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -21,6 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
 import {
   buildDynamicColumns,
   buildFormulaColumns,
@@ -71,6 +73,18 @@ function DataTableIbgeV2Component() {
   const [formulaNome, setFormulaNome] = useState("");
   const [formulaExpressao, setFormulaExpressao] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [exportPage, setExportPage] = useState(1);
+  const [exportPageSize, setExportPageSize] = useState(2000);
+  const [exporting, setExporting] = useState(false);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const EXPORT_PAGE_SIZE_OPTIONS = [2000, 5000, 10000, 50000];
+  const exportTotalPages = useMemo(() => {
+    if (totalRecords > 0) {
+      return Math.max(1, Math.ceil(totalRecords / exportPageSize));
+    }
+    return 0;
+  }, [totalRecords, exportPageSize]);
 
   useEffect(() => {
     if (!errorMessage) {
@@ -415,6 +429,99 @@ function DataTableIbgeV2Component() {
     }
   };
 
+  const openExportDialog = async () => {
+    setErrorMessage("");
+    setExporting(true);
+    setTotalRecords(0);
+    setExportDialogOpen(true);
+    try {
+      const countBody = {
+        collection_name: selectedCollection,
+        columns: selectedColumns,
+        page: 1,
+        limit: 1,
+        ...(cdSetorFilter.length > 0
+          ? { cd_setor: cdSetorFilter }
+          : setorCdSetores.length > 0
+          ? { cd_setor: setorCdSetores }
+          : {}),
+      };
+      const countData = await postIbgeMongoList(countBody);
+      setTotalRecords(
+        Number.isFinite(Number(countData?.total_records))
+          ? Number(countData.total_records)
+          : 0
+      );
+    } catch (error) {
+      setTotalRecords(0);
+      setErrorMessage("Não foi possível obter o total de registros.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleExportPage = async () => {
+    setExporting(true);
+    setErrorMessage("");
+    try {
+      const requestBody = {
+        collection_name: selectedCollection,
+        columns: selectedColumns,
+        page: exportPage,
+        limit: exportPageSize,
+        ...(cdSetorFilter.length > 0
+          ? { cd_setor: cdSetorFilter }
+          : setorCdSetores.length > 0
+          ? { cd_setor: setorCdSetores }
+          : {}),
+      };
+
+      const data = await postIbgeMongoList(requestBody);
+      const payloadRows = Array.isArray(data?.payload) ? data.payload : [];
+
+      if (payloadRows.length === 0) {
+        setErrorMessage(
+          "Nenhum registro encontrado para a página selecionada."
+        );
+        return;
+      }
+
+      const visibleColumns = allColumns.filter((column) =>
+        selectedColumns.includes(column.field)
+      );
+      const headers = visibleColumns
+        .map((column) => column.headerName)
+        .join(",");
+      const csvRows = payloadRows.map((row) =>
+        visibleColumns
+          .map((column) => {
+            const value = row[column.field];
+            const strValue =
+              value === null || value === undefined ? "" : String(value);
+            return `"${strValue.replace(/"/g, '""')}"`;
+          })
+          .join(",")
+      );
+      const csv = [headers, ...csvRows].join("\n");
+      const blob = new Blob([`\uFEFF${csv}`], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `ibge_v2_${selectedCollection}_pagina_${exportPage}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      setExportDialogOpen(false);
+    } catch (error) {
+      setErrorMessage("Não foi possível exportar os dados da página.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const handleDeleteFormula = async (formulaId, formulaName) => {
     const confirmed = window.confirm(
       `Remover a fórmula customizada "${formulaName}"?`
@@ -465,6 +572,11 @@ function DataTableIbgeV2Component() {
         }
 
         setRows(Array.isArray(data?.payload) ? data.payload : []);
+        setTotalRecords(
+          Number.isFinite(Number(data?.total_records))
+            ? Number(data.total_records)
+            : 0
+        );
       } catch (error) {
         if (!active) {
           return;
@@ -600,6 +712,12 @@ function DataTableIbgeV2Component() {
                 placeholder="Digite e pressione Enter"
                 fullWidth
                 size="small"
+                sx={{
+                  "& input:focus, & input:focus-visible": {
+                    outline: "none",
+                    boxShadow: "none",
+                  },
+                }}
               />
             )}
           />
@@ -608,6 +726,38 @@ function DataTableIbgeV2Component() {
         <Stack direction="row" spacing={1} alignItems="center">
           <Button
             variant="contained"
+            size="small"
+            disableRipple
+            onClick={openExportDialog}
+            startIcon={<DownloadIcon />}
+          >
+            Exportar
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            disableRipple
+            sx={{
+              backgroundColor: "primary.main",
+              color: "primary.contrastText",
+              boxShadow: "none",
+              flexShrink: 0,
+              minWidth: 0,
+              px: 1.5,
+              whiteSpace: "nowrap",
+              "&:hover": { backgroundColor: "primary.main" },
+              "&:focus": { backgroundColor: "primary.main" },
+              "&:active": { backgroundColor: "primary.main" },
+              "&:focus-visible": {
+                backgroundColor: "primary.main",
+                boxShadow: "none",
+                outline: "none",
+              },
+              "&.Mui-focusVisible": {
+                backgroundColor: "primary.main",
+                boxShadow: "none",
+              },
+            }}
             onClick={() => setFormulaDialogOpen(true)}
           >
             Fórmula customizada
@@ -734,6 +884,102 @@ function DataTableIbgeV2Component() {
           <Button onClick={() => setFormulaDialogOpen(false)}>Cancelar</Button>
           <Button variant="contained" onClick={handleCreateFormula}>
             Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={exportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Exportar dados IBGE V2</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <Typography variant="body2">
+              Total de registros considerando o filtro atual:{" "}
+              <b>{totalRecords}</b>
+            </Typography>
+
+            {totalRecords > EXPORT_PAGE_SIZE_OPTIONS[0] && (
+              <Alert severity="warning">
+                Não é possível baixar todos os {totalRecords} registros de uma
+                vez devido ao tamanho dos dados. Recomendamos a exportação por
+                páginas de {EXPORT_PAGE_SIZE_OPTIONS[0].toLocaleString("pt-BR")}{" "}
+                registros.
+              </Alert>
+            )}
+
+            <Typography variant="subtitle2">Registros por vez</Typography>
+            <FormControl fullWidth size="small">
+              <InputLabel id="ibge-v2-export-size-label">
+                Registros por vez
+              </InputLabel>
+              <Select
+                labelId="ibge-v2-export-size-label"
+                id="ibge-v2-export-size"
+                value={exportPageSize}
+                onChange={(event) => {
+                  setExportPage(1);
+                  setExportPageSize(Number(event.target.value));
+                }}
+                label="Registros por vez"
+              >
+                {EXPORT_PAGE_SIZE_OPTIONS.map((size) => (
+                  <MenuItem key={size} value={size}>
+                    {size.toLocaleString("pt-BR")} registros
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <Typography variant="subtitle2">
+              Exportar por página ({exportPageSize.toLocaleString("pt-BR")}{" "}
+              registros por página)
+            </Typography>
+
+            <Stack direction="row" spacing={2} alignItems="center">
+              <TextField
+                label="Página"
+                type="number"
+                size="small"
+                value={exportPage}
+                onChange={(event) =>
+                  setExportPage(
+                    Math.max(
+                      1,
+                      Math.min(
+                        Number(event.target.value) || 1,
+                        exportTotalPages
+                      )
+                    )
+                  )
+                }
+                inputProps={{ min: 1, max: exportTotalPages }}
+                sx={{ width: 120 }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                de {exportTotalPages} página{exportTotalPages === 1 ? "" : "s"}
+              </Typography>
+            </Stack>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setExportDialogOpen(false)}>Cancelar</Button>
+          <Button
+            variant="contained"
+            onClick={handleExportPage}
+            disabled={exporting}
+            startIcon={
+              exporting ? (
+                <CircularProgress size={16} color="inherit" />
+              ) : (
+                <DownloadIcon />
+              )
+            }
+          >
+            {exporting ? "Baixando..." : "Baixar página"}
           </Button>
         </DialogActions>
       </Dialog>

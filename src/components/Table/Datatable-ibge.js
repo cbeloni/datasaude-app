@@ -332,6 +332,29 @@ function DataTableIbgeComponent() {
         <Stack direction="row" spacing={1} alignItems="center">
           <Button
             variant="contained"
+            size="small"
+            disableRipple
+            sx={{
+              backgroundColor: "primary.main",
+              color: "primary.contrastText",
+              boxShadow: "none",
+              flexShrink: 0,
+              minWidth: 0,
+              px: 1.5,
+              whiteSpace: "nowrap",
+              "&:hover": { backgroundColor: "primary.main" },
+              "&:focus": { backgroundColor: "primary.main" },
+              "&:active": { backgroundColor: "primary.main" },
+              "&:focus-visible": {
+                backgroundColor: "primary.main",
+                boxShadow: "none",
+                outline: "none",
+              },
+              "&.Mui-focusVisible": {
+                backgroundColor: "primary.main",
+                boxShadow: "none",
+              },
+            }}
             onClick={() => setFormulaDialogOpen(true)}
           >
             Fórmula customizada
