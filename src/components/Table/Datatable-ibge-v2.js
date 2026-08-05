@@ -810,7 +810,7 @@ function DataTableIbgeV2Component() {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Fórmulas customizadas</DialogTitle>
+        <DialogTitle>Fórmulas</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
