@@ -709,7 +709,7 @@ function DataTableIbgeV2Component() {
               <TextField
                 {...params}
                 label="cd_setor"
-                placeholder="Digite e pressione Enter"
+                placeholder="Prefixo do setor e Enter"
                 fullWidth
                 size="small"
                 sx={{
