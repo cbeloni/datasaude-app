@@ -6,31 +6,10 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
 import PageHeader from "components/Card/PageHeader";
-import DataTableComponent from "components/Table/Datatable";
-import DataTablePacienteComponent from "components/Table/Datatable-Paciente";
-import DataTableIbgeComponent from "components/Table/Datatable-ibge";
 import DataTableIbgeV2Component from "components/Table/Datatable-ibge-v2";
-import PoluentesHelper from "views/TableList/PoluentesHelper";
 import { TABLE_TAB_PERMISSIONS } from "config/tabPermissions";
 
-const poluentesHelper = PoluentesHelper();
-
 const TABS = [
-  {
-    ...TABLE_TAB_PERMISSIONS[0],
-    description: "Pacientes com dados dos poluentes coletados.",
-    Component: DataTablePacienteComponent,
-  },
-  {
-    ...TABLE_TAB_PERMISSIONS[1],
-    description: "Coletas a cada uma hora.",
-    Component: () => <DataTableComponent poluentesHelper={poluentesHelper} />,
-  },
-  {
-    ...TABLE_TAB_PERMISSIONS[2],
-    description: "Tabela baseada no dataset de setores do IBGE.",
-    Component: DataTableIbgeComponent,
-  },
   {
     ...TABLE_TAB_PERMISSIONS[3],
     description: "Tabela IBGE com collections MongoDB e colunas dinâmicas.",
